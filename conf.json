@@ -1,0 +1,59 @@
+{
+    "last_index":23432,
+    "user_agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0",
+    "filters":[],
+    "isTest": false,
+    "scope": [
+        {
+            "databaseSettings": {
+                "type": "MongoDB",
+                "name": "BotDatabase",
+                "history_collection_name": "history_collection",
+                "log_collection_name": "log_collection",
+                "collection_name": "main_collection",
+                "uri": "mongodb://localhost:27017/",
+                "user_name": "admin"
+            },
+            "settings":{
+                "search_time_sleep": 2,
+                "thread_limit": 10
+            },
+            "scopeName":"sahibinden.com auto",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
+            "startUrl": "https://www.sahibinden.com/otomobil?pagingSize=50",
+            "history": {
+                "to": "database",
+                "collection_name": "history_collection",
+                "control": {
+                    "from": "database",
+                    "progress": "skip"
+                }
+            },
+            "isPagination": true,
+            "isLogger": true,
+            "pagination": {
+              "urlClass": "prevNextBut",
+              "ifExistsClass": "last",
+              "attrib": "href"
+            },
+            "searchUrlClass": {
+                "className": "classifiedTitle",
+                "type": "loop",
+                "forItem": [{
+                    "childNameType": "loop",
+                    "folderChildNameClass": "//li[@class='breadcrumbItem']/a",
+                    "childIterator": "os.sep",
+                    "downloadFolder": "auto_images",
+                    "itemList": [{
+                        "className": "//div[@class='classifiedDetailMainPhoto']/label/img",
+                        "process": "download",
+                        "needAttr": {
+                            "if": "data-src",
+                            "else": "src"
+                        }
+                    }]
+                }]
+            }
+        }
+    ]
+}
