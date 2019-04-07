@@ -5,18 +5,18 @@
     "isTest": false,
     "scope": [
         {
-            "databaseSettings": {
-                "type": "MongoDB",
-                "name": "BotDatabase",
-                "history_collection_name": "history_collection",
-                "log_collection_name": "log_collection",
-                "collection_name": "main_collection",
-                "uri": "mongodb://localhost:27017/",
-                "user_name": "admin"
-            },
             "settings":{
                 "search_time_sleep": 2,
-                "thread_limit": 10
+                "thread_limit": 10,
+                "database": {
+                    "type": "MongoDB",
+                    "name": "BotDatabase",
+                    "history_collection_name": "history_collection",
+                    "log_collection_name": "log_collection",
+                    "collection_name": "main_collection",
+                    "uri": "mongodb://localhost:27017/",
+                    "user_name": "admin"
+                }
             },
             "scopeName":"sahibinden.com auto",
             "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
