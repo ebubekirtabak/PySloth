@@ -67,7 +67,7 @@ class MemoryThreadController:
                     print(thread.name + ' Timeout...')
                     thread.stop_time = now_time
                     self.thread_array.append(self.active_thread_array[index])
-                    self.active_thread_array.remove(self.active_thread_array[0])
+                    self.active_thread_array.remove(self.active_thread_array[index])
 
             index += 1
 
