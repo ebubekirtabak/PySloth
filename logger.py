@@ -16,3 +16,9 @@ def set_error_log(data):
         the_file.write( str(time.strftime('%c')) + " : " + data)
         the_file.write('\n')
 
+def set_memory_log(data):
+    abs_file_path = os.path.join(
+        script_dir, 'memory_logs/error_log' + str(time.time()) + '.txt')
+    with open(abs_file_path, 'a') as the_file:
+        the_file.write( str(time.strftime('%c')) + " : " + data)
+        the_file.write('\n')
