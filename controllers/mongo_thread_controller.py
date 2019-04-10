@@ -2,6 +2,7 @@ import logger
 import mongo
 import time
 import scope
+import sys
 from collections import namedtuple
 
 class MongoThreadController:
@@ -40,7 +41,7 @@ class MongoThreadController:
         logger.set_log("added Thread : " + thread_model.name)
         if len(self.active_thread_array) < self.settings['thread_limit']:
             self.active_thread_array.append(thread_model)
-            self.thread_controller()
+            scope.start_thread(thread_model)
         else:
             mongo.insert(self.database, self.database_setting['thread_collection_name'], thread_model.__dict__)
 
@@ -54,6 +55,7 @@ class MongoThreadController:
                 logger.set_log("Finish thread : " + name)
                 self.active_thread_array.remove(self.active_thread_array[index])
                 break
+
             index += 1
         self.thread_controller()
 
@@ -80,5 +82,7 @@ class MongoThreadController:
 
         except Exception as e:
             logger.set_error_log("auto_thread_stopper(): " + str(e))
+            type, value, traceback = sys.exc_info()
+            print('Error opening %s: %s' % (value.filename, value.strerror))
             time.sleep(10)
             self.thread_controller()
