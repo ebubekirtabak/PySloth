@@ -3,6 +3,7 @@ import mongo
 import time
 import scope
 import sys
+import os
 from collections import namedtuple
 
 class MongoThreadController:
@@ -43,7 +44,11 @@ class MongoThreadController:
             self.active_thread_array.append(thread_model)
             scope.start_thread(thread_model)
         else:
-            mongo.insert(self.database, self.database_setting['thread_collection_name'], thread_model.__dict__)
+            try:
+                mongo.insert(self.database, self.database_setting['thread_collection_name'], thread_model.__dict__)
+            except Exception as e:
+                logger.set_error_log("no __dict__: " + str(e))
+                mongo.insert(self.database, self.database_setting['thread_collection_name'], thread_model)
 
         self.thread_controller()
 
@@ -67,6 +72,8 @@ class MongoThreadController:
         # then timeout stop thread
 
         try:
+            clear = lambda: os.system('clear')
+            clear()
             index = 0
             for thread in self.active_thread_array:
                 now_time = int(round(time.time() * 1000))
@@ -74,7 +81,9 @@ class MongoThreadController:
                 different = int(different / 1000)
                 if different > self.settings['thread_time_out']:
                     print(thread.name + ' Timeout...')
-                    thread.stop_time = now_time
+                    '''if 'stop_time' in thread:
+                        thread.stop_time = now_time'''
+
                     self.add_thread(self.active_thread_array[index])
                     self.active_thread_array.remove(self.active_thread_array[index])
 
