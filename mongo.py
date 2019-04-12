@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import sys
 # http://api.mongodb.com/python/current/tutorial.html
 from pprint import pprint
 
@@ -19,18 +20,35 @@ def connect_database(database):
 
 
 def get_server_status(db):
-    return db.command("serverStatus") 
+    try:
+        return db.command("serverStatus")
+    except Exception as e:
+        print(e)
+        return 0
 
 
 def insert(db, collection, data):
     if db != 400:
         try:
             mycol = db[collection]
-            print("insert db")
             mycol.insert_one(data)
         except Exception as e:
+            # type, value, traceback = sys.exc_info()
+            # print('Error opening %s: %s' % (value.filename, value.strerror))
             print(e)
-            return 400   
+            return 400
+
+# def get_object(db, collection):
+
+
+def get_find_one(db, collection, query):
+    return db[collection].find(query)
+
+def find_and_delete(db, collection, query):
+    return db[collection].find_one_and_delete(query)
+
+def get_length(db, collection):
+    return db[collection].count()
 
 def isExists(db, collection, data):
     mycol = db[collection]

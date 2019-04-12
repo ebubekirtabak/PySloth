@@ -32,7 +32,7 @@ def controller_interval():
     threading.Timer(30, auto_thread_controller).start()
 
 def auto_thread_controller():
-    print("run auto_thread_controller" + str(datetime.datetime.now()))
+    print("run auto_thread_controller: " + str(datetime.datetime.now()))
     controller_interval()
     controller.auto_thread_stopper()
     controller.thread_controller()

@@ -1,8 +1,10 @@
 import logger
 import mongo
 import time
-import json
-from bson import json_util
+import scope
+import sys
+import os
+from collections import namedtuple
 
 class MongoThreadController:
     active_thread_array = []
@@ -18,17 +20,21 @@ class MongoThreadController:
         self.database = mongo.connect_database(self.database_setting)
 
     def thread_controller(self):
-        print("mongo thread_controller")
         try:
+            lent = mongo.get_length(self.database, self.database_setting['thread_collection_name'])
             logger.set_log("Mongo Thread Controller : Active : " +
                        str(len(self.active_thread_array)) + " : Array : " +
-                       str(len(self.thread_array)))
-            lent = mongo.get_length(self.database, self.database_setting['thread_collection_name'])
+                       str(lent))
             if len(self.active_thread_array) < self.settings["thread_limit"] and lent > 0:
-                print("bhjbjh")
+                 thread_object = mongo.find_and_delete(
+                        self.database,self.database_setting['thread_collection_name'], { "status": "wait" })
+                 thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(*thread_object.values())
+                 scope.start_thread(thread_model)
+                 self.active_thread_array.append(thread_model)
+                 print("start: ")
 
         except Exception as e:
-            logger.set_error_log("auto_thread_stopper(): " + str(e))
+            logger.set_error_log("mongo_thread_controller(): " + str(e))
             time.sleep(10)
             self.thread_controller()
 
@@ -36,16 +42,27 @@ class MongoThreadController:
         logger.set_log("added Thread : " + thread_model.name)
         if len(self.active_thread_array) < self.settings['thread_limit']:
             self.active_thread_array.append(thread_model)
+            scope.start_thread(thread_model)
         else:
-            dt = {}
-            dt.update(vars(thread_model))
-            json_model = json.dumps(dt)
-            mongo.insert(self.database, self.database_setting['thread_collection_name'], json_model)
+            try:
+                mongo.insert(self.database, self.database_setting['thread_collection_name'], thread_model.__dict__)
+            except Exception as e:
+                logger.set_error_log("no __dict__: " + str(e))
+                mongo.insert(self.database, self.database_setting['thread_collection_name'], thread_model)
 
         self.thread_controller()
 
-    def remove_thread(self):
-        print("mongo thread_controller")
+    def remove_thread(self, name):
+        index = 0
+        for thread_item in self.active_thread_array:
+
+            if thread_item.name == name:
+                logger.set_log("Finish thread : " + name)
+                self.active_thread_array.remove(self.active_thread_array[index])
+                break
+
+            index += 1
+        self.thread_controller()
 
     def clear_thread_list(self):
         self.empty_thread_step = 0
@@ -55,6 +72,8 @@ class MongoThreadController:
         # then timeout stop thread
 
         try:
+            clear = lambda: os.system('clear')
+            clear()
             index = 0
             for thread in self.active_thread_array:
                 now_time = int(round(time.time() * 1000))
@@ -62,13 +81,17 @@ class MongoThreadController:
                 different = int(different / 1000)
                 if different > self.settings['thread_time_out']:
                     print(thread.name + ' Timeout...')
-                    thread.stop_time = now_time
+                    '''if 'stop_time' in thread:
+                        thread.stop_time = now_time'''
+
                     self.add_thread(self.active_thread_array[index])
                     self.active_thread_array.remove(self.active_thread_array[index])
 
-            index += 1
+                index += 1
 
         except Exception as e:
             logger.set_error_log("auto_thread_stopper(): " + str(e))
+            type, value, traceback = sys.exc_info()
+            print('Error opening %s: %s' % (value.filename, value.strerror))
             time.sleep(10)
             self.thread_controller()

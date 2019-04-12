@@ -69,7 +69,7 @@ class MemoryThreadController:
                     self.thread_array.append(self.active_thread_array[index])
                     self.active_thread_array.remove(self.active_thread_array[index])
 
-            index += 1
+                index += 1
 
         except Exception as e:
             logger.set_error_log("auto_thread_stopper(): " + str(e))
