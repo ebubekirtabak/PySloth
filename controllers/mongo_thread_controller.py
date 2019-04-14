@@ -111,3 +111,15 @@ class MongoThreadController:
 
             time.sleep(10)
             self.thread_controller()
+
+    def restart_thread(self, name):
+        index = 0
+        for thread_item in self.active_thread_array:
+            if thread_item.name == name:
+                logger.set_log("Restart thread : " + name)
+                self.add_thread(self.active_thread_array[index])
+                del self.active_thread_array[index]
+                break
+
+            index += 1
+        self.thread_controller()
