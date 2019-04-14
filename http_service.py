@@ -1,10 +1,9 @@
-import requests
 import os
 import time
-import re
 import random
-import thread_controller
+from controllers import thread_controller
 import logger
+import sys
 from urllib.request import urlopen
 import urllib.request
 
@@ -20,8 +19,17 @@ def download_image(*kwargs):
 
         print("Downloaded: " + url)
         filename = url.split('/')[-1]
-        if len(filename) > 90:
-            filename =filename[0:filename.index('?')]
+        while len(filename) > 90:
+            if '?' in filename:
+                filename = filename[0:filename.index('?')]
+            else:
+                file_extension = filename[filename.rindex('.'):len(filename)]
+                filename = filename[0:filename.rindex('.')]
+                if len(filename) > 90:
+                    filename = filename[0:60]
+                    filename = filename + str(time.time()) + '.' + file_extension
+                else:
+                    filename = filename + '.' + file_extension
 
         filename = filename + "?ty=" + str(random.randint(1,9999999))
 
@@ -49,14 +57,17 @@ def download_image(*kwargs):
         thread_controller.remove_thread(thread_name)
 
     except ConnectionResetError as e:
-        logger.set_log('Error: ' + str(e))
-        logger.set_log('Sleep system 300 S')
+        logger.set_error_log('Error: ' + str(e))
+        logger.set_error_log('Sleep system 300 S')
         time.sleep(300)
-        logger.set_log('Restart thread : ' + thread_name )
+        logger.set_error_log('Restart thread : ' + thread_name )
         thread_controller.restart_thread(thread_name)
     except Exception as e:
-        logger.set_log('Error: ' + str(e))
-        logger.set_log('Sleep system 300 S')
+        type, value, traceback = sys.exc_info()
+        print('Error opening %s: %s' % (value.filename, value.strerror))
+        logger.set_error_log('Error: ' + str(e))
+        logger.set_error_log('Error opening %s: %s' % (value.filename, value.strerror))
+        logger.set_error_log('Sleep system 300 S')
         time.sleep(300)
-        logger.set_log('Restart thread : ' + thread_name )
+        logger.set_error_log('Restart thread : ' + thread_name )
         thread_controller.restart_thread(thread_name)
