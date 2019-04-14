@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+import logger
 import sys
 # http://api.mongodb.com/python/current/tutorial.html
 from pprint import pprint
@@ -31,8 +32,13 @@ def insert(db, collection, data):
     if db != 400:
         try:
             mycol = db[collection]
-            mycol.insert_one(data)
+            result = mycol.insert_one(data)
+            if result.inserted_id is not None:
+                logger.set_log("insert data")
+            else:
+                logger.set_error_log("mongo insert data error")
         except Exception as e:
+            logger.set_error_log("mongoDB inser Error: " + str(e))
             # type, value, traceback = sys.exc_info()
             # print('Error opening %s: %s' % (value.filename, value.strerror))
             print(e)
@@ -53,4 +59,3 @@ def get_length(db, collection):
 def isExists(db, collection, data):
     mycol = db[collection]
     return mycol.find({data['column_name']: { "$in": data['key']}}).count() > 0
-    
