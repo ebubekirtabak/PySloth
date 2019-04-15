@@ -46,6 +46,10 @@
                     "downloadFolder": "auto_images",
                     "itemList": [{
                         "className": "//div[@class='classifiedDetailMainPhoto']/label/img",
+                        "classNames": [
+                            "//div[@class='classifiedDetailMainPhoto']/label/img",
+                            "//div[@class='classifiedDetailMainPhoto']/label/span"
+                        ],
                         "process": "download",
                         "needAttr": {
                             "if": "data-src",
