@@ -23,11 +23,14 @@ class MongoThreadController:
 
     def thread_controller(self):
         try:
+            active_thread_length = len(self.active_thread_array)
             lent = mongo.get_length(self.database, self.database_setting['thread_collection_name'])
             logger.set_log("Mongo Thread Controller : Active : " +
-                       str(len(self.active_thread_array)) + " : Array : " +
+                       str(active_thread_length) + " : Array : " +
                        str(lent))
-            if len(self.active_thread_array) < self.settings["thread_limit"] and lent > 0:
+            if active_thread_length == 0 and lent == 0:
+                scope.shutdown()
+            elif active_thread_length < self.settings["thread_limit"] and lent > 0:
                  thread_object = mongo.find_and_delete(
                         self.database, self.database_setting['thread_collection_name'], { "status": "wait", "type": "download_thread" })
                  if thread_object is None:
@@ -37,7 +40,7 @@ class MongoThreadController:
                      thread_object.start_time = int(round(time.time() * 1000))
                  else:
                      thread_object["start_time"] = int(round(time.time() * 1000))
-                     
+
                  thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(*thread_object.values())
                  self.active_thread_array.append(thread_model)
                  scope.start_thread(thread_model)
