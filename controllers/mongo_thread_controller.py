@@ -33,7 +33,11 @@ class MongoThreadController:
                  if thread_object is None:
                      thread_object = mongo.find_and_delete(self.database, self.database_setting['thread_collection_name'],
                                                             {"status": "wait" })
-                 thread_object["start_time"] = int(round(time.time() * 1000))
+                 if isinstance(thread_object, ThreadModel):
+                     thread_object.start_time = int(round(time.time() * 1000))
+                 else:
+                     thread_object["start_time"] = int(round(time.time() * 1000))
+                     
                  thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(*thread_object.values())
                  self.active_thread_array.append(thread_model)
                  scope.start_thread(thread_model)
@@ -54,7 +58,12 @@ class MongoThreadController:
     def add_thread(self, thread_model):
         logger.set_log("added Thread : " + thread_model.name)
         if len(self.active_thread_array) < self.settings['thread_limit']:
-            thread_model.start_time = int(round(time.time() * 1000))
+            if isinstance(thread_model, ThreadModel):
+                thread_model.start_time = int(round(time.time() * 1000))
+            else:
+                logger.set_error_log("add_thread: non object error")
+                thread_model = namedtuple("ThreadModel", thread_model.keys(), rename=True)(*thread_model.values())
+                thread_model["start_time"] = int(round(time.time() * 1000))
             self.active_thread_array.append(thread_model)
             scope.start_thread(thread_model)
         else:
