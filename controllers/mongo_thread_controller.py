@@ -58,15 +58,18 @@ class MongoThreadController:
     def dict_from_class(self, cls):
         return dict((key, value) for (key, value) in cls)
 
+
     def add_thread(self, thread_model):
         logger.set_log("added Thread : " + thread_model.name)
         if len(self.active_thread_array) < self.settings['thread_limit']:
             if isinstance(thread_model, ThreadModel):
                 thread_model.start_time = int(round(time.time() * 1000))
             else:
-                logger.set_error_log("add_thread: non object error")
-                thread_model = namedtuple("ThreadModel", thread_model.keys(), rename=True)(*thread_model.values())
-                thread_model["start_time"] = int(round(time.time() * 1000))
+                logger.set_error_log("add_thread: non object error " + thread_model[1])
+                thread_model = ThreadModel(thread_model[1], thread_model[2], thread_model[3],
+                                           thread_model[4], thread_model[5], int(round(time.time() * 1000)),
+                                           thread_model[7])
+
             self.active_thread_array.append(thread_model)
             scope.start_thread(thread_model)
         else:
