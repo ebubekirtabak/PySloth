@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+*.pc
+*.pyc
+*.pyo
+__pycache__
+
+*.py[cod]
+*$py.class
+.idea/*
+auto_images/
+log/
+venv/
+session/
+downloads/
+memory_logs/
+myconf.json
+log.txt
+error_log.txt
