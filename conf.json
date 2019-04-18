@@ -1,5 +1,7 @@
 {
-    "last_index":23432,
+    "description": {
+        "en": "Conf.json is default configuration file. Please do not changed that conf file. Create new \"myconf.json\" file in project root and copy this json your \"myconf.json\" file ."
+    },
     "user_agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0",
     "filters":[],
     "isTest": false,
@@ -16,19 +18,16 @@
                     "collection_name": "main_collection",
                     "uri": "mongodb://localhost:27017/",
                     "user_name": "admin"
+                },
+                "history": {
+                    "collection_name": "history_collection",
+                    "source": "mysql, mongo",
+                    "clear_on_exit": true
                 }
             },
             "scopeName":"sahibinden.com auto",
             "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
             "startUrl": "https://www.sahibinden.com/otomobil?pagingSize=50",
-            "history": {
-                "to": "database",
-                "collection_name": "history_collection",
-                "control": {
-                    "from": "database",
-                    "progress": "skip"
-                }
-            },
             "isPagination": true,
             "isLogger": true,
             "pagination": {
@@ -45,7 +44,7 @@
                     "childIterator": "os.sep",
                     "downloadFolder": "auto_images",
                     "itemList": [{
-                        "className": "//div[contains(concat(' ', normalize-space(@class), ' '), ' classifiedDetailMainPhoto ']/label/img",
+                        "className": "//div[@class='classifiedDetailMainPhoto']/label/img",
                         "classNames": [
                             "//div[@class='classifiedDetailMainPhoto']/label/img",
                             "//div[@class='classifiedDetailMainPhoto']/label/span"
