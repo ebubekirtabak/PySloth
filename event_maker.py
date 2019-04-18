@@ -18,6 +18,7 @@ class EventMaker:
                 if element is not None:
                     if 'delay' in event:
                         time.sleep(event['delay'])
+
                     for action in event['actions']:
                         if 'delay' in action:
                             time.sleep(action['delay'])
@@ -39,12 +40,11 @@ class EventMaker:
             except NoSuchElementException as e:
                 print("-- NoSuchElementException: " + str(e))
 
-            except  Exception as e:
+            except Exception as e:
                 print("start_thread_error: " + str(e))
 
         else:
             return None
-
 
     def set_click(self, element, action):
         element.click()
@@ -58,7 +58,6 @@ class EventMaker:
 
     def set_excute_script(self, element, action):
         self.driver.execute_script(action['script'])
-
 
     def nothing(self, element, action):
         return ""
