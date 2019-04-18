@@ -4,6 +4,7 @@ import sys
 # http://api.mongodb.com/python/current/tutorial.html
 from pprint import pprint
 
+
 def connect_database(database):
     print(database)
     client = MongoClient(database['uri'])
