@@ -8,16 +8,32 @@
     "scope": [
         {
             "settings":{
-                "search_time_sleep": 2,
-                "thread_limit": 10,
+                "search_time_sleep": 5,
+                "download_time_sleep": 5,
+                "session_id": "alamy_dollar",
+                "multi_process": {
+                    "time_out": 300,
+                    "limit": 3,
+                    "base": "mongo"
+                },
+                "driver": {
+                    "driver_path": "/usr/lib/chromium-browser/chromedriver",
+                    "driver_arguments": [
+                        "--no-sandbox",
+                        "--headless"
+                    ]
+                },
                 "database": {
                     "type": "MongoDB",
                     "name": "BotDatabase",
-                    "history_collection_name": "history_collection",
-                    "log_collection_name": "log_collection",
-                    "collection_name": "main_collection",
                     "uri": "mongodb://localhost:27017/",
-                    "user_name": "admin"
+                    "user_name": "admin",
+                    "password": "database_password",
+                    "collections": {
+                        "history_collection": { "name": "history_collection" },
+                        "log_collection": { "name": "log_collection" },
+                        "main": { "name": "main_collection" }
+                    }
                 },
                 "history": {
                     "collection_name": "history_collection",
