@@ -12,15 +12,9 @@ class ThreadModel:
         self._start_time = start_time
         self.stop_time = stop_time
 
-    def to_dict(self):
-        return [("name", self.name), ("target", self.target), ("args", self.args),
-                ("status", self.status), ("type", self.type), ("start_time", self.start_time),
-                ("stop_time", self.stop_time)]
-
     @property
     def start_time(self):
         return self._start_time
-
 
     @start_time.setter
     def start_time(self, start_time):
