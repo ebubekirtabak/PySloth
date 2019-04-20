@@ -38,6 +38,21 @@ class FileModule:
             return file_name
 
     @staticmethod
+    def read_file(dir=script_dir, file_name=None):
+        try:
+            abs_file_path = os.path.join(dir, file_name)
+            if os.path.isfile(abs_file_path):
+                with open(abs_file_path) as data:
+                    return {"succes": True, "data": data}
+            else:
+                return {"succes": False}
+        except Exception as e:
+            logger.set_error_log("read_file -> (" + dir + file_name + "): "
+                                 + str(e))
+            return {"succes": False, "error_message": "File not found."}
+
+
+    @staticmethod
     def write_file_line(self, dir=script_dir, file_name=None, line=None):
         try:
             self.check_directory(dir)
