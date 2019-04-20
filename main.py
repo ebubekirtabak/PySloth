@@ -4,7 +4,7 @@ import sys
 
 
 def main():
-    if sys.argv[1] == 'scope':
+    if len(sys.argv) > 1 and sys.argv[1] == 'scope':
         scope.init_scope()
 
 
