@@ -51,11 +51,14 @@ def insert(db, collection, data):
 def get_find_one(db, collection, query):
     return db[collection].find(query)
 
+
 def find_and_delete(db, collection, query):
     return db[collection].find_one_and_delete(query)
 
+
 def get_length(db, collection):
     return db[collection].count()
+
 
 def isExists(db, collection, data):
     mycol = db[collection]
