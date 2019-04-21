@@ -58,7 +58,6 @@ class MongoThreadController:
     def dict_from_class(self, cls):
         return dict((key, value) for (key, value) in cls)
 
-
     def add_thread(self, thread_model):
         logger.set_log("added Thread : " + thread_model.name)
         if len(self.active_thread_array) < self.settings['thread_limit']:
