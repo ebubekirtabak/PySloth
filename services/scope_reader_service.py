@@ -5,10 +5,11 @@ from modules.file_module import FileModule
 
 class ScopeReaderService:
 
-    def __init__(self, name):
-        self.init_scope_model(name)
+    def __init__(self):
+        pass
 
-    def init_scope_model(self, scope_name):
+    @staticmethod
+    def init_scope_model(scope_name):
         try:
             read_file = FileModule.read_json_file(file_name='myconf.json')
             if read_file['success'] is True:
@@ -16,7 +17,7 @@ class ScopeReaderService:
                 print(data)
                 scope = data['scope']
                 for item in scope:
-                    if item.scope_name == scope_name:
-                        print(item)
+                    if item['scope_name'] == scope_name:
+                        return item
         except Exception as e:
             print(str(e))
