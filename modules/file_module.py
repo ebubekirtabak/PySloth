@@ -1,8 +1,11 @@
 import time
-import logger
 import os
+import sys
+import logger
+import json
 
-script_dir = os.path.dirname(__file__)
+
+script_dir = os.path.dirname(sys.modules['__main__'].__file__)
 
 
 class FileModule:
@@ -43,13 +46,27 @@ class FileModule:
             abs_file_path = os.path.join(dir, file_name)
             if os.path.isfile(abs_file_path):
                 with open(abs_file_path) as data:
-                    return {"succes": True, "data": data}
+                    return {"success": True, "data": data.read()}
             else:
-                return {"succes": False}
+                return {"success": False}
         except Exception as e:
             logger.set_error_log("read_file -> (" + dir + file_name + "): "
                                  + str(e))
-            return {"succes": False, "error_message": "File not found."}
+            return {"success": False, "error_message": "File not found."}
+
+    @staticmethod
+    def read_json_file(dir=script_dir, file_name=None):
+        try:
+            abs_file_path = os.path.join(dir, file_name)
+            if os.path.isfile(abs_file_path):
+                with open(abs_file_path) as data:
+                    return {"success": True, "data": json.load(data)}
+            else:
+                return {"success": False}
+        except Exception as e:
+            logger.set_error_log("read_file -> (" + dir + file_name + "): "
+                                 + str(e))
+            return {"success": False, "error_message": "File not found."}
 
 
     @staticmethod
