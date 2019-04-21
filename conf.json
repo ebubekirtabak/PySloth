@@ -2,19 +2,17 @@
     "description": {
         "en": "Conf.json is default configuration file. Please do not changed that conf file. Create new \"myconf.json\" file in project root and copy this json your \"myconf.json\" file ."
     },
-    "user_agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:62.0) Gecko/20100101 Firefox/62.0",
-    "filters":[],
-    "isTest": false,
     "scope": [
         {
             "settings":{
                 "search_time_sleep": 5,
                 "download_time_sleep": 5,
                 "session_id": "alamy_dollar",
+                "role": "main || scanner || downloader",
                 "multi_process": {
                     "time_out": 300,
                     "limit": 3,
-                    "base": "mongo"
+                    "base": "mongo || memory"
                 },
                 "driver": {
                     "driver_path": "/usr/lib/chromium-browser/chromedriver",
@@ -41,7 +39,7 @@
                     "clear_on_exit": true
                 }
             },
-            "scopeName":"sahibinden.com auto",
+            "scope_name":"sahibinden.com auto",
             "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
             "startUrl": "https://www.sahibinden.com/otomobil?pagingSize=50",
             "isPagination": true,
@@ -60,7 +58,7 @@
                     "childIterator": "os.sep",
                     "downloadFolder": "auto_images",
                     "itemList": [{
-                        "className": "//div[@class='classifiedDetailMainPhoto']/label/img",
+                        "className": "//div[contains(concat(' ', normalize-space(@class), ' '), ' classifiedDetailMainPhoto ']/label/img",
                         "classNames": [
                             "//div[@class='classifiedDetailMainPhoto']/label/img",
                             "//div[@class='classifiedDetailMainPhoto']/label/span"
