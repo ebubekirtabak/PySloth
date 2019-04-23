@@ -11,7 +11,7 @@ import kthread
 import mongo
 
 from selenium import webdriver
-from services import http_service
+from services.http_service import HttpServices
 from controllers import thread_controller
 from event_maker import EventMaker
 from models.thread_model import ThreadModel
@@ -35,6 +35,7 @@ class Scope:
         self.database = database
         self.settings = settings
         self.root_search_item = scope.search_item
+        self.http_services = HttpServices(self.settings)
         # self.scope.reporting = {"download_counter": 0, "page_count": 0}
 
     def start(self):
@@ -158,6 +159,28 @@ class Scope:
             thread_model.stop_time = 0
             thread_controller.add_thread(thread_model)
 
+    def start_thread(self, thread_model):
+        global download_counter
+        args = thread_model.args
+        print(thread_model.type)
+        if thread_model.type == "get_items":
+            thread = kthread.KThread(target=get_items,
+                                     args=(args["url"], args["thread_name"], args["type"]),
+                                     name=args["thread_name"])
+        elif thread_model.type == "download_thread":
+            thread = kthread.KThread(target=self.http_services.download_file,
+                                     args=(args["attrib"], args["folder_name"],
+                                             args["headers"], args["thread_name"]),
+                                     name=args["thread_name"])
+
+        try:
+            thread.start()
+            Logger().set_log("Start Thread : " + args["thread_name"])
+        except Exception as e:
+            print("start_thread_error: " + str(e))
+            Logger.set_error_log("start_thread_error: " + str(e))
+            Logger.set_error_log("restart thread: " + args["thread_name"])
+            thread_controller.restart_thread(args["thread_name"])
 
 def insert_db(setting, collection, data):
     global settings
@@ -392,29 +415,6 @@ def get_folder_name(list, iterator, folder_name):
                 os.mkdir(path)
     return directory
 
-
-def start_thread(thread_model):
-    global download_counter
-    args = thread_model.args
-    print(thread_model.type)
-    if thread_model.type == "get_items":
-        thread = kthread.KThread(target=get_items,
-                                 args=(args["url"], args["thread_name"], args["type"]),
-                                 name=args["thread_name"])
-    elif thread_model.type == "download_thread":
-        thread = kthread.KThread(target=http_service.download_file,
-                                 args=(args["attrib"], args["folder_name"],
-                                         args["headers"], args["thread_name"]),
-                                 name=args["thread_name"])
-
-    try:
-        thread.start()
-        logger.set_log("Start Thread : " + args["thread_name"])
-    except Exception as e:
-        print("start_thread_error: " + str(e))
-        logger.set_error_log("start_thread_error: " + str(e))
-        logger.set_error_log("restart thread: " + args["thread_name"])
-        thread_controller.restart_thread(args["thread_name"])
 
 
 def shutdown():

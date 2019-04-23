@@ -18,6 +18,7 @@ class MongoThreadController:
 
     def __init__(self, settings):
         self.settings = settings
+        self.multi_process = settings.multi_process
         self.database_setting = settings.database
         self.database = mongo.connect_database(self.database_setting)
 
@@ -60,7 +61,7 @@ class MongoThreadController:
 
     def add_thread(self, thread_model):
         Logger().set_log("added Thread : " + thread_model.name)
-        if len(self.active_thread_array) < self.settings['thread_limit']:
+        if len(self.active_thread_array) < self.multi_process['limit']:
             if isinstance(thread_model, ThreadModel):
                 thread_model.start_time = int(round(time.time() * 1000))
             else:
@@ -75,8 +76,10 @@ class MongoThreadController:
             try:
                 mongo.insert(self.database, self.database_setting['thread_collection_name'], thread_model.__dict__)
             except Exception as e:
-                object_thread = ThreadModel(thread_model.name, thread_model.target, thread_model.args,
-                                            thread_model.status, thread_model.type, thread_model.start_time, thread_model.stop_time)
+                object_thread = ThreadModel(thread_model.name, thread_model.target,
+                                            thread_model.args, thread_model.status,
+                                            thread_model.type, thread_model.start_time,
+                                            thread_model.stop_time)
                 Logger().set_error_log("no __dict__: " + str( object_thread.__dict__))
                 mongo.insert(self.database,
                              self.database_setting['thread_collection_name'], object_thread.__dict__)
