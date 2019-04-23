@@ -17,13 +17,14 @@ global empty_thread_step
 global session_time
 global controller
 
+
 def on_load(_settings):
     global settings
     global session_time
     global controller
     settings = _settings
     session_time = str(time.time())
-    controller = controller_switcher(settings['thread_controller'])
+    controller = controller_switcher(settings.multi_process["base"])
     controller_interval()
     # controller_thread = Thread(target = thread_controller, args=())
     # controller_thread.start()
