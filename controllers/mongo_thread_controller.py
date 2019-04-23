@@ -1,9 +1,9 @@
-import logger
 import mongo
 import time
 import scope
 import sys
 import os
+from logger import Logger
 from models.thread_model import ThreadModel
 from collections import namedtuple
 
@@ -18,14 +18,14 @@ class MongoThreadController:
 
     def __init__(self, settings):
         self.settings = settings
-        self.database_setting = settings['database']
+        self.database_setting = settings.database
         self.database = mongo.connect_database(self.database_setting)
 
     def thread_controller(self):
         try:
             active_thread_length = len(self.active_thread_array)
             lent = mongo.get_length(self.database, self.database_setting['thread_collection_name'])
-            logger.set_log("Mongo Thread Controller : Active : " +
+            Logger().set_log("Mongo Thread Controller : Active : " +
                        str(active_thread_length) + " : Array : " +
                        str(lent))
             if active_thread_length == 0 and lent == 0:
@@ -47,11 +47,11 @@ class MongoThreadController:
                  print("start thread: ")
 
         except Exception as e:
-            logger.set_error_log("mongo_thread_controller(): " + str(e))
+            Logger().set_error_log("mongo_thread_controller(): " + str(e))
             type, value, traceback = sys.exc_info()
 
             print(sys.exc_info()[0])
-            logger.set_error_log(sys.exc_info()[0])
+            Logger().set_error_log(sys.exc_info()[0])
             time.sleep(10)
             self.thread_controller()
 
@@ -59,12 +59,12 @@ class MongoThreadController:
         return dict((key, value) for (key, value) in cls)
 
     def add_thread(self, thread_model):
-        logger.set_log("added Thread : " + thread_model.name)
+        Logger().set_log("added Thread : " + thread_model.name)
         if len(self.active_thread_array) < self.settings['thread_limit']:
             if isinstance(thread_model, ThreadModel):
                 thread_model.start_time = int(round(time.time() * 1000))
             else:
-                logger.set_error_log("add_thread: non object error " + thread_model[1])
+                Logger().set_error_log("add_thread: non object error " + thread_model[1])
                 thread_model = ThreadModel(thread_model[1], thread_model[2], thread_model[3],
                                            thread_model[4], thread_model[5], int(round(time.time() * 1000)),
                                            thread_model[7])
@@ -77,7 +77,7 @@ class MongoThreadController:
             except Exception as e:
                 object_thread = ThreadModel(thread_model.name, thread_model.target, thread_model.args,
                                             thread_model.status, thread_model.type, thread_model.start_time, thread_model.stop_time)
-                logger.set_error_log("no __dict__: " + str( object_thread.__dict__))
+                Logger().set_error_log("no __dict__: " + str( object_thread.__dict__))
                 mongo.insert(self.database,
                              self.database_setting['thread_collection_name'], object_thread.__dict__)
 
@@ -88,7 +88,7 @@ class MongoThreadController:
         for thread_item in self.active_thread_array:
 
             if thread_item.name == name:
-                logger.set_log("Finish thread : " + name)
+                Logger().set_log("Finish thread : " + name)
                 del self.active_thread_array[index]
                 break
 
@@ -120,10 +120,10 @@ class MongoThreadController:
                 index += 1
 
         except Exception as e:
-            logger.set_error_log("auto_thread_stopper(): " + str(e))
+            Logger().set_error_log("auto_thread_stopper(): " + str(e))
             type, value, traceback = sys.exc_info()
             print('Error opening %s: %s' % (value.filename, value.strerror))
-            logger.set_error_log('Error opening %s: %s' % (value.filename, value.strerror))
+            Logger().set_error_log('Error opening %s: %s' % (value.filename, value.strerror))
 
             time.sleep(10)
             self.thread_controller()
@@ -132,7 +132,7 @@ class MongoThreadController:
         index = 0
         for thread_item in self.active_thread_array:
             if thread_item.name == name:
-                logger.set_log("Restart thread : " + name)
+                Logger().set_log("Restart thread : " + name)
                 self.add_thread(self.active_thread_array[index])
                 del self.active_thread_array[index]
                 break
