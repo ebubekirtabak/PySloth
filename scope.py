@@ -8,7 +8,6 @@ import urllib.request
 from collections import namedtuple
 
 import kthread
-import logger
 import mongo
 
 from selenium import webdriver
@@ -17,6 +16,7 @@ from controllers import thread_controller
 from event_maker import EventMaker
 from models.thread_model import ThreadModel
 from modules.file_module import FileModule
+from logger import Logger
 from models.search_item_model import SearchItemModel
 from helpers.url_helpers import UrlHelpers
 from lxml.html import fromstring
@@ -35,6 +35,7 @@ class Scope:
         self.database = database
         self.settings = settings
         self.root_search_item = scope.search_item
+        # self.scope.reporting = {"download_counter": 0, "page_count": 0}
 
     def start(self):
         if 'database' in self.scope.settings:
@@ -45,11 +46,12 @@ class Scope:
 
 
         print('starting')
+        thread_controller.on_load(self.settings)
+        thread_controller.clear_thread_list()
         if self.settings.role == 'main' and 'url' in self.scope.page:
-            thread_controller.on_load(self.scope.settings)
-            thread_controller.clear_thread_list()
             self.root_search_item = self.scope.search_item
             self.call_page(self.scope.page['url'], self.scope.search_item)
+
 
     def select_database(self, database_setting):
         switcher = {
@@ -74,7 +76,6 @@ class Scope:
             html_content = UrlHelpers().get_page_html_content(url=url, data=data, headers=search_item.headers)
             print(html_content)
             self.parse_page(html_content, search_item)
-
 
     def call_page_with_javascript(self, url, search_item):
         # javascript is enable
@@ -102,6 +103,49 @@ class Scope:
 
         for class_name in search_item.class_names:
             elements = doc.xpath(class_name)
+            for element in elements:
+                if "attrib" in search_item or hasattr(search_item, 'attrib'):
+                    attrib = element.attrib[search_item.attrib]
+                else:
+                    attrib = element.attrib['href']
+
+                if 'download_attrib' in search_item or hasattr(search_item, 'download_attrib') and search_item.download_attrib is True:
+                    Logger().set_log("Added Download List: " + attrib)
+                    print("Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : "
+                          + str(self.scope.reporting["page_count"]) + " : " + search_item.download_folder)
+                    if 'headers' in search_item or hasattr(search_item, 'headers'):
+                        headers = search_item.headers
+                    else:
+                        headers = self.root_search_item.headers
+
+                    headers["Referer"] = attrib
+                    thread_model = ThreadModel("thread_" + str(time.time()))
+                    thread_model.target = 'http_service.download_image'
+                    thread_model.args = {
+                        "attrib": attrib,
+                        "folder_name": search_item.download_folder,
+                        "headers": headers,
+                        "thread_name": thread_model.name
+                    }
+                    thread_model.status = "wait"
+                    thread_model.type = "download_thread"
+                    thread_model.start_time = 0
+                    thread_model.stop_time = 0
+                    thread_controller.add_thread(thread_model)
+
+                    self.scope.reporting["download_counter"] += 1
+                else:
+                    thread_model = ThreadModel("thread_" + str(time.time()))
+                    thread_model.target = 'get_items'
+                    thread_model.args = {
+                        "url": attrib, "thread_name": thread_model.name, "type": 'page'
+                    }
+                    thread_model.status = "wait"
+                    thread_model.type = "get_items"
+                    thread_model.start_time = 0
+                    thread_model.stop_time = 0
+                    thread_controller.add_thread(thread_model)
+
         if 'search_item' in search_item:
             thread_model = ThreadModel("thread_" + str(download_counter) + "_" + str(time.time()))
             thread_model.target = 'http_service.download_image'
