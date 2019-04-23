@@ -19,6 +19,7 @@ class UrlHelpers:
             content = f.read()
             doc = fromstring(content)
             doc.make_links_absolute(url)
+            return doc
         except ConnectionResetError as e:
             Logger().set_error_log(str(e))
         except Exception as e:
