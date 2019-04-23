@@ -40,19 +40,18 @@
                 }
             },
             "scope_name":"sahibinden.com auto",
-            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
-            "start_url": "https://www.sahibinden.com/otomobil?pagingSize=50",
-            "isPagination": true,
-            "isLogger": true,
-            "pagination": {
-              "class": "prevNextBut",
-              "if_exists_class": "last",
-              "attrib": "href"
+            "page": {
+                "url": "https://www.sahibinden.com/otomobil?pagingSize=50",
+                "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
+                "data": ""
             },
-            "searchUrlClass": {
-                "className": "classifiedTitle",
+            "search_item": {
+                "class_name": "classifiedTitle",
                 "type": "loop",
-                "forItem": [{
+                "headers": {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
+                },
+                "for_item": [{
                     "childNameType": "loop",
                     "folderChildNameClass": "//li[@class='breadcrumbItem']/a",
                     "childIterator": "os.sep",
@@ -69,7 +68,12 @@
                             "else": "src"
                         }
                     }]
-                }]
+                }],
+                "pagination": {
+                    "class": "prevNextBut",
+                    "if_exists_class": "last",
+                    "attrib": "href"
+                }
             }
         }
     ]
