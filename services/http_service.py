@@ -1,11 +1,15 @@
 import os
 import time
 import random
+from collections import namedtuple
+
 from controllers import thread_controller
 import logger
 import sys
 from urllib.request import urlopen
 import urllib.request
+
+from models.setting_model import SettingModel
 from modules import file_module
 script_dir = os.path.dirname(__file__)
 
@@ -14,7 +18,10 @@ class HttpServices:
 
     def __init__(self, settings):
         self.settings = settings
-        self.file_settings = self.settings.file_settings
+        if isinstance(self.settings, SettingModel):
+            self.settings = namedtuple("SettingModel", self.settings.keys())(*self.settings.values())
+
+        self.file_settings = self.settings["file_settings"]
 
     def download_file(self, *kwargs):
         try:
