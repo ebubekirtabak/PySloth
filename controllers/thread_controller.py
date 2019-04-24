@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 import scope
 import time
 import logger
@@ -12,10 +14,13 @@ script_dir = os.path.dirname(__file__)
 
 class ThreadController:
 
-    def __init__(self, settings):
+    def __init__(self, settings, main_scope):
+        self.main_scope = main_scope
         self.settings = settings
         self.session_time = str(time.time())
-        self.controller = self.controller_switcher(self.settings.multi_process.base)
+        self.multi_process = self.settings["multi_process"]
+        self.multi_process = namedtuple("MultiProcessModel", self.multi_process.keys())(*self.multi_process.values())
+        self.controller = self.controller_switcher(self.multi_process.base)
         self.controller_interval()
 
     def controller_interval(self):
@@ -29,9 +34,9 @@ class ThreadController:
 
     def controller_switcher(self, type):
         switcher = {
-            "mongo": MongoThreadController(self.settings),
-            "memory": MemoryThreadController(self.settings),
-            "mysql": lambda: MemoryThreadController(self.settings),
+            "mongo": MongoThreadController(self.settings, self.main_scope),
+            "memory": MemoryThreadController(self.settings, self.main_scope),
+            "mysql": lambda: MemoryThreadController(self.settings, self.main_scope),
         }
 
         return switcher.get(type, lambda: "nothing")
