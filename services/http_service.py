@@ -11,6 +11,8 @@ import urllib.request
 
 from models.setting_model import SettingModel
 from modules import file_module
+from modules.file_module import FileModule
+
 script_dir = os.path.dirname(__file__)
 
 
@@ -18,6 +20,7 @@ class HttpServices:
 
     def __init__(self, settings):
         self.settings = settings
+        self.file_module = FileModule
         if isinstance(self.settings, SettingModel):
             self.settings = namedtuple("SettingModel", self.settings.keys())(*self.settings.values())
 
@@ -33,7 +36,7 @@ class HttpServices:
             print("Downloaded: " + url)
             filename = url.split('/')[-1]
             if "max_file_length" in self.file_settings:
-                filename = file_module.get_short_file_name(filename, 90)
+                filename = file_module.get_short_file_name(filename, self.file_settings["max_file_length"])
             filename = filename + "?ty=" + str(random.randint(1,9999999))
 
             startTime = time.time()
