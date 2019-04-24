@@ -37,6 +37,9 @@
                     "collection_name": "history_collection",
                     "source": "mysql, mongo, postgre",
                     "clear_on_exit": true
+                },
+                "file_settings": {
+                    "max_file_length": 150
                 }
             },
             "scope_name":"sahibinden.com auto",
