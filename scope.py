@@ -12,7 +12,7 @@ import mongo
 
 from selenium import webdriver
 from services.http_service import HttpServices
-from controllers import thread_controller
+from controllers.thread_controller import ThreadController
 from event_maker import EventMaker
 from models.thread_model import ThreadModel
 from modules.file_module import FileModule
@@ -30,12 +30,15 @@ global settings
 global database_driver
 
 class Scope:
-    def __init__(self, scope, database=None, settings=None):
+    def __init__(self, scope, database=None):
         self.scope = scope
         self.database = database
-        self.settings = settings
+        self.settings = self.scope.settings
         self.root_search_item = scope.search_item
+        self.thread_controller = ThreadController(self.settings)
+        self.thread_controller.clear_thread_list()
         self.http_services = HttpServices(self.settings)
+
         # self.scope.reporting = {"download_counter": 0, "page_count": 0}
 
     def start(self):
@@ -45,10 +48,7 @@ class Scope:
         if self.settings is None:
             self.settings = namedtuple("SettingModel", self.scope.settings.keys())(*self.scope.settings.values())
 
-
         print('starting')
-        thread_controller.on_load(self.settings)
-        thread_controller.clear_thread_list()
         if self.settings.role == 'main' and 'url' in self.scope.page:
             self.root_search_item = self.scope.search_item
             self.call_page(self.scope.page['url'], self.scope.search_item)
