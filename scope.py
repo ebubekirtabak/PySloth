@@ -11,6 +11,8 @@ import kthread
 import mongo
 
 from selenium import webdriver
+
+from models.setting_model import SettingModel
 from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
 from event_maker import EventMaker
@@ -29,13 +31,15 @@ global next_url
 global settings
 global database_driver
 
+
 class Scope:
+
     def __init__(self, scope, database=None):
         self.scope = scope
         self.database = database
         self.settings = self.scope.settings
         self.root_search_item = scope.search_item
-        self.thread_controller = ThreadController(self.settings)
+        self.thread_controller = ThreadController(self.settings, self)
         self.thread_controller.clear_thread_list()
         self.http_services = HttpServices(self.settings)
 
@@ -45,8 +49,8 @@ class Scope:
         if 'database' in self.scope.settings:
             self.database = self.select_database(self.scope.settings['database'])
 
-        if self.settings is None:
-            self.settings = namedtuple("SettingModel", self.scope.settings.keys())(*self.scope.settings.values())
+        if isinstance(self.settings, SettingModel) is not True:
+            self.settings = namedtuple("SettingsModel", self.scope.settings.keys())(*self.scope.settings.values())
 
         print('starting')
         if self.settings.role == 'main' and 'url' in self.scope.page:
@@ -132,7 +136,7 @@ class Scope:
                     thread_model.type = "download_thread"
                     thread_model.start_time = 0
                     thread_model.stop_time = 0
-                    thread_controller.add_thread(thread_model)
+                    self.thread_controller.add_thread(thread_model)
 
                     self.scope.reporting["download_counter"] += 1
                 else:
@@ -145,7 +149,7 @@ class Scope:
                     thread_model.type = "get_items"
                     thread_model.start_time = 0
                     thread_model.stop_time = 0
-                    thread_controller.add_thread(thread_model)
+                    self.thread_controller.add_thread(thread_model)
 
         if 'search_item' in search_item:
             thread_model = ThreadModel("thread_" + str(download_counter) + "_" + str(time.time()))
@@ -157,7 +161,7 @@ class Scope:
             thread_model.type = "call_page"
             thread_model.start_time = 0
             thread_model.stop_time = 0
-            thread_controller.add_thread(thread_model)
+            self.thread_controller.add_thread(thread_model)
 
     def start_thread(self, thread_model):
         global download_counter
