@@ -12,8 +12,9 @@ class MemoryThreadController:
     settings = {}
     empty_thread_step = 0
 
-    def __init__(self, settings):
+    def __init__(self, settings, main_scope):
         self.settings = settings
+        self.main_scope = main_scope
 
     def thread_controller(self):
 
