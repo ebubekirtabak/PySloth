@@ -35,11 +35,11 @@ def insert(db, collection, data):
             mycol = db[collection]
             result = mycol.insert_one(data)
             if result.inserted_id is not None:
-                logger.set_log("insert data")
+                logger.Logger().set_log("insert data")
             else:
-                logger.set_error_log("mongo insert data error")
+                logger.Logger().set_error_log("mongo insert data error")
         except Exception as e:
-            logger.set_error_log("mongoDB inser Error: " + str(e))
+            logger.Logger().set_error_log("mongoDB inser Error: " + str(e))
             # type, value, traceback = sys.exc_info()
             # print('Error opening %s: %s' % (value.filename, value.strerror))
             print(e)
