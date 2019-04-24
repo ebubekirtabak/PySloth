@@ -19,8 +19,7 @@ class FileModule:
         if not os.path.exists(dir):
             os.makedirs(dir)
 
-    @staticmethod
-    def get_short_file_name(file_name, max_len):
+    def get_short_file_name(self, file_name, max_len):
         try:
             while len(file_name) > max_len:
                 if '?' in file_name:
