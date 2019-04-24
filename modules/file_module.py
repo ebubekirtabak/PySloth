@@ -10,16 +10,14 @@ script_dir = os.path.dirname(sys.modules['__main__'].__file__)
 
 class FileModule:
 
-    def __init__(self, file_name):
+    def __init__(self, file_name=None):
         self.file_name = file_name
 
-
-    @staticmethod
-    def check_directory(dir):
+    def check_directory(self, dir=script_dir):
         if not os.path.exists(dir):
             os.makedirs(dir)
 
-    def get_short_file_name(self, file_name, max_len):
+    def get_short_file_name(self, file_name, max_len=120):
         try:
             while len(file_name) > max_len:
                 if '?' in file_name:
@@ -67,8 +65,6 @@ class FileModule:
                                  + str(e))
             return {"success": False, "error_message": "File not found."}
 
-
-    @staticmethod
     def write_file_line(self, dir=script_dir, file_name=None, line=None):
         try:
             self.check_directory(dir)
