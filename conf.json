@@ -48,36 +48,38 @@
                 "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
                 "data": ""
             },
-            "search_item": {
-                "class_name": "classifiedTitle",
-                "type": "loop",
-                "headers": {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
-                },
-                "for_item": [{
-                    "childNameType": "loop",
-                    "folderChildNameClass": "//li[@class='breadcrumbItem']/a",
-                    "childIterator": "os.sep",
-                    "downloadFolder": "auto_images",
-                    "itemList": [{
-                        "className": "//div[contains(concat(' ', normalize-space(@class), ' '), ' classifiedDetailMainPhoto ']/label/img",
-                        "classNames": [
-                            "//div[@class='classifiedDetailMainPhoto']/label/img",
-                            "//div[@class='classifiedDetailMainPhoto']/label/span"
-                        ],
-                        "process": "download",
-                        "needAttr": {
-                            "if": "data-src",
-                            "else": "src"
-                        }
-                    }]
-                }],
-                "pagination": {
-                    "class": "prevNextBut",
-                    "if_exists_class": "last",
-                    "attrib": "href"
+            "for_item": [
+                {
+                    "class_name": "classifiedTitle",
+                    "type": "loop",
+                    "headers": {
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
+                    },
+                    "for_item": [{
+                        "childNameType": "loop",
+                        "folderChildNameClass": "//li[@class='breadcrumbItem']/a",
+                        "childIterator": "os.sep",
+                        "downloadFolder": "auto_images",
+                        "itemList": [{
+                            "className": "//div[contains(concat(' ', normalize-space(@class), ' '), ' classifiedDetailMainPhoto ']/label/img",
+                            "classNames": [
+                                "//div[@class='classifiedDetailMainPhoto']/label/img",
+                                "//div[@class='classifiedDetailMainPhoto']/label/span"
+                            ],
+                            "process": "download",
+                            "needAttr": {
+                                "if": "data-src",
+                                "else": "src"
+                            }
+                        }]
+                    }],
+                    "pagination": {
+                        "class": "prevNextBut",
+                        "if_exists_class": "last",
+                        "attrib": "href"
+                    }
                 }
-            }
+            ]
         }
     ]
 }
