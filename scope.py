@@ -90,14 +90,15 @@ class Scope:
             for argument in driver['driver_arguments']:
                 chrome_options.add_argument(argument)
 
-        chromedriver = driver['driver_path']
-        os.environ["webdriver.chrome.driver"] = chromedriver
-        driver = webdriver.Chrome(chromedriver, chrome_options=chrome_options)
-        driver.get(url)
-        event_maker = EventMaker(driver);
-        if 'events' in search_item:
-            for event in search_item['events']:
-                event_maker.push_event(driver, event=event)
+        if 'driver_path' in driver:
+            chromedriver = driver['driver_path']
+            os.environ["webdriver.chrome.driver"] = chromedriver
+            driver = webdriver.Chrome(chromedriver, chrome_options=chrome_options)
+            driver.get(url)
+            event_maker = EventMaker(driver);
+            if 'events' in search_item:
+                for event in search_item['events']:
+                    event_maker.push_event(driver, event=event)
 
         response = driver.page_source
         doc = fromstring(response)
