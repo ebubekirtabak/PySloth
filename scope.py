@@ -164,6 +164,27 @@ class Scope:
             thread_model.stop_time = 0
             self.thread_controller.add_thread(thread_model)
 
+        if 'pagination' in search_item:
+            pagination = search_item['pagination']
+            for pag in doc.xpath(pagination['class']):
+                if 'if_exists_class' in pagination and doc.find_class('if_exists_class') is not None:
+                    next_url = pag.attrib[pagination['attrib']]
+                else:
+                    next_url = pag.attrib[pagination['attrib']]
+            else:
+                attr_list = doc.xpath(pagination['class'])
+                if len(attr_list) > 0:
+                    next_url = attr_list[0].attrib[pagination['attrib']]
+                else:
+                    next_url = None
+
+            if next_url is not None:
+                next_url = next_url.replace(" ", "%20")
+                page_count += 1
+                time.sleep(settings["search_time_sleep"])
+                self.call_page(next_url, search_item)
+
+
     def start_thread(self, thread_model):
         global download_counter
         args = thread_model.args
