@@ -154,12 +154,12 @@ class Scope:
 
         if 'search_item' in search_item:
             thread_model = ThreadModel("thread_" + str(download_counter) + "_" + str(time.time()))
-            thread_model.target = 'http_service.download_image'
+            thread_model.target = 'search_page'
             thread_model.args = {
                 "search_item": search_item['search_item']
             }
             thread_model.status = "wait"
-            thread_model.type = "call_page"
+            thread_model.type = "search_page"
             thread_model.start_time = 0
             thread_model.stop_time = 0
             self.thread_controller.add_thread(thread_model)
