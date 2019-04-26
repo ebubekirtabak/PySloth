@@ -184,7 +184,7 @@ class Scope:
             print("start_thread_error: " + str(e))
             Logger.set_error_log("start_thread_error: " + str(e))
             Logger.set_error_log("restart thread: " + args["thread_name"])
-            thread_controller.restart_thread(args["thread_name"])
+            self.thread_controller.restart_thread(args["thread_name"])
 
 def insert_db(setting, collection, data):
     global settings
