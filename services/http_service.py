@@ -1,11 +1,13 @@
 import os
 import time
 import random
-from collections import namedtuple
-
-from controllers import thread_controller
-from logger import Logger
 import sys
+
+import globals
+from collections import namedtuple
+from logger import Logger
+
+
 from urllib.request import urlopen
 import urllib.request
 
@@ -37,17 +39,17 @@ class HttpServices:
             filename = url.split('/')[-1]
             if "max_file_length" in self.file_settings:
                 filename = FileModule().get_short_file_name(filename, self.file_settings["max_file_length"])
-            filename = filename + "?ty=" + str(random.randint(1,9999999))
+            # filename = filename + "?ty=" + str(random.randint(1,9999999))
 
             startTime = time.time()
             request = urllib.request.Request(url, headers=headers)
             contents = urllib.request.urlopen(request)
             endTime = time.time()
-            self.logger.set_log("Download directory: " + script_dir + path)
-            if not os.path.exists(script_dir + path):
-                os.makedirs(script_dir + path)
+            self.logger.set_log("Download directory: " + globals.script_dir + path)
+            if not os.path.exists(globals.script_dir + path):
+                os.makedirs(globals.script_dir + path)
 
-            abs_file_path = os.path.join(script_dir + path, filename)
+            abs_file_path = os.path.join(globals.script_dir + path, filename)
 
             with open(abs_file_path , 'wb') as f:
                 while True:
