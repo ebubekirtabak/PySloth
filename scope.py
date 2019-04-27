@@ -152,17 +152,18 @@ class Scope:
                     thread_model.stop_time = 0
                     self.thread_controller.add_thread(thread_model)
 
-        if 'search_item' in search_item:
-            thread_model = ThreadModel("thread_" + str(download_counter) + "_" + str(time.time()))
-            thread_model.target = 'search_page'
-            thread_model.args = {
-                "search_item": search_item['search_item']
-            }
-            thread_model.status = "wait"
-            thread_model.type = "search_page"
-            thread_model.start_time = 0
-            thread_model.stop_time = 0
-            self.thread_controller.add_thread(thread_model)
+            if 'search_item' in search_item:
+                thread_model = ThreadModel("thread_" + str(download_counter) + "_" + str(time.time()))
+                thread_model.target = 'parse_page'
+                thread_model.args = {
+                    "url": attrib,
+                    "search_item": search_item['search_item']
+                }
+                thread_model.status = "wait"
+                thread_model.type = "search_page"
+                thread_model.start_time = 0
+                thread_model.stop_time = 0
+                self.thread_controller.add_thread(thread_model)
 
         if 'pagination' in search_item:
             pagination = search_item['pagination']
@@ -182,8 +183,17 @@ class Scope:
                 next_url = next_url.replace(" ", "%20")
                 page_count += 1
                 time.sleep(settings["search_time_sleep"])
-                self.call_page(next_url, search_item)
-
+                thread_model = ThreadModel("thread_" + str(time.time()))
+                thread_model.target = 'call_page'
+                thread_model.args = {
+                    "url": next_url,
+                    "search_item": search_item
+                }
+                thread_model.status = "wait"
+                thread_model.type = "call_page"
+                thread_model.start_time = 0
+                thread_model.stop_time = 0
+                self.thread_controller.add_thread(thread_model)
 
     def start_thread(self, thread_model):
         global download_counter
