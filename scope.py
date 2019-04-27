@@ -41,7 +41,7 @@ class Scope:
         self.root_search_item = scope.search_item
         self.thread_controller = ThreadController(self.settings, self)
         self.thread_controller.clear_thread_list()
-        self.http_services = HttpServices(self.settings)
+        self.http_services = HttpServices(self.settings, self.thread_controller)
 
         # self.scope.reporting = {"download_counter": 0, "page_count": 0}
 

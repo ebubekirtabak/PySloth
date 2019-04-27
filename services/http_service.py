@@ -13,15 +13,14 @@ from models.setting_model import SettingModel
 from modules import file_module
 from modules.file_module import FileModule
 
-script_dir = os.path.dirname(__file__)
-
 
 class HttpServices:
 
-    def __init__(self, settings):
+    def __init__(self, settings, thread_controller):
         self.settings = settings
         self.file_module = FileModule
         self.logger = Logger()
+        self.thread_controller = thread_controller
         if isinstance(self.settings, SettingModel):
             self.settings = namedtuple("SettingModel", self.settings.keys())(*self.settings.values())
 
@@ -62,14 +61,14 @@ class HttpServices:
             # print("Elapsed: " + str(r.elapsed))
             print("Time Taken: " + totalTimeTaken)
             print("thread_name: " + thread_name)
-            thread_controller.remove_thread(thread_name)
+            self.thread_controller.remove_thread(thread_name)
 
         except ConnectionResetError as e:
             self.logger.set_error_log('Error: ' + str(e))
             self.logger.set_error_log('Sleep system 300 S')
             time.sleep(300)
             self.logger.set_error_log('Restart thread : ' + thread_name)
-            thread_controller.restart_thread(thread_name)
+            self.thread_controller.restart_thread(thread_name)
         except Exception as e:
             type, value, traceback = sys.exc_info()
             print('Error opening %s: %s' % (value.filename, value.strerror))
@@ -78,4 +77,4 @@ class HttpServices:
             self.logger.set_error_log('Sleep system 300 S')
             time.sleep(300)
             self.logger.set_error_log('Restart thread : ' + thread_name)
-            thread_controller.restart_thread(thread_name)
+            self.thread_controller.restart_thread(thread_name)
