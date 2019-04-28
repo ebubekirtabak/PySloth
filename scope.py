@@ -144,7 +144,10 @@ class Scope:
                     thread_model = ThreadModel("thread_" + str(time.time()))
                     thread_model.target = 'get_items'
                     thread_model.args = {
-                        "url": attrib, "thread_name": thread_model.name, "type": 'page'
+                        "url": attrib,
+                        "thread_name": thread_model.name,
+                        "type": 'page',
+                        "for_item": search_item.for_item
                     }
                     thread_model.status = "wait"
                     thread_model.type = "get_items"
@@ -153,14 +156,14 @@ class Scope:
                     self.thread_controller.add_thread(thread_model)
 
             if 'search_item' in search_item:
-                thread_model = ThreadModel("thread_" + str(download_counter) + "_" + str(time.time()))
+                thread_model = ThreadModel("thread_" + str(time.time()))
                 thread_model.target = 'parse_page'
                 thread_model.args = {
                     "url": attrib,
                     "search_item": search_item['search_item']
                 }
                 thread_model.status = "wait"
-                thread_model.type = "search_page"
+                thread_model.type = "call_page"
                 thread_model.start_time = 0
                 thread_model.stop_time = 0
                 self.thread_controller.add_thread(thread_model)
@@ -181,7 +184,7 @@ class Scope:
 
             if next_url is not None:
                 next_url = next_url.replace(" ", "%20")
-                page_count += 1
+                self.scope.reporting["page_count"] += 1
                 time.sleep(settings["search_time_sleep"])
                 thread_model = ThreadModel("thread_" + str(time.time()))
                 thread_model.target = 'call_page'
@@ -200,13 +203,17 @@ class Scope:
         args = thread_model.args
         print(thread_model.type)
         if thread_model.type == "get_items":
-            thread = kthread.KThread(target=get_items,
+            thread = kthread.KThread(target=self.get_items,
                                      args=(args["url"], args["thread_name"], args["type"]),
                                      name=args["thread_name"])
         elif thread_model.type == "download_thread":
             thread = kthread.KThread(target=self.http_services.download_file,
                                      args=(args["attrib"], args["folder_name"],
                                              args["headers"], args["thread_name"]),
+                                     name=args["thread_name"])
+        elif thread_model.type == "call_page":
+            thread = kthread.KThread(target=self.call_page,
+                                     args=(args["url"], args["search_item"], args["thread_name"]),
                                      name=args["thread_name"])
 
         try:
@@ -217,6 +224,52 @@ class Scope:
             Logger.set_error_log("start_thread_error: " + str(e))
             Logger.set_error_log("restart thread: " + args["thread_name"])
             self.thread_controller.restart_thread(args["thread_name"])
+
+    def get_items(*params):
+        global scope
+        global download_counter
+        global page_count
+        global settings
+        url = params[0]
+        thread_name = params[1]
+        type = params[2]
+        print("Reading: " + url)
+
+        search_url_class = scope['searchUrlClass']
+
+        if "searchUrlClass" in search_url_class and type is not 'item':
+            inside_search = search_url_class["searchUrlClass"]
+            doc = get_page_content(url, inside_search["enable_javascript"], inside_search)
+            elements = doc.xpath(inside_search['className'])
+            for el in elements:
+                if search_url_class["attrib"] is not None:
+                    attrib = el.attrib[inside_search["attrib"]]
+                else:
+                    attrib = el.attrib['href']
+
+                thread_model = ThreadModel("thread_" + str(time.time()))
+                thread_model.target = 'get_items'
+                thread_model.args = {
+                    "url": attrib, "thread_name": thread_model.name, "type": 'item'
+                }
+                thread_model.status = "wait"
+                thread_model.type = "get_items"
+                thread_model.start_time = 0
+                thread_model.stop_time = 0
+                thread_controller.add_thread(thread_model)
+
+        else:
+
+            if 'forItem' in search_url_class:
+                for_items = search_url_class['forItem']
+                doc = get_page_content(url, search_url_class["enable_javascript"], search_url_class)
+            else:
+                inside_search = search_url_class["searchUrlClass"]
+                for_items = inside_search['forItem']
+                doc = get_page_content(url, inside_search["enable_javascript"], inside_search)
+
+            item_loops(doc, for_items, url)
+        thread_controller.remove_thread(thread_name)
 
 def insert_db(setting, collection, data):
     global settings
@@ -307,53 +360,6 @@ def search_page(page_url, search_url_class):
                 page_count += 1
                 time.sleep(settings["search_time_sleep"])
                 search_page(next_url, search_url_class)
-
-
-def get_items(*params):
-    global scope
-    global download_counter
-    global page_count
-    global settings
-    url = params[0]
-    thread_name = params[1]
-    type = params[2]
-    print("Reading: " + url)
-
-    search_url_class = scope['searchUrlClass']
-
-    if "searchUrlClass" in search_url_class  and type is not 'item':
-        inside_search = search_url_class["searchUrlClass"]
-        doc = get_page_content(url, inside_search["enable_javascript"], inside_search)
-        elements = doc.xpath(inside_search ['className'])
-        for el in elements:
-            if search_url_class["attrib"] is not None:
-                attrib = el.attrib[inside_search["attrib"]]
-            else:
-                attrib = el.attrib['href']
-
-            thread_model = ThreadModel("thread_" + str(time.time()))
-            thread_model.target = 'get_items'
-            thread_model.args = {
-                "url": attrib, "thread_name": thread_model.name, "type": 'item'
-            }
-            thread_model.status = "wait"
-            thread_model.type = "get_items"
-            thread_model.start_time = 0
-            thread_model.stop_time = 0
-            thread_controller.add_thread(thread_model)
-
-    else:
-
-        if 'forItem' in search_url_class:
-            for_items = search_url_class['forItem']
-            doc = get_page_content(url, search_url_class["enable_javascript"], search_url_class)
-        else:
-            inside_search = search_url_class["searchUrlClass"]
-            for_items = inside_search['forItem']
-            doc = get_page_content(url, inside_search["enable_javascript"], inside_search)
-
-        item_loops(doc, for_items, url)
-    thread_controller.remove_thread(thread_name)
 
 
 def item_loops(doc, items, url):
