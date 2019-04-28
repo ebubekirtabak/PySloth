@@ -142,14 +142,14 @@ class Scope:
                     self.scope.reporting["download_counter"] += 1
                 else:
                     thread_model = ThreadModel("thread_" + str(time.time()))
-                    thread_model.target = 'get_items'
+                    thread_model.target = 'item_loops'
                     thread_model.args = {
                         "url": attrib,
                         "thread_name": thread_model.name,
                         "for_item": search_item.for_item
                     }
                     thread_model.status = "wait"
-                    thread_model.type = "get_items"
+                    thread_model.type = "item_loops"
                     thread_model.start_time = 0
                     thread_model.stop_time = 0
                     self.thread_controller.add_thread(thread_model)
@@ -201,14 +201,14 @@ class Scope:
         global download_counter
         args = thread_model.args
         print(thread_model.type)
-        if thread_model.type == "get_items":
-            thread = kthread.KThread(target=self.get_items,
-                                     args=(args["url"], args["thread_name"], args["for_item"]),
+        if thread_model.type == "item_loops":
+            thread = kthread.KThread(target=self.item_loops,
+                                     args=(args["url"], args["for_item"], args["thread_name"]),
                                      name=args["thread_name"])
         elif thread_model.type == "download_thread":
             thread = kthread.KThread(target=self.http_services.download_file,
                                      args=(args["attrib"], args["folder_name"],
-                                             args["headers"], args["thread_name"]),
+                                            args["headers"], args["thread_name"]),
                                      name=args["thread_name"])
         elif thread_model.type == "call_page":
             thread = kthread.KThread(target=self.call_page,
@@ -220,9 +220,89 @@ class Scope:
             Logger().set_log("Start Thread : " + args["thread_name"])
         except Exception as e:
             print("start_thread_error: " + str(e))
-            Logger.set_error_log("start_thread_error: " + str(e))
-            Logger.set_error_log("restart thread: " + args["thread_name"])
+            Logger().set_error_log("start_thread_error: " + str(e))
+            Logger().set_error_log("restart thread: " + args["thread_name"])
             self.thread_controller.restart_thread(args["thread_name"])
+
+    def item_loops(self, *args):
+        url = args[0]
+        for_items = args[1]
+        thread_name = args[2]
+        for item in for_items:
+            item_list = item['item_list']
+            for list_item in item_list:
+                class_name = list_item['class_name']
+                need_attr = list_item['need_attr']
+                folder_name = item['download_folder']
+
+                if 'childIterator' in item:
+                    folder_sep = item['childIterator']
+                else:
+                    folder_sep = os.path.sep
+
+                folder_name = folder_name.replace("${os.sep}", folder_sep)
+                if 'folderChildNameClass' in item:
+                    if item['childIterator'] == 'os.sep':
+                        folder_sep = os.sep
+                    else:
+                        folder_sep = item['childIterator']
+
+                    folder_name = get_folder_name(doc.xpath(item['folderChildNameClass']), folder_sep, folder_name)
+                i = 0
+                elements = doc.xpath(class_name)
+                if len(elements) == 0:
+                    logger.set_error_log("The \"" + class_name + "\" class was not found at \""
+                                         + url + "\".")
+
+                for element in elements:  # get element list
+                    attrib = ''
+                    if need_attr['if'] in element.attrib:
+                        attrib = element.attrib[need_attr['if']]
+                    else:
+                        attrib = element.attrib[need_attr['else']]
+
+                    try:
+                        logger.set_log("Added Download List: " + url)
+                        print("Download List: " + str(download_counter) + " : from page : " + str(
+                            page_count) + " : " + folder_name)
+                        headers = {
+                            'User-Agent': scope['user_agent'],
+                            'Accept-Language': scope['accept_language'],
+                            'Referer': url
+                        }
+
+                        thread_model = ThreadModel("thread_" + str(download_counter) + "_" + str(time.time()))
+                        thread_model.target = 'http_service.download_image'
+                        thread_model.args = {
+                            "attrib": attrib,
+                            "folder_name": folder_name,
+                            "headers": headers,
+                            "thread_name": thread_model.name
+                        }
+                        thread_model.status = "wait"
+                        thread_model.type = "download_thread"
+                        thread_model.start_time = 0
+                        thread_model.stop_time = 0
+                        thread_controller.add_thread(thread_model)
+
+                        download_counter += 1
+                        time.sleep(settings["download_time_sleep"])
+
+                    except Exception as e:
+                        print("Error: " + str(e))
+                        abs_file_path = os.path.join(script_dir, 'error_log.txt')
+                        with open(abs_file_path, 'a') as the_file:
+                            the_file.write(str(page_count) + ': ' + str(e) + '\n' + folder_name)
+                            the_file.write('\n')
+                        time.sleep(120)
+                        headers = {
+                            'User-Agent': scope['user_agent'],
+                            'Accept-Language': scope['accept_language'],
+                            'Referer': url  # This is another valid field
+                        }
+
+                        http_service.download_image(attrib, folder_name, headers, "thread_" + str(download_counter))
+                    i = i + 1
 
 
 def insert_db(setting, collection, data):
@@ -235,83 +315,6 @@ def insert_db(setting, collection, data):
 
     func = switcher.get(setting['type'], lambda: "nothing")
     func.insert(settings['db'], collection, data)
-
-def item_loops(doc, items, url):
-    global download_counter
-    for item in items:
-        item_list = item['itemList']
-        for list_item in item_list:
-            class_name = list_item['className']
-            need_attr = list_item['needAttr']
-            folder_name = item['downloadFolder']
-
-            if 'childIterator' in item:
-                folder_sep = item['childIterator']
-            else:
-                folder_sep = os.path.sep
-
-            folder_name = folder_name.replace("${os.sep}", folder_sep)
-            if 'folderChildNameClass' in item:
-                if item['childIterator'] == 'os.sep':
-                   folder_sep = os.sep
-                else:
-                   folder_sep = item['childIterator']
-
-                folder_name = get_folder_name(doc.xpath(item['folderChildNameClass']), folder_sep, folder_name)
-            i = 0
-            elements =  doc.xpath(class_name)
-            if len(elements) == 0:
-                logger.set_error_log("The \"" + class_name + "\" class was not found at \""
-                                     + url + "\".")
-
-            for element in elements: # get element list
-                attrib = ''
-                if need_attr['if'] in element.attrib:
-                    attrib = element.attrib[need_attr['if']]
-                else:
-                    attrib = element.attrib[need_attr['else']]
-
-                try:
-                    logger.set_log("Added Download List: " + url)
-                    print("Download List: " + str(download_counter) + " : from page : " + str(page_count) + " : " + folder_name)
-                    headers = {
-                        'User-Agent': scope['user_agent'],
-                        'Accept-Language': scope['accept_language'],
-                        'Referer': url
-                    }
-
-                    thread_model = ThreadModel("thread_" + str(download_counter) + "_" + str(time.time()))
-                    thread_model.target = 'http_service.download_image'
-                    thread_model.args = {
-                        "attrib": attrib,
-                        "folder_name": folder_name,
-                        "headers": headers,
-                        "thread_name": thread_model.name
-                    }
-                    thread_model.status = "wait"
-                    thread_model.type = "download_thread"
-                    thread_model.start_time = 0
-                    thread_model.stop_time = 0
-                    thread_controller.add_thread(thread_model)
-
-                    download_counter += 1
-                    time.sleep(settings["download_time_sleep"])
-
-                except Exception as e:
-                    print("Error: " + str(e))
-                    abs_file_path = os.path.join(script_dir, 'error_log.txt')
-                    with open(abs_file_path, 'a') as the_file:
-                        the_file.write( str(page_count) + ': ' + str(e) + '\n' + folder_name)
-                        the_file.write('\n')
-                    time.sleep(120)
-                    headers = {
-                        'User-Agent': scope['user_agent'],
-                        'Accept-Language': scope['accept_language'],
-                        'Referer': url  # This is another valid field
-                    }
-
-                    http_service.download_image(attrib, folder_name, headers, "thread_" + str(download_counter))
-                i = i + 1
 
 
 def get_folder_name(list, iterator, folder_name):
