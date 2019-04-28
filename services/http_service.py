@@ -73,9 +73,11 @@ class HttpServices:
             self.thread_controller.restart_thread(thread_name)
         except Exception as e:
             type, value, traceback = sys.exc_info()
-            print('Error opening %s: %s' % (value.filename, value.strerror))
             self.logger.set_error_log('Error: ' + str(e))
-            self.logger.set_error_log('Error opening %s: %s' % (value.filename, value.strerror))
+            if hasattr(value, 'filename'):
+                print('Error opening %s: %s' % (value.filename, value.strerror))
+                self.logger.set_error_log('Error opening %s: %s' % (value.filename, value.strerror))
+
             self.logger.set_error_log('Sleep system 300 S')
             time.sleep(300)
             self.logger.set_error_log('Restart thread : ' + thread_name)
