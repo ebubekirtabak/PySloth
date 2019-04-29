@@ -228,30 +228,32 @@ class Scope:
         url = args[0]
         for_items = args[1]
         thread_name = args[2]
+        html_content = UrlHelpers().get_page_html_content(url=url, data=None, headers=self.root_search_item.headers)
         for item in for_items:
             item_list = item['item_list']
             for list_item in item_list:
                 class_name = list_item['class_name']
                 need_attr = list_item['need_attr']
                 folder_name = item['download_folder']
+                if 'custom_seperator' in item:
+                    folder_sep = item['custom_seperator']
 
-                if 'childIterator' in item:
-                    folder_sep = item['childIterator']
-                else:
-                    folder_sep = os.path.sep
-
-                folder_name = folder_name.replace("${os.sep}", folder_sep)
-                if 'folderChildNameClass' in item:
-                    if item['childIterator'] == 'os.sep':
-                        folder_sep = os.sep
+                if 'dynamic_folder' in item:
+                    dynamic_folder = item['dynamic_folder']
+                    if 'custom_seperator' in dynamic_folder:
+                        dynamic_folder_sep = dynamic_folder['custom_seperator']
                     else:
-                        folder_sep = item['childIterator']
+                        dynamic_folder_sep = os.path.sep
 
-                    folder_name = get_folder_name(doc.xpath(item['folderChildNameClass']), folder_sep, folder_name)
+                    if 'child_name_class' in item:
+                        folder_name = get_folder_name(html_content.xpath(item['folderChildNameClass']), dynamic_folder_sep, folder_name)
+
+                    folder_name = folder_name.replace("${os.sep}", folder_sep)
+
                 i = 0
                 elements = doc.xpath(class_name)
                 if len(elements) == 0:
-                    logger.set_error_log("The \"" + class_name + "\" class was not found at \""
+                    Logger().set_error_log("The \"" + class_name + "\" class was not found at \""
                                          + url + "\".")
 
                 for element in elements:  # get element list
