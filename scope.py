@@ -228,7 +228,8 @@ class Scope:
         url = args[0]
         for_items = args[1]
         thread_name = args[2]
-        html_content = UrlHelpers().get_page_html_content(url=url, data=None, headers=self.root_search_item.headers)
+
+        html_content = UrlHelpers().get_page_html_content(url=url, data=None, headers=self.root_search_item['headers'])
         for item in for_items:
             item_list = item['item_list']
             for list_item in item_list:
@@ -246,12 +247,12 @@ class Scope:
                         dynamic_folder_sep = os.path.sep
 
                     if 'child_name_class' in item:
-                        folder_name = get_folder_name(html_content.xpath(item['folderChildNameClass']), dynamic_folder_sep, folder_name)
+                        folder_name = get_folder_name(html_content.xpath(item['child_name_class']), dynamic_folder_sep, folder_name)
 
                     folder_name = folder_name.replace("${os.sep}", folder_sep)
 
                 i = 0
-                elements = doc.xpath(class_name)
+                elements = html_content.xpath(class_name)
                 if len(elements) == 0:
                     Logger().set_error_log("The \"" + class_name + "\" class was not found at \""
                                          + url + "\".")
@@ -264,16 +265,15 @@ class Scope:
                         attrib = element.attrib[need_attr['else']]
 
                     try:
-                        logger.set_log("Added Download List: " + url)
-                        print("Download List: " + str(download_counter) + " : from page : " + str(
-                            page_count) + " : " + folder_name)
+                        Logger().set_log("Added Download List: " + url)
+                        print("Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : " + str(self.scope.reporting["page_count"]) + " : " + folder_name)
                         headers = {
                             'User-Agent': scope['user_agent'],
                             'Accept-Language': scope['accept_language'],
                             'Referer': url
                         }
 
-                        thread_model = ThreadModel("thread_" + str(download_counter) + "_" + str(time.time()))
+                        thread_model = ThreadModel("thread_" + str(time.time()))
                         thread_model.target = 'http_service.download_image'
                         thread_model.args = {
                             "attrib": attrib,
@@ -285,9 +285,9 @@ class Scope:
                         thread_model.type = "download_thread"
                         thread_model.start_time = 0
                         thread_model.stop_time = 0
-                        thread_controller.add_thread(thread_model)
+                        self.thread_controller.add_thread(thread_model)
 
-                        download_counter += 1
+                        self.scope.reporting["download_counter"] += 1
                         time.sleep(settings["download_time_sleep"])
 
                     except Exception as e:
@@ -306,6 +306,10 @@ class Scope:
                         http_service.download_image(attrib, folder_name, headers, "thread_" + str(download_counter))
                     i = i + 1
 
+    def shutdown(self):
+        print("All process is successfull ")
+        Logger().set_log("scrappy is finished...")
+        exit()
 
 def insert_db(setting, collection, data):
     global settings
@@ -335,10 +339,3 @@ def get_folder_name(list, iterator, folder_name):
             if not os.path.isdir(path):
                 os.mkdir(path)
     return directory
-
-
-
-def shutdown():
-    print("All process is successfull ")
-    logger.set_log("scrappy is finished...")
-    exit()
