@@ -62,9 +62,11 @@
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
                     },
                     "for_item": [{
-                        "childNameType": "loop",
-                        "folderChildNameClass": "//li[@class='breadcrumbItem']/a",
-                        "childIterator": "os.sep",
+                        "dynamic_folder": {
+                            "element_type": "loop",
+                            "folder_child_name_class": "//li[@class='breadcrumbItem']/a",
+                            "custom_iterator": "os.sep",
+                        },
                         "download_folder": "auto_images",
                         "item_list": [{
                             "className": "//div[contains(concat(' ', normalize-space(@class), ' '), ' classifiedDetailMainPhoto ']/label/img",
