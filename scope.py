@@ -3,6 +3,7 @@
 import json
 import os
 import time
+import sys
 import urllib
 import urllib.request
 from collections import namedtuple
@@ -288,14 +289,16 @@ class Scope:
                         self.thread_controller.add_thread(thread_model)
 
                         self.scope.reporting["download_counter"] += 1
-                        time.sleep(settings["download_time_sleep"])
+                        time.sleep(self.settings.download_time_sleep)
 
                     except Exception as e:
                         print("Error: " + str(e))
-                        abs_file_path = os.path.join(script_dir, 'error_log.txt')
-                        with open(abs_file_path, 'a') as the_file:
-                            the_file.write(str(self.scope.reporting['page_counter']) + ': ' + str(e) + '\n' + folder_name)
-                            the_file.write('\n')
+                        type, value, traceback = sys.exc_info()
+                        Logger().set_error_log('Error: ' + str(e))
+                        if hasattr(value, 'filename'):
+                            print('Error opening %s: %s' % (value.filename, value.strerror))
+                            Logger().set_error_log('Error opening %s: %s' % (value.filename, value.strerror))
+
                         time.sleep(120)
                         if 'headers' in item:
                             headers = item['headers']
