@@ -309,6 +309,8 @@ class Scope:
                         self.http_services.download_file(attrib, folder_name, headers,
                                                          "thread_" + str(self.scope.reporting["download_counter"]))
                     i = i + 1
+                    self.thread_controller.remove_thread(thread_name)
+
 
     def shutdown(self):
         print("All process is successfull ")
