@@ -267,12 +267,12 @@ class Scope:
                     try:
                         Logger().set_log("Added Download List: " + url)
                         print("Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : " + str(self.scope.reporting["page_count"]) + " : " + folder_name)
-                        headers = {
-                            'User-Agent': scope['user_agent'],
-                            'Accept-Language': scope['accept_language'],
-                            'Referer': url
-                        }
+                        if 'headers' in item:
+                            headers = item['headers']
+                        else:
+                            headers = self.root_search_item['headers']
 
+                        headers['Referer'] = url
                         thread_model = ThreadModel("thread_" + str(time.time()))
                         thread_model.target = 'http_service.download_image'
                         thread_model.args = {
@@ -294,16 +294,17 @@ class Scope:
                         print("Error: " + str(e))
                         abs_file_path = os.path.join(script_dir, 'error_log.txt')
                         with open(abs_file_path, 'a') as the_file:
-                            the_file.write(str(page_count) + ': ' + str(e) + '\n' + folder_name)
+                            the_file.write(str(self.scope.reporting['page_counter']) + ': ' + str(e) + '\n' + folder_name)
                             the_file.write('\n')
                         time.sleep(120)
-                        headers = {
-                            'User-Agent': scope['user_agent'],
-                            'Accept-Language': scope['accept_language'],
-                            'Referer': url  # This is another valid field
-                        }
+                        if 'headers' in item:
+                            headers = item['headers']
+                        else:
+                            headers = self.root_search_item['headers']
 
-                        http_service.download_image(attrib, folder_name, headers, "thread_" + str(download_counter))
+                        headers['Referer'] = url
+                        self.http_services.download_file(attrib, folder_name, headers,
+                                                         "thread_" + str(self.scope.reporting["download_counter"]))
                     i = i + 1
 
     def shutdown(self):
