@@ -15,7 +15,7 @@ Tarama işleminin başlayacağı web adresi.
 ### SETTINGS {}
 
 ```json
-"settings": {
+"settings":{
     "search_time_sleep": 60,
     "download_time_sleep": 5,
     "thread_limit": 3,
