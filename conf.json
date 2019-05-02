@@ -61,6 +61,27 @@
                     "headers": {
                         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
                     },
+                    "events": [
+                        {
+                            "selector": ".//a[@class='home-card'][1]",
+                            "delay": 1,
+                            "sleep": 5,
+                            "actions": [
+                                { "type": "excute_script", "script": "window.scrollTo(0,400);", "delay": 1 },
+                                { "type": "style", "style": "background: red;", "delay": 1 },
+                                { "type": "click", "delay": 1 }
+                            ]
+                        },
+                        {
+                            "selector": ".//div[@class='column is-4-fullhd is-4-widescreen is-4-tablet is-6-mobile is-12-small filter-card']/div[@class='card-actions has-text-centered']/a",
+                            "delay": 1,
+                            "sleep": 5,
+                            "actions": [
+                                { "type": "style", "style": "background: red;" },
+                                { "type": "click" }
+                            ]
+                        }
+                    ],
                     "for_item": [{
                         "dynamic_folder": {
                             "element_type": "loop",
