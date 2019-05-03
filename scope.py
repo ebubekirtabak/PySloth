@@ -218,6 +218,8 @@ class Scope:
 
         try:
             thread.start()
+            thread_model.thread_referance = thread
+            return thread_model
             Logger().set_log("Start Thread : " + args["thread_name"])
         except Exception as e:
             print("start_thread_error: " + str(e))
