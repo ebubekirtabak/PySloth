@@ -45,8 +45,7 @@ class MongoThreadController:
                      thread_object["start_time"] = int(round(time.time() * 1000))
 
                  thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(*thread_object.values())
-                 self.active_thread_array.append(thread_model)
-                 self.main_scope.start_thread(thread_model)
+                 self.active_thread_array.append(self.main_scope.start_thread(thread_model))
                  print("start thread: ")
 
         except Exception as e:
@@ -72,8 +71,7 @@ class MongoThreadController:
                                            thread_model[4], thread_model[5], int(round(time.time() * 1000)),
                                            thread_model[7])
 
-            self.active_thread_array.append(thread_model)
-            self.main_scope.start_thread(thread_model)
+            self.active_thread_array.append(self.main_scope.start_thread(thread_model))
         else:
             try:
                 mongo.insert(self.database, self.database_setting['thread_collection_name'], thread_model.__dict__)
@@ -94,6 +92,7 @@ class MongoThreadController:
 
             if thread_item.name == name:
                 self.logger.set_log("Finish thread : " + name)
+                thread_item.thread_referance.terminate()
                 del self.active_thread_array[index]
                 break
 
