@@ -19,6 +19,12 @@
                     "driver_arguments": [
                         "--no-sandbox",
                         "--headless"
+                    ],
+                    "$driver_emulations": [
+
+                    ],
+                    "driver_extensions": [
+
                     ]
                 },
                 "database": {
