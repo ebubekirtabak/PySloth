@@ -20,7 +20,7 @@
                         "--no-sandbox",
                         "--headless"
                     ],
-                    "$driver_emulations": [
+                    "driver_emulations": [
 
                     ],
                     "driver_extensions": [
