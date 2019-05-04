@@ -218,10 +218,20 @@ class Scope:
 
         try:
             thread.start()
+            if hasattr(thread_model, 'thread_referance'):
+                thread_model.thread_referance = thread
+
             Logger().set_log("Start Thread : " + args["thread_name"])
+            return thread
         except Exception as e:
             print("start_thread_error: " + str(e))
             Logger().set_error_log("start_thread_error: " + str(e))
+            type, value, traceback = sys.exc_info()
+            Logger().set_error_log('Error: ' + str(e))
+            if hasattr(value, 'filename'):
+                print('Error %s: %s' % (value.filename, value.strerror))
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
+
             Logger().set_error_log("restart thread: " + args["thread_name"])
             self.thread_controller.restart_thread(args["thread_name"])
 
@@ -309,6 +319,8 @@ class Scope:
                         self.http_services.download_file(attrib, folder_name, headers,
                                                          "thread_" + str(self.scope.reporting["download_counter"]))
                     i = i + 1
+                    self.thread_controller.remove_thread(thread_name)
+
 
     def shutdown(self):
         print("All process is successfull ")
