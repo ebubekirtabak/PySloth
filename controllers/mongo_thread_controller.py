@@ -45,7 +45,9 @@ class MongoThreadController:
                      thread_object.thread_referance = thread_referance
                  else:
                      thread_object["start_time"] = int(round(time.time() * 1000))
-                     thread_referance = self.main_scope.start_thread(thread_object)
+                     thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(
+                         *thread_object.values())
+                     thread_referance = self.main_scope.start_thread(thread_model)
                      thread_object['thread_referance'] = thread_referance
 
                  thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(*thread_object.values())
@@ -80,7 +82,7 @@ class MongoThreadController:
                 thread_model = ThreadModel(thread_model[1], thread_model[2], thread_model[3],
                                            thread_model[4], thread_model[5], int(round(time.time() * 1000)),
                                            thread_model[7], thread)
-            print("Start Therad: " + thread_model.name)
+            print("Start Thread: " + thread_model.name)
             self.active_thread_array.append(thread_model)
         else:
             try:
@@ -102,12 +104,15 @@ class MongoThreadController:
 
             if thread_item.name == name:
                 self.logger.set_log("Finish thread : " + name)
+                del self.active_thread_array[index]
                 if hasattr(thread_item, 'thread_referance'):
                     print("Remove Thread From Memory")
-                    thread_item.thread_referance.terminate()
+                    try:
+                        thread_item.thread_referance.terminate()
+                    except Exception as e:
+                        self.logger.set_error_log("mongo_thread_controller(): " + str(e))
+                    print('Deleted Thread: ' + name)
 
-                del self.active_thread_array[index]
-                print('Deleted Thread: ' + name)
                 break
 
             index += 1
