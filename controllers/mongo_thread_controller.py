@@ -41,16 +41,18 @@ class MongoThreadController:
                                                             {"status": "wait" })
                  if isinstance(thread_object, ThreadModel):
                      thread_object.start_time = int(round(time.time() * 1000))
-                     thread_object.thread_referance = None
+                     thread_referance = self.main_scope.start_thread(thread_object)
+                     thread_object.thread_referance = thread_referance
                  else:
                      thread_object["start_time"] = int(round(time.time() * 1000))
-                     thread_object['thread_referance'] = None
+                     thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(
+                         *thread_object.values())
+                     thread_referance = self.main_scope.start_thread(thread_model)
+                     thread_object['thread_referance'] = thread_referance
 
                  thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(*thread_object.values())
-                 thread_referance = self.main_scope.start_thread(thread_model)
-                 setattr(thread_model, 'thread_referance', thread_referance)
+                 print("start thread: " + thread_model.name)
                  self.active_thread_array.append(thread_model)
-                 print("start thread: ")
 
         except Exception as e:
             self.logger.set_error_log("mongo_thread_controller(): " + str(e))
@@ -72,13 +74,15 @@ class MongoThreadController:
         if len(self.active_thread_array) < self.multi_process['limit']:
             if isinstance(thread_model, ThreadModel):
                 thread_model.start_time = int(round(time.time() * 1000))
+                thread = self.main_scope.start_thread(thread_model)
+                setattr(thread_model, 'thread_referance', thread)
             else:
                 self.logger.set_error_log("add_thread: non object error " + thread_model[1])
+                thread = self.main_scope.start_thread(thread_model)
                 thread_model = ThreadModel(thread_model[1], thread_model[2], thread_model[3],
                                            thread_model[4], thread_model[5], int(round(time.time() * 1000)),
-                                           thread_model[7])
-            thread = self.main_scope.start_thread(thread_model)
-            setattr(thread_model, 'thread_referance', thread)
+                                           thread_model[7], thread)
+            print("Start Thread: " + thread_model.name)
             self.active_thread_array.append(thread_model)
         else:
             try:
@@ -100,10 +104,15 @@ class MongoThreadController:
 
             if thread_item.name == name:
                 self.logger.set_log("Finish thread : " + name)
-                if hasattr(thread_item, 'thread_referance '):
-                    thread_item.thread_referance.terminate()
-
                 del self.active_thread_array[index]
+                if hasattr(thread_item, 'thread_referance'):
+                    print("Remove Thread From Memory")
+                    try:
+                        thread_item.thread_referance.terminate()
+                    except Exception as e:
+                        self.logger.set_error_log("mongo_thread_controller(): " + str(e))
+                    print('Deleted Thread: ' + name)
+
                 break
 
             index += 1
