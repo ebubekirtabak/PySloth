@@ -227,7 +227,6 @@ class Scope:
             print("start_thread_error: " + str(e))
             Logger().set_error_log("start_thread_error: " + str(e))
             type, value, traceback = sys.exc_info()
-            Logger().set_error_log('Error: ' + str(e))
             if hasattr(value, 'filename'):
                 print('Error %s: %s' % (value.filename, value.strerror))
                 Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
