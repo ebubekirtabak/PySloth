@@ -266,10 +266,9 @@ class Scope:
                 elements = html_content.xpath(class_name)
                 if len(elements) == 0:
                     Logger().set_error_log("The \"" + class_name + "\" class was not found at \""
-                                         + url + "\".")
+                                            + url + "\".")
 
                 for element in elements:  # get element list
-                    attrib = ''
                     if need_attr['if'] in element.attrib:
                         attrib = element.attrib[need_attr['if']]
                     else:
