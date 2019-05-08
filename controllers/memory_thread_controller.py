@@ -1,10 +1,12 @@
 import time
 import scope
-import logger
 import os
 
+from collections import namedtuple
+from logger import Logger
 
 script_dir = os.path.dirname(__file__)
+
 
 class MemoryThreadController:
     active_thread_array = []
@@ -13,14 +15,16 @@ class MemoryThreadController:
     empty_thread_step = 0
 
     def __init__(self, settings, main_scope):
-        self.settings = settings
+        self.settings = namedtuple("SettingsModel", settings.keys())(*settings.values())
+        self.multi_process = self.settings.multi_process
+        self.logger = Logger()
         self.main_scope = main_scope
 
     def thread_controller(self):
 
         try:
             time.sleep(1)
-            logger.set_log("Thread Controller : Active : " + str(len(self.active_thread_array)) + " : Array : " + str(
+            self.logger.set_log("Thread Controller : Active : " + str(len(self.active_thread_array)) + " : Array : " + str(
                 len(self.thread_array)))
             if len(self.active_thread_array) < self.settings["thread_limit"] and len(self.thread_array) > 0:
                 scope.start_thread(self.thread_array[0])

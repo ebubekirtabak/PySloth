@@ -1,6 +1,5 @@
 import mongo
 import time
-import scope
 import sys
 import os
 from logger import Logger
@@ -13,7 +12,7 @@ class MongoThreadController:
     thread_array = []
     settings = {}
     empty_thread_step = 0
-    databse_setting = None
+    database_setting = None
     database = None
 
     def __init__(self, settings, main_scope):
