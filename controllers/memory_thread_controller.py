@@ -25,14 +25,14 @@ class MemoryThreadController:
             time.sleep(1)
             self.logger.set_log("Thread Controller : Active : " + str(len(self.active_thread_array)) + " : Array : " +
                                 str(len(self.thread_array)))
-            if len(self.active_thread_array) < self.settings["thread_limit"] and len(self.thread_array) > 0:
+            if len(self.active_thread_array) < self.multi_process["limit"] and len(self.thread_array) > 0:
                 self.main_scope.start_thread(self.thread_array[0])
                 self.active_thread_array.append(self.thread_array[0])
                 self.thread_array.remove(self.thread_array[0])
                 self.empty_thread_step = 0
                 time.sleep(2)
 
-            elif len(self.active_thread_array) >= self.settings["thread_limit"]:
+            elif len(self.active_thread_array) >= self.multi_process["limit"]:
                 time.sleep(1)
             elif len(self.active_thread_array) == 0 and len(self.thread_array) == 0:
                 self.empty_thread_step += 1
