@@ -1,5 +1,4 @@
 import time
-import scope
 import os
 
 from collections import namedtuple
@@ -24,10 +23,10 @@ class MemoryThreadController:
 
         try:
             time.sleep(1)
-            self.logger.set_log("Thread Controller : Active : " + str(len(self.active_thread_array)) + " : Array : " + str(
-                len(self.thread_array)))
+            self.logger.set_log("Thread Controller : Active : " + str(len(self.active_thread_array)) + " : Array : " +
+                                str(len(self.thread_array)))
             if len(self.active_thread_array) < self.settings["thread_limit"] and len(self.thread_array) > 0:
-                scope.start_thread(self.thread_array[0])
+                self.main_scope.start_thread(self.thread_array[0])
                 self.active_thread_array.append(self.thread_array[0])
                 self.thread_array.remove(self.thread_array[0])
                 self.empty_thread_step = 0
@@ -40,13 +39,11 @@ class MemoryThreadController:
                 self.empty_thread_step += 1
                 time.sleep(1)
                 if self.empty_thread_step > 120:
-                    logger.set_log("program exit()")
+                    self.logger.set_log("program exit()")
                     exit()
 
         except Exception as e:
-            # type, value, traceback = sys.exc_info()
-            # print('Error opening %s: %s' % (value.filename, value.strerror))
-            logger.set_error_log("Thread_Controller: " + str(e))
+            self.logger.set_error_log("Thread_Controller: " + str(e))
             time.sleep(10)
             self.thread_controller()
 
