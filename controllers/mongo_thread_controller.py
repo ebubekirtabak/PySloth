@@ -33,25 +33,27 @@ class MongoThreadController:
             if active_thread_length == 0 and lent == 0:
                 self.main_scope.shutdown()
             elif active_thread_length < self.multi_process["limit"] and lent > 0:
-                 thread_object = mongo.find_and_delete(
-                        self.database, self.database_setting['thread_collection_name'], { "status": "wait", "type": "download_thread" })
-                 if thread_object is None:
-                     thread_object = mongo.find_and_delete(self.database, self.database_setting['thread_collection_name'],
-                                                            {"status": "wait" })
-                 if isinstance(thread_object, ThreadModel):
-                     thread_object.start_time = int(round(time.time() * 1000))
-                     thread_referance = self.main_scope.start_thread(thread_object)
-                     thread_object.thread_referance = thread_referance
-                 else:
-                     thread_object["start_time"] = int(round(time.time() * 1000))
-                     thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(
+                thread_object = mongo.find_and_delete(self.database,
+                                                      self.database_setting['thread_collection_name'],
+                                                      {"status": "wait", "type": "download_thread"})
+                if thread_object is None:
+                    thread_object = mongo.find_and_delete(self.database,
+                                                          self.database_setting['thread_collection_name'],
+                                                          {"status": "wait"})
+                if isinstance(thread_object, ThreadModel):
+                    thread_object.start_time = int(round(time.time() * 1000))
+                    thread_referance = self.main_scope.start_thread(thread_object)
+                    thread_object.thread_referance = thread_referance
+                else:
+                    thread_object["start_time"] = int(round(time.time() * 1000))
+                    thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(
                          *thread_object.values())
-                     thread_referance = self.main_scope.start_thread(thread_model)
-                     thread_object['thread_referance'] = thread_referance
+                    thread_referance = self.main_scope.start_thread(thread_model)
+                    thread_object['thread_referance'] = thread_referance
 
-                 thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(*thread_object.values())
-                 print("start thread: " + thread_model.name)
-                 self.active_thread_array.append(thread_model)
+                thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(*thread_object.values())
+                print("start thread: " + thread_model.name)
+                self.active_thread_array.append(thread_model)
 
         except Exception as e:
             self.logger.set_error_log("mongo_thread_controller(): " + str(e))
