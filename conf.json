@@ -54,6 +54,10 @@
                 "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
                 "data": ""
             },
+            "reporting": {
+                "page_count": 0,
+                "download_counter": 0
+            },
             "search_item": [
                 {
                     "class_names": [
