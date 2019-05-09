@@ -1,7 +1,16 @@
 ## PySloth
+
 ### What is PySloth ?
+
 PySloth is a programmable web bot. PySLoth can simulate user behavior. Can search web pages with use javascript and without javascript.
 Can limited multithread process.
-#### settings
-##### $thread_limit
-'Progress Thread limit.'
+
+### Ho To Install ?
+
+Install pySloth requirements.
+
+```pip install -r requirements.txt```
+
+Create  a file from named ```myconf.json``` in project directory.
+
+Copy content of ```conf.json``` file to your ```myconf.json``` file.
