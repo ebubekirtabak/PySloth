@@ -9,6 +9,7 @@
                 "download_time_sleep": 5,
                 "session_id": "alamy_dollar",
                 "role": "main || scanner || downloader",
+                "is_go_again_history": false,
                 "multi_process": {
                     "time_out": 300,
                     "limit": 3,
