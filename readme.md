@@ -14,3 +14,7 @@ Install pySloth requirements.
 Create  a file from named ```myconf.json``` in project directory.
 
 Copy content of ```conf.json``` file to your ```myconf.json``` file.
+
+Starting Web crawling:
+
+``` python main.py -scope  'scope_name''```
