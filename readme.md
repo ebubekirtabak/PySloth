@@ -17,4 +17,4 @@ Copy content of ```conf.json``` file to your ```myconf.json``` file.
 
 Starting Web crawling:
 
-``` python main.py -scope  'scope_name''```
+``` python main.py 'scope'  'scope_name''```
