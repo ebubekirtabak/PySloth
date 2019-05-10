@@ -111,7 +111,7 @@ class MongoThreadController:
                     try:
                         thread_item.thread_referance.terminate()
                     except Exception as e:
-                        self.logger.set_error_log("mongo_thread_controller(): " + str(e))
+                        self.logger.set_error_log("mongo_thread_controller -> remove_thread(): " + str(e))
                     print('Deleted Thread: ' + name)
 
                 break
@@ -163,3 +163,7 @@ class MongoThreadController:
 
             index += 1
         self.thread_controller()
+
+    def history_check(self, url):
+        return mongo.isExists(self.database, self.database_setting['history_collection_name'], {'column_name': 'url', 'key': url})
+

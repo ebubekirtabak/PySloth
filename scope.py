@@ -202,6 +202,14 @@ class Scope:
         global download_counter
         args = thread_model.args
         print(thread_model.type)
+        url = args["url"]
+        if self.settings.is_go_again_history is True and self.thread_controller.history_check(url) is True:
+            return None
+        else:
+            database_setting = self.scope.settings['database']
+            mongo.insert(self.database, database_setting['history_collection_name'], {"url": url})
+
+
         if thread_model.type == "item_loops":
             thread = kthread.KThread(target=self.item_loops,
                                      args=(args["url"], args["for_item"], args["thread_name"]),
