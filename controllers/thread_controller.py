@@ -56,6 +56,9 @@ class ThreadController:
     def get_thread_size(self):
         return len(self.thread_array.length)
 
+    def history_check(self, url):
+        return self.controller.history_check(url)
+
 
 
 
