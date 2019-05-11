@@ -62,4 +62,4 @@ def get_length(db, collection):
 
 def isExists(db, collection, data):
     mycol = db[collection]
-    return mycol.find({data['column_name']: { "$in": data['key']}}).count() > 0
+    return mycol.find(data).count() > 0
