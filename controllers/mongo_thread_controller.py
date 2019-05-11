@@ -56,7 +56,7 @@ class MongoThreadController:
                 self.active_thread_array.append(thread_model)
 
         except Exception as e:
-            self.logger.set_error_log("mongo_thread_controller(): " + str(e))
+            self.logger.set_error_log("mongo_thread_controller -> thread_controller(): " + str(e))
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
                 print('Error %s: %s' % (value.filename, value.strerror))
@@ -73,18 +73,12 @@ class MongoThreadController:
     def add_thread(self, thread_model):
         self.logger.set_log("added Thread : " + thread_model.name)
         if len(self.active_thread_array) < self.multi_process['limit']:
-            if isinstance(thread_model, ThreadModel):
-                thread_model.start_time = int(round(time.time() * 1000))
-                thread = self.main_scope.start_thread(thread_model)
-                setattr(thread_model, 'thread_referance', thread)
+            thread_model = self.thread_starter(thread_model)
+            if thread_model is not None:
+                print("Start Thread: " + thread_model.name)
+                self.active_thread_array.append(thread_model)
             else:
-                self.logger.set_error_log("add_thread: non object error " + thread_model[1])
-                thread = self.main_scope.start_thread(thread_model)
-                thread_model = ThreadModel(thread_model[1], thread_model[2], thread_model[3],
-                                           thread_model[4], thread_model[5], int(round(time.time() * 1000)),
-                                           thread_model[7], thread)
-            print("Start Thread: " + thread_model.name)
-            self.active_thread_array.append(thread_model)
+                self.logger.set_log("cancel duplicate url thread : ")
         else:
             try:
                 mongo.insert(self.database, self.database_setting['thread_collection_name'], thread_model.__dict__)
@@ -98,6 +92,22 @@ class MongoThreadController:
                              self.database_setting['thread_collection_name'], object_thread.__dict__)
 
         self.thread_controller()
+
+    def thread_starter(self, thread_model):
+        if isinstance(thread_model, ThreadModel):
+            thread_model.start_time = int(round(time.time() * 1000))
+            thread = self.main_scope.start_thread(thread_model)
+            setattr(thread_model, 'thread_referance', thread)
+        else:
+            self.logger.set_error_log("add_thread: non object error " + thread_model[1])
+            thread = self.main_scope.start_thread(thread_model)
+            thread_model = ThreadModel(thread_model[1], thread_model[2], thread_model[3],
+                                       thread_model[4], thread_model[5], int(round(time.time() * 1000)),
+                                       thread_model[7], thread)
+        if thread is not None:
+            return thread_model
+        else:
+            return None
 
     def remove_thread(self, name):
         index = 0
@@ -125,7 +135,6 @@ class MongoThreadController:
 
     def auto_thread_stopper(self):
         # then timeout stop thread
-
         try:
             clear = lambda: os.system('clear')
             clear()
@@ -165,5 +174,5 @@ class MongoThreadController:
         self.thread_controller()
 
     def history_check(self, url):
-        return mongo.isExists(self.database, self.database_setting['history_collection_name'], {'column_name': 'url', 'key': url})
+        return mongo.isExists(self.database, self.database_setting['history_collection_name'], {'url': url})
 
