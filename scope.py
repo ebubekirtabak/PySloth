@@ -129,7 +129,7 @@ class Scope:
                     thread_model = ThreadModel("thread_" + str(time.time()))
                     thread_model.target = 'http_service.download_image'
                     thread_model.args = {
-                        "attrib": attrib,
+                        "url": attrib,
                         "folder_name": search_item.download_folder,
                         "headers": headers,
                         "thread_name": thread_model.name
@@ -168,15 +168,15 @@ class Scope:
                 thread_model.stop_time = 0
                 self.thread_controller.add_thread(thread_model)
 
-        if 'pagination' in search_item:
-            pagination = search_item['pagination']
-            for pag in doc.xpath(pagination['class']):
+        if hasattr(search_item, 'pagination'):
+            pagination = search_item.pagination
+            for pag in doc.xpath(pagination['url_class']):
                 if 'if_exists_class' in pagination and doc.find_class('if_exists_class') is not None:
                     next_url = pag.attrib[pagination['attrib']]
                 else:
                     next_url = pag.attrib[pagination['attrib']]
             else:
-                attr_list = doc.xpath(pagination['class'])
+                attr_list = doc.xpath(pagination['url_class'])
                 if len(attr_list) > 0:
                     next_url = attr_list[0].attrib[pagination['attrib']]
                 else:
@@ -185,12 +185,13 @@ class Scope:
             if next_url is not None:
                 next_url = next_url.replace(" ", "%20")
                 self.scope.reporting["page_count"] += 1
-                time.sleep(settings["search_time_sleep"])
+                time.sleep(self.settings.search_time_sleep)
                 thread_model = ThreadModel("thread_" + str(time.time()))
                 thread_model.target = 'call_page'
                 thread_model.args = {
                     "url": next_url,
-                    "search_item": search_item
+                    "search_item": search_item,
+                    "thread_name": thread_model.name
                 }
                 thread_model.status = "wait"
                 thread_model.type = "call_page"
@@ -203,7 +204,7 @@ class Scope:
         args = thread_model.args
         print(thread_model.type)
         url = args["url"]
-        if self.settings.is_go_again_history is True and self.thread_controller.history_check(url) is True:
+        if self.settings.is_go_again_history is False and self.thread_controller.history_check(url) is True:
             return None
         else:
             database_setting = self.scope.settings['database']
@@ -216,7 +217,7 @@ class Scope:
                                      name=args["thread_name"])
         elif thread_model.type == "download_thread":
             thread = kthread.KThread(target=self.http_services.download_file,
-                                     args=(args["attrib"], args["folder_name"],
+                                     args=(args["url"], args["folder_name"],
                                             args["headers"], args["thread_name"]),
                                      name=args["thread_name"])
         elif thread_model.type == "call_page":
@@ -293,7 +294,7 @@ class Scope:
                         thread_model = ThreadModel("thread_" + str(time.time()))
                         thread_model.target = 'http_service.download_image'
                         thread_model.args = {
-                            "attrib": attrib,
+                            "url": attrib,
                             "folder_name": folder_name,
                             "headers": headers,
                             "thread_name": thread_model.name
@@ -331,7 +332,7 @@ class Scope:
     def shutdown(self):
         print("All process is successfull ")
         Logger().set_log("scrappy is finished...")
-        exit()
+        exit(0)
 
 def insert_db(setting, collection, data):
     global settings
