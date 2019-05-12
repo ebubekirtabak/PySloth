@@ -27,3 +27,5 @@ Starting Web crawling:
   "settings": { ... }
 }
 ```
+
+![login functionalty](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/login.gif "Login function")
