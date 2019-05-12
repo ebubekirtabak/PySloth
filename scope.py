@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
 import os
 import time
 import sys
@@ -12,11 +11,13 @@ import mongo
 from selenium import webdriver
 
 from models.setting_model import SettingModel
+from models.user_model import UserModel
 from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
 from event_maker import EventMaker
 from models.thread_model import ThreadModel
 from modules.file_module import FileModule
+from helpers.form_helpers import FormHelpers
 from logger import Logger
 from models.search_item_model import SearchItemModel
 from helpers.url_helpers import UrlHelpers
@@ -35,6 +36,8 @@ class Scope:
         self.thread_controller = ThreadController(self.settings, self)
         self.thread_controller.clear_thread_list()
         self.http_services = HttpServices(self.settings, self.thread_controller)
+        self.form_helpers = None
+        self.user_model = UserModel()
 
         # self.scope.reporting = {"download_counter": 0, "page_count": 0}
 
@@ -71,12 +74,14 @@ class Scope:
 
         if search_item.enable_javascript is not True:
             html_content = UrlHelpers().get_page_html_content(url=url, data=data, headers=search_item.headers)
-            print(html_content)
             self.parse_page(html_content, search_item)
+        else:
+            # javascript enable
+            self.call_page_with_javascript(url, search_item)
 
     def call_page_with_javascript(self, url, search_item):
         # javascript is enable
-        driver = self.settings
+        driver = self.settings.driver
         chrome_options = webdriver.ChromeOptions()
         if 'driver_arguments' in driver:
             for argument in driver['driver_arguments']:
@@ -87,7 +92,17 @@ class Scope:
             os.environ["webdriver.chrome.driver"] = chromedriver
             driver = webdriver.Chrome(chromedriver, chrome_options=chrome_options)
             driver.get(url)
-            event_maker = EventMaker(driver);
+            event_maker = EventMaker(driver)
+
+            if hasattr(self.scope, 'login') and self.user_model.is_login is not True:
+                self.form_helpers = FormHelpers(driver)
+                for event in self.scope.login['events']:
+                    event_maker.push_event(driver, event=event)
+
+                forms = self.scope.login['forms']
+                for form in forms:
+                    self.form_helpers.submit_form(form)
+
             if 'events' in search_item:
                 for event in search_item['events']:
                     event_maker.push_event(driver, event=event)

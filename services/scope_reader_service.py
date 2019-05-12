@@ -12,10 +12,7 @@ class ScopeReaderService:
 
     def get_scope(self, scope_name):
         scope = self.init_scope_model(scope_name)
-        settins_dict = scope["settings"]
-        setting = namedtuple("SettingModel", settins_dict.keys())(*settins_dict.values())
         scope_model = namedtuple("ScopeModel", scope.keys())(*scope.values())
-        print(setting.session_id)
         return scope_model
 
     def init_scope_model(self, scope_name):

@@ -49,7 +49,37 @@
                     "max_file_length": 150
                 }
             },
-            "scope_name":"sahibinden.com auto",
+            "scope_name":"your_scope_name",
+            "login": {
+                "events": [
+                    {
+                        "selector": "//div[@class='UnauthHeader__rightContentContainer']/div[@class='Jea XiG gjz mQ8 zI7 iyn Hsu']/button[@class='lightGrey headerLoginButton active']",
+                        "delay": 0,
+                        "sleep": 0,
+                        "actions": [
+                          { "type": "click", "delay": 1 }
+                        ]
+                    }
+                ],
+                "forms": [
+                    {
+                        "inputs": [
+                            {
+                                "value": "your_value",
+                                "selector": "//div[@class='zI7 iyn Hsu']/fieldset/div[@class='zI7 iyn Hsu']/span/input[@id='email']"
+                            },
+                            {
+                                "value": "your_value",
+                                "selector": "//div[@class='zI7 iyn Hsu']/fieldset/div[@class='zI7 iyn Hsu']/span/input[@id='password']"
+                            }
+                        ],
+                        "submit": {
+                            "selector": "//div[@data-test-id='registerFormSubmitButton']/button[@class='red SignupButton active']",
+                            "event": ""
+                        }
+                    }
+                ]
+            },
             "page": {
                 "url": "https://www.sahibinden.com/otomobil?pagingSize=50",
                 "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
