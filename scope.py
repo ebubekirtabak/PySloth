@@ -4,8 +4,6 @@ import json
 import os
 import time
 import sys
-import urllib
-import urllib.request
 from collections import namedtuple
 
 import kthread
@@ -25,12 +23,6 @@ from helpers.url_helpers import UrlHelpers
 from lxml.html import fromstring
 
 script_dir = os.path.dirname(__file__)
-global scope
-global page_count
-global download_counter
-global next_url
-global settings
-global database_driver
 
 
 class Scope:
@@ -57,7 +49,6 @@ class Scope:
         if self.settings.role == 'main' and 'url' in self.scope.page:
             self.root_search_item = self.scope.search_item
             self.call_page(self.scope.page['url'], self.scope.search_item)
-
 
     def select_database(self, database_setting):
         switcher = {
@@ -200,7 +191,6 @@ class Scope:
                 self.thread_controller.add_thread(thread_model)
 
     def start_thread(self, thread_model):
-        global download_counter
         args = thread_model.args
         print(thread_model.type)
         url = args["url"]
