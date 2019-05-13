@@ -92,6 +92,7 @@
             "script_actions": [
                 {
                     "type": "",
+                    "event": "click",
                     "value": "",
                     "selector": "",
                     "desc":"",

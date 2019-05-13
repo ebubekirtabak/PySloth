@@ -107,6 +107,8 @@ class Scope:
                 for event in search_item['events']:
                     event_maker.push_event(driver, event=event)
 
+            self.parse_page(driver, search_item)
+
         response = driver.page_source
         doc = fromstring(response)
         doc.make_links_absolute(url)
