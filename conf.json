@@ -89,6 +89,14 @@
                 "page_count": 0,
                 "download_counter": 0
             },
+            "script_actions": [
+                {
+                    "type": "",
+                    "value": "",
+                    "selector": "",
+                    "desc":"",
+                }
+            ],
             "search_item": [
                 {
                     "class_names": [
