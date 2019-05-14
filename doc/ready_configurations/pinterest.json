@@ -1,0 +1,128 @@
+{
+    "settings": {
+        "search_time_sleep": 5,
+        "download_time_sleep": 5,
+        "thread_time_out": 300,
+        "thread_limit": 15,
+        "thread_controller": "mongo",
+        "session_id": "pinterest",
+        "role": "main",
+        "is_go_again_history": false,
+        "multi_process": {
+            "time_out": 300,
+            "limit": 10,
+            "base": "mongo"
+        },
+        "driver": {
+            "driver_path": "/usr/lib/chromium-browser/chromedriver",
+            "driver_arguments": []
+        },
+        "database": {
+            "type": "MongoDB",
+            "name": "BotDatabase",
+            "history_collection_name": "history_collection",
+            "log_collection_name": "log_collection",
+            "thread_collection_name": "thread_collection",
+            "collection_name": "main_collection",
+            "uri": "mongodb://localhost:27017/",
+            "user_name": "admin"
+        },
+        "file_settings": {
+            "max_file_length": 150
+        }
+    },
+    "reporting": {
+        "download_counter": 0, "page_count": 0
+    },
+    "login": {
+        "events": [
+            {
+                "selector": "//div[@class='UnauthHeader__rightContentContainer']/div[@class='Jea XiG gjz mQ8 zI7 iyn Hsu']/button[@class='lightGrey headerLoginButton active']",
+                "delay": 0,
+                "sleep": 0,
+                "actions": [
+                  { "type": "click", "delay": 1 }
+                ]
+            }
+        ],
+        "forms": [
+            {
+                "inputs": [
+                    {
+                        "value": "example@mail.com",
+                        "selector": "//div[@class='zI7 iyn Hsu']/fieldset/div[@class='zI7 iyn Hsu']/span/input[@id='email']"
+                    },
+                    {
+                        "value": "password",
+                        "selector": "//div[@class='zI7 iyn Hsu']/fieldset/span/input[@id='password']"
+                    }
+                ],
+                "submit": {
+                    "selector": "//div[@data-test-id='registerFormSubmitButton']/button[@class='red SignupButton active']",
+                    "event": ""
+                }
+            }
+        ]
+    },
+    "page": {
+        "url": "https://tr.pinterest.com/search/pins/?q=dollar%20bank%20note&rs=typed&term_meta[]=dollar%7Ctyped&term_meta[]=bank%7Ctyped&term_meta[]=note%7Ctyped",
+        "user_agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "accept_language": "'en-US,en;q=0.5'"
+    },
+    "scope_name": "Pinterest",
+    "history": {
+        "to": "database",
+        "collection_name": "history_collection",
+        "control": {
+            "from": "database",
+            "progress": "skip"
+        }
+    },
+    "isPagination": true,
+    "isLogger": true,
+    "script_actions": [
+        {
+            "type": "",
+            "value": "",
+            "selector": "",
+            "desc":"",
+        }
+    ],
+    "search_item": {
+        "class_names": [
+            "//div[@class='pinWrapper']/div[contains(concat(' ', normalize-space(@class), ' '),' XiG zI7 iyn Hsu ')]/a"
+        ],
+        "type": "loop",
+        "enable_javascript": true,
+        "attrib": "href",
+        "download_attrib": false,
+        "download_folder": "/downloads/pinterest",
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+            "Accept-Language": "'en-US,en;q=0.5'"
+        },
+        "for_item": [
+            {
+                "download_folder": "/downloads/dollar_bank_note",
+                "item_list": [
+                    {
+                        "class_name": "//div[contains(concat(' ', normalize-space(@class), ' '),' img-hold ')]/a[@class='preview-img-cnt-holder']/span[contains(concat(' ', normalize-space(@class), ' '),' preview-img-cnt ')]/span[contains(concat(' ', normalize-space(@class), ' '),' preview-img-clipper ')]/img",
+                        "process": "download",
+                        "need_attr": {
+                            "if": "href",
+                            "else": "src"
+                        }
+                    }
+                ]
+            }
+        ],
+        "pagination": {
+            "url_class": "//div[@class='hd-middle-right yui-pg-container narrowYSearchMargin']/a[@class='yui-pg-next']",
+            "if_exists_class": "no-popunder",
+            "attrib": "href"
+        },
+        "search_item": {
+            "className": "//div[@class='z_c_g']/div[@class='z_e_a']/div[@class='z_e_b']/img[@class='z_e_h']"
+        }
+    }
+}
