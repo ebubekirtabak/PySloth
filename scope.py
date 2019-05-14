@@ -10,6 +10,7 @@ import mongo
 
 from selenium import webdriver
 
+from helpers.selenium_html_helpers import SeleniumHtmlHelpers
 from models.setting_model import SettingModel
 from models.user_model import UserModel
 from services.http_service import HttpServices
@@ -107,7 +108,12 @@ class Scope:
                 for event in search_item['events']:
                     event_maker.push_event(driver, event=event)
 
-            self.parse_page(driver, search_item)
+            if hasattr(self.scope, 'script_actions'):
+                selenium_html_helper = SeleniumHtmlHelpers()
+                selenium_html_helper.parse_html_with_js(driver, self.scope.script_actions)
+
+            if hasattr(self.scope, 'search_item'):
+                self.parse_page(driver, search_item)
 
         response = driver.page_source
         doc = fromstring(response)
@@ -216,8 +222,6 @@ class Scope:
         else:
             database_setting = self.scope.settings['database']
             mongo.insert(self.database, database_setting['history_collection_name'], {"url": url})
-
-
         if thread_model.type == "item_loops":
             thread = kthread.KThread(target=self.item_loops,
                                      args=(args["url"], args["for_item"], args["thread_name"]),
