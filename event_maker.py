@@ -1,6 +1,9 @@
+import sys
 import time
 
 from selenium.common.exceptions import NoSuchElementException
+
+from logger import Logger
 
 
 class EventMaker:
@@ -42,20 +45,24 @@ class EventMaker:
                 print("-- NoSuchElementException: " + str(e))
 
             except Exception as e:
-                print("start_thread_error: " + str(e))
+                print("Push Event ->: " + str(e))
 
         else:
             return None
 
-    def push_event_to_element(self, element, event):
+    def push_event_to_element(self, element, events):
         try:
-            if element is not None:
+            for event in events:
                 if 'delay' in event:
                     time.sleep(event['delay'])
+                if 'selector' in event:
+                    element = element.find_element_by_xpath(event['selector'])
 
                 for action in event['actions']:
                     if 'delay' in action:
                         time.sleep(action['delay'])
+
+
 
                     switcher = {
                         "click": self.set_click,
@@ -75,7 +82,12 @@ class EventMaker:
             print("-- NoSuchElementException: " + str(e))
 
         except Exception as e:
-            print("start_thread_error: " + str(e))
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                print('Error %s: %s' % (value.filename, value.strerror))
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
+
+            print("Push Event () ->: " + str(e))
 
     def set_click(self, element, action):
         element.click()
