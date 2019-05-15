@@ -33,7 +33,6 @@ class Scope:
         self.scope = scope
         self.database = database
         self.settings = self.scope.settings
-        self.root_search_item = scope.search_item
         self.thread_controller = ThreadController(self.settings, self)
         self.thread_controller.clear_thread_list()
         self.http_services = HttpServices(self.settings, self.thread_controller)
@@ -51,8 +50,11 @@ class Scope:
 
         print('starting')
         if self.settings.role == 'main' and 'url' in self.scope.page:
-            self.root_search_item = self.scope.search_item
-            self.call_page(self.scope.page['url'], self.scope.search_item)
+            if hasattr(self.scope, 'script_actions'):
+                self.call_page_with_javascript(self.scope.page['url'], None)
+            else:
+                self.root_search_item = self.scope.search_item
+                self.call_page(self.scope.page['url'], self.scope.search_item)
 
     def select_database(self, database_setting):
         switcher = {
@@ -104,15 +106,15 @@ class Scope:
                 for form in forms:
                     self.form_helpers.submit_form(form)
 
-            if 'events' in search_item:
-                for event in search_item['events']:
-                    event_maker.push_event(driver, event=event)
-
             if hasattr(self.scope, 'script_actions'):
                 selenium_html_helper = SeleniumHtmlHelpers()
                 selenium_html_helper.parse_html_with_js(driver, self.scope.script_actions)
 
             if hasattr(self.scope, 'search_item'):
+                if 'events' in search_item:
+                    for event in search_item['events']:
+                        event_maker.push_event(driver, event=event)
+
                 self.parse_page(driver, search_item)
 
         response = driver.page_source
