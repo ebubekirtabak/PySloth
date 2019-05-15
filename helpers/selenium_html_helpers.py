@@ -8,12 +8,6 @@ class SeleniumHtmlHelpers:
     def parse_html_with_js(self, doc, script_actions):
 
         for action in script_actions:
-            '''namedtuple("ScriptActionModel", scope.keys())(*scope.values())
-            if action['type'] == 'event*':
-                elements = doc.find_elements_by_xpath(action['selector'])
-                for element in elements:
-                    self.action_router(element, action)
-            else:'''
             self.action_router(doc, action)
 
 
