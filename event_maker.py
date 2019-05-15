@@ -6,6 +6,7 @@ from selenium.common.exceptions import NoSuchElementException
 class EventMaker:
 
     driver = None
+
     def __init__(self, driver):
         self.driver = driver
         pass
@@ -45,6 +46,36 @@ class EventMaker:
 
         else:
             return None
+
+    def push_event_to_element(self, element, event):
+        try:
+            if element is not None:
+                if 'delay' in event:
+                    time.sleep(event['delay'])
+
+                for action in event['actions']:
+                    if 'delay' in action:
+                        time.sleep(action['delay'])
+
+                    switcher = {
+                        "click": self.set_click,
+                        "scroll": self.set_scroll,
+                        "style": self.set_style,
+                        "excute_script": self.set_excute_script,
+                        "nothing": lambda: self.nothing,
+                    }
+
+                    func = switcher.get(action['type'], lambda: "nothing")
+                    func(element, action)
+
+                if 'sleep' in event:
+                    time.sleep(event['sleep'])
+
+        except NoSuchElementException as e:
+            print("-- NoSuchElementException: " + str(e))
+
+        except Exception as e:
+            print("start_thread_error: " + str(e))
 
     def set_click(self, element, action):
         element.click()
