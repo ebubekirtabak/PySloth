@@ -2,6 +2,8 @@ import sys
 import time
 
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 from logger import Logger
 
@@ -66,8 +68,10 @@ class EventMaker:
 
                     switcher = {
                         "click": self.set_click,
+                        "click_with_command": self.set_click_with_command,
                         "scroll": self.set_scroll,
                         "style": self.set_style,
+                        "set_attr": self.set_attr,
                         "excute_script": self.set_excute_script,
                         "nothing": lambda: self.nothing,
                     }
@@ -87,7 +91,13 @@ class EventMaker:
                 print('Error %s: %s' % (value.filename, value.strerror))
                 Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
-            print("Push Event () ->: " + str(e))
+            print("Push Event To Element () ->: " + str(e))
+
+    def set_click_with_command(self, element, action):
+        action = ActionChains(self.driver).key_down(Keys.CONTROL)
+        action.move_to_element(element)
+        action.click()
+        action.perform()
 
     def set_click(self, element, action):
         element.click()
@@ -98,6 +108,10 @@ class EventMaker:
     def set_style(self, element, action):
         scriptSetAttrValue = "arguments[0].setAttribute(arguments[1],arguments[2])"
         self.driver.execute_script(scriptSetAttrValue, element, 'style', action['style'])
+
+    def set_attr(self, element, action):
+        scriptSetAttrValue = "arguments[0].setAttribute(arguments[1],arguments[2])"
+        self.driver.execute_script(scriptSetAttrValue, element, action['attr'], action['attr_value'])
 
     def set_excute_script(self, element, action):
         self.driver.execute_script(action['script'])
