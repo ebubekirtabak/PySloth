@@ -107,7 +107,7 @@ class Scope:
                     self.form_helpers.submit_form(form)
 
             if hasattr(self.scope, 'script_actions'):
-                selenium_html_helper = SeleniumHtmlHelpers()
+                selenium_html_helper = SeleniumHtmlHelpers(self)
                 selenium_html_helper.parse_html_with_js(driver, self.scope.script_actions)
 
             if hasattr(self.scope, 'search_item'):
