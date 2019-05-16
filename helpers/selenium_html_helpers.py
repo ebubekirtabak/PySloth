@@ -36,13 +36,14 @@ class SeleniumHtmlHelpers:
     def download_loop(self, doc, action):
         elements = doc.find_elements_by_xpath(action['selector'])
         for element in elements:
-            url = element.get_attribute(action['download_attribute'])
+            download = action['download']
+            url = element.get_attribute(download['download_attribute'])
             thread_model = ThreadModel("thread_" + str(time.time()))
             thread_model.target = 'http_service.download_image'
             thread_model.args = {
                 "url": url,
-                "folder_name": search_item.download_folder,
-                "headers": headers,
+                "folder_name": download['download_folder'],
+                "headers": download['headers'],
                 "thread_name": thread_model.name
             }
             thread_model.status = "wait"
