@@ -31,4 +31,5 @@ Starting Web crawling:
 ### Main features
 
 #### Login 
+
 ![login functionalty](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/login.gif "Login function")
