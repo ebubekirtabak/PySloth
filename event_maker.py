@@ -1,6 +1,7 @@
 import sys
 import time
 
+import kthread
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -12,8 +13,9 @@ class EventMaker:
 
     driver = None
 
-    def __init__(self, driver):
+    def __init__(self, driver, selenium_helper=None):
         self.driver = driver
+        self.selenium_helper = selenium_helper
         pass
 
     def push_event(self, driver, event):
@@ -64,20 +66,25 @@ class EventMaker:
                     if 'delay' in action:
                         time.sleep(action['delay'])
 
-
-
-                    switcher = {
-                        "click": self.set_click,
-                        "click_with_command": self.set_click_with_command,
-                        "scroll": self.set_scroll,
-                        "style": self.set_style,
-                        "set_attr": self.set_attr,
-                        "excute_script": self.set_excute_script,
-                        "nothing": lambda: self.nothing,
-                    }
-
-                    func = switcher.get(action['type'], lambda: "nothing")
-                    func(element, action)
+                    type = action['type']
+                    if type == 'click':
+                        self.set_click(element, action)
+                    elif type == 'click_action_element':
+                        self.set_click_action_element(self.driver, action)
+                    elif type == 'click_with_command':
+                        self.set_click_with_command(element, action)
+                    elif type == 'scroll':
+                        self.set_scroll(element, action)
+                    elif type == 'style':
+                        self.set_style(element, action)
+                    elif type == 'set_attr':
+                        self.set_attr(element, action)
+                    elif type == 'excute_script':
+                        self.set_excute_script(element, action)
+                    elif type == 'download':
+                        thread = kthread.KThread(target=self.selenium_helper.download_loop,
+                                                 args=(element, action))
+                        thread.start()
 
                 if 'sleep' in event:
                     time.sleep(event['sleep'])
@@ -99,6 +106,11 @@ class EventMaker:
         action.click()
         action.perform()
 
+    def set_click_action_element(self, element, action):
+        if 'selector' in action:
+            element = element.find_element_by_xpath(action['selector'])
+            element.click()
+
     def set_click(self, element, action):
         element.click()
 
@@ -115,6 +127,9 @@ class EventMaker:
 
     def set_excute_script(self, element, action):
         self.driver.execute_script(action['script'])
+
+    def download(self):
+        pass
 
     def nothing(self, element, action):
         return ""
