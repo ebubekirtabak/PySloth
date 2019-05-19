@@ -36,4 +36,4 @@ Starting Web crawling:
 
 #### Script Actions
 
-![login functionalty](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/script_actions.gif "Login function")
+![Script Actions](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/script_actions.gif "Script Actions")
