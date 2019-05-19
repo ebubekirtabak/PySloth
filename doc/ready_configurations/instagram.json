@@ -1,0 +1,88 @@
+{
+  "settings": {
+    "search_time_sleep": 5,
+    "download_time_sleep": 5,
+    "session_id": "instagram",
+    "role": "main",
+    "is_go_again_history": false,
+    "driver": {
+      "driver_path": "/usr/local/bin/chromedriver-72",
+      "driver_arguments": []
+    },
+    "multi_process": {
+      "time_out": 300,
+      "limit": 3,
+      "base": "mongo"
+    },
+    "database": {
+      "type": "MongoDB",
+      "name": "BotDatabase",
+      "history_collection_name": "history_collection",
+      "log_collection_name": "log_collection",
+      "thread_collection_name": "thread_collection",
+      "collection_name": "main_collection",
+      "uri": "mongodb://localhost:27017/",
+      "user_name": "admin"
+    },
+    "file_settings": {
+      "max_file_length": 150
+    }
+  },
+  "reporting": { "download_counter": 0, "page_count": 0 },
+  "scope_name": "Instagram",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
+  "accept_language": "'en-US,en;q=0.5'",
+  "page": {
+    "url": "https://www.instagram.com/explore/tags/ayasophia/"
+  },
+  "history": {
+    "to": "database",
+    "collection_name": "history_collection",
+    "control": {
+      "from": "database",
+      "progress": "skip"
+    }
+  },
+  "isPagination": true,
+  "isLogger": true,
+  "pagination": {
+    "urlClass": "//div[@class='hd-middle-right yui-pg-container narrowYSearchMargin']/a[@class='yui-pg-next']",
+    "!ifExistsClass": "no-popunder",
+    "attrib": "href"
+  },
+  "script_actions": [
+    {
+      "type": "event*",
+      "value": "",
+      "selector": "//div[@class='v1Nh3 kIKUG  _bz0w']/a",
+      "events": [
+        {
+          "delay": 0,
+          "sleep": 0,
+          "actions": [
+            { "type": "click", "delay": 1, "sleep": 2 },
+            {
+              "delay": 2,
+              "sleep": 1,
+              "type": "download",
+              "selector": "//div[@class='eLAPa kPFhm']/div[@class='KL4Bh']/img[@class='FFVAD']",
+              "download": {
+                "download_attribute": "src",
+                "download_folder": "/downloads/ayasophia",
+                "headers": {
+                  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64"
+                }
+              }
+            },
+            {
+              "delay": 1,
+              "type": "click_action_element",
+              "selector": "//div[@class='_2dDPU vCf6V']/button[@class='ckWGn']"
+            }
+          ]
+        }
+      ],
+      "desc":""
+    }
+  ]
+}
