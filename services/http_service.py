@@ -37,8 +37,13 @@ class HttpServices:
 
             print("Downloaded: " + url)
             filename = url.split('/')[-1]
+
+            if '?' in filename:
+                filename = filename.split('?')[0]
+
             if "max_file_length" in self.file_settings:
                 filename = FileModule().get_short_file_name(filename, self.file_settings["max_file_length"])
+
             # filename = filename + "?ty=" + str(random.randint(1,9999999))
 
             startTime = time.time()
