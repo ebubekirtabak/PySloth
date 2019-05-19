@@ -9,15 +9,14 @@ class SeleniumHtmlHelpers:
         self.scope = scope
 
     def parse_html_with_js(self, doc, script_actions):
-
         for action in script_actions:
             self.action_router(doc, action)
 
 
     def action_router(self, doc, script_actions):
-        event_maker = EventMaker(doc)
+        event_maker = EventMaker(doc, self)
         switch = {
-            "event_loop": self.event_loop,
+            "event*": self.event_loop,
             "download_loop": self.download_loop,
             "event": event_maker.push_event,
             "function": event_maker.push_event,
@@ -28,7 +27,7 @@ class SeleniumHtmlHelpers:
         return func(doc, script_actions)
 
     def event_loop(self, doc, action):
-        event_maker = EventMaker(doc)
+        event_maker = EventMaker(doc, self)
         elements = doc.find_elements_by_xpath(action['selector'])
         for element in elements:
             event_maker.push_event_to_element(element, action['events'])
@@ -51,4 +50,4 @@ class SeleniumHtmlHelpers:
             thread_model.start_time = 0
             thread_model.stop_time = 0
             self.scope.thread_controller.add_thread(thread_model)
-            pass
+            return True
