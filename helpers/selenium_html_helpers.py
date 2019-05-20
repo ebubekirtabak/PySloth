@@ -33,7 +33,14 @@ class SeleniumHtmlHelpers:
             event_maker.push_event_to_element(element, action['events'])
 
     def download_loop(self, doc, action):
-        elements = doc.find_elements_by_xpath(action['selector'])
+        if 'selector' in action:
+            elements = doc.find_elements_by_xpath(action['selector'])
+        elif 'selectors' in action:
+            elements = []
+            for selector in action['selectors']:
+                selector_elements = doc.find_elements_by_xpath(selector)
+                elements = elements + selector_elements
+
         for element in elements:
             download = action['download']
             url = element.get_attribute(download['download_attribute'])
