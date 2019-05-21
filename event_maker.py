@@ -22,7 +22,11 @@ class EventMaker:
         if driver is not None:
 
             try:
-                element = driver.find_element_by_xpath(event['selector'])
+                if 'selector' in event:
+                    element = driver.find_element_by_xpath(event['selector'])
+                else:
+                    element = driver
+
                 if element is not None:
                     if 'delay' in event:
                         time.sleep(event['delay'])
