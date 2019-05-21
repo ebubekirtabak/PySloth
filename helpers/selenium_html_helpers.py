@@ -1,5 +1,9 @@
 import time
 
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
 from event_maker import EventMaker
 from models.thread_model import ThreadModel
 
@@ -10,21 +14,27 @@ class SeleniumHtmlHelpers:
 
     def parse_html_with_js(self, doc, script_actions):
         for action in script_actions:
-            self.action_router(doc, action)
-
+            if action['type'] != "**":
+                self.action_router(doc, action)
+            else:
+                WebDriverWait(doc, 30).until(
+                    expected_conditions.invisibility_of_element_located((By.ID, 'ajax_loader'))
+                )
+                self.parse_html_with_js(doc, script_actions)
 
     def action_router(self, doc, script_actions):
         event_maker = EventMaker(doc, self)
-        switch = {
-            "event*": self.event_loop,
-            "download_loop": self.download_loop,
-            "event": event_maker.push_event,
-            "function": event_maker.push_event,
-            "null": lambda: 0,
-        }
-
-        func = switch.get(script_actions['type'], lambda: "nothing")
-        return func(doc, script_actions)
+        type = script_actions['type'];
+        if type == "event*":
+            self.event_loop(doc, script_actions)
+        elif type == "download_loop":
+            self.download_loop(doc, script_actions)
+        elif type == "event":
+            event_maker.push_event(doc, script_actions)
+        elif type == "excute_script":
+            event_maker.push_event(doc, script_actions)
+        elif type == "function":
+            event_maker.push_event(doc, script_actions)
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
