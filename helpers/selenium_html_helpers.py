@@ -17,7 +17,7 @@ class SeleniumHtmlHelpers:
             if action['type'] != "**":
                 self.action_router(doc, action)
             else:
-                WebDriverWait(doc, 30).until(
+               WebDriverWait(doc, 30).until(
                     expected_conditions.invisibility_of_element_located((By.ID, 'ajax_loader'))
                 )
                 self.parse_html_with_js(doc, script_actions)

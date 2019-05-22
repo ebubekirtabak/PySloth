@@ -34,6 +34,6 @@ Starting Web crawling:
 
 ![login functionalty](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/login.gif "Login function")
 
-#### Script Actions
+#### User Actions
 
-![Script Actions](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/script_actions.gif "Script Actions")
+![User Actions](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/script_actions.gif "User Actions")
