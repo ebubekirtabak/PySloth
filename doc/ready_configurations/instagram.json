@@ -28,7 +28,10 @@
       "max_file_length": 150
     }
   },
-  "reporting": { "download_counter": 0, "page_count": 0 },
+  "reporting": {
+    "download_counter": 0,
+    "page_count": 0
+  },
   "scope_name": "Instagram",
   "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
   "accept_language": "'en-US,en;q=0.5'",
@@ -52,6 +55,17 @@
   },
   "script_actions": [
     {
+      "type": "excute_script",
+      "sleep": 5,
+      "actions": [
+        {
+          "type": "excute_script",
+          "script": "window.scrollTo(0, document.body.scrollHeight);",
+          "delay": 1
+        }
+      ]
+    },
+    {
       "type": "event*",
       "value": "",
       "selector": "//div[@class='v1Nh3 kIKUG  _bz0w']/a",
@@ -60,12 +74,20 @@
           "delay": 0,
           "sleep": 0,
           "actions": [
-            { "type": "click", "delay": 1, "sleep": 2 },
             {
-              "delay": 2,
+              "type": "click",
+              "delay": 1,
+              "sleep": 2
+            },
+            {
+              "delay": 3,
               "sleep": 1,
               "type": "download",
-              "selector": "//div[@class='eLAPa kPFhm']/div[@class='KL4Bh']/img[@class='FFVAD']",
+              "selectors": [
+                "//div[@class='eLAPa kPFhm']/div[@class='KL4Bh']/img[@class='FFVAD']",
+                "//div[@class='eLAPa RzuR0']/div[@class='KL4Bh']/img[@class='FFVAD']",
+                "//div[@class='oJub8']/div[@class='GRtmf wymO0 ']/div[@class='_5wCQW']/video[@class='tWeCl']"
+              ],
               "download": {
                 "download_attribute": "src",
                 "download_folder": "/downloads/ayasophia",
@@ -82,7 +104,22 @@
           ]
         }
       ],
-      "desc":""
+      "desc": ""
+    },
+    {
+      "type": "excute_script",
+      "sleep": 5,
+      "actions": [
+        {
+          "type": "excute_script",
+          "script": "window.scrollTo(0, document.body.scrollHeight);",
+          "delay": 1,
+          "sleep": 20
+        }
+      ]
+    },
+    {
+      "type": "**"
     }
   ]
 }
