@@ -19,12 +19,12 @@ class SeleniumHtmlHelpers:
             else:
                WebDriverWait(doc, 30).until(
                     expected_conditions.invisibility_of_element_located((By.ID, 'ajax_loader'))
-                )
-                self.parse_html_with_js(doc, script_actions)
+               )
+               self.parse_html_with_js(doc, script_actions)
 
     def action_router(self, doc, script_actions):
         event_maker = EventMaker(doc, self)
-        type = script_actions['type'];
+        type = script_actions['type']
         if type == "event*":
             self.event_loop(doc, script_actions)
         elif type == "download_loop":
