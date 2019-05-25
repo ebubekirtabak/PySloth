@@ -11,6 +11,7 @@ from models.thread_model import ThreadModel
 class SeleniumHtmlHelpers:
     def __init__(self, scope):
         self.scope = scope
+        self.loop_index = {}
 
     def parse_html_with_js(self, doc, script_actions):
         for action in script_actions:
@@ -39,6 +40,15 @@ class SeleniumHtmlHelpers:
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
         elements = doc.find_elements_by_xpath(action['selector'])
+        if 'for_index_id' in action:
+            if action['for_index_id'] in self.loop_index:
+                index = self.loop_index[action['for_index_id']]
+            else:
+                self.loop_index[action['for_index_id']] = 0
+                index = 0
+        else:
+            index = 0
+
         for element in elements:
             event_maker.push_event_to_element(element, action['events'])
 
