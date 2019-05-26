@@ -11,7 +11,7 @@ from models.thread_model import ThreadModel
 class SeleniumHtmlHelpers:
     def __init__(self, scope):
         self.scope = scope
-        self.loop_index = {}
+        self.keep_elements = {}
 
     def parse_html_with_js(self, doc, script_actions):
         for action in script_actions:
@@ -40,17 +40,9 @@ class SeleniumHtmlHelpers:
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
         elements = doc.find_elements_by_xpath(action['selector'])
-        if 'for_index_id' in action:
-            if action['for_index_id'] in self.loop_index:
-                index = self.loop_index[action['for_index_id']]
-            else:
-                self.loop_index[action['for_index_id']] = 0
-                index = 0
-        else:
-            index = 0
-
         for element in elements:
-            event_maker.push_event_to_element(element, action['events'])
+            if self.is_not_exists_element(element.id, action):
+                event_maker.push_event_to_element(element, action['events'])
 
     def download_loop(self, doc, action):
         if 'selector' in action:
@@ -78,3 +70,21 @@ class SeleniumHtmlHelpers:
             thread_model.stop_time = 0
             self.scope.thread_controller.add_thread(thread_model)
             return True
+
+
+    def is_not_exists_element(self, id, event):
+        if 'keep_element_id' in event:
+            if event['keep_element_id'] in self.keep_elements:
+                element_list = self.keep_elements[event['keep_element_id']]
+                if id in element_list:
+                    return False
+                else:
+                    self.keep_elements[event['keep_element_id']].append(id)
+                    return True
+            else:
+                self.keep_elements[event['keep_element_id']] = []
+                self.keep_elements[event['keep_element_id']].append(id)
+                return True
+        else:
+            return True
+
