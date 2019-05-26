@@ -74,3 +74,11 @@ class FileModule:
                 the_file.write('\n')
         except Exception as e:
             print(e)
+
+    @staticmethod
+    def if_exists_file(file_name):
+        try:
+            fh = open(file_name, 'r')
+            return True
+        except FileNotFoundError:
+            return False

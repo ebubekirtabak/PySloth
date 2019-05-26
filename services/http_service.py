@@ -54,7 +54,7 @@ class HttpServices:
             if not os.path.exists(globals.script_dir + path):
                 os.makedirs(globals.script_dir + path)
 
-            abs_file_path = os.path.join(globals.script_dir + path, filename)
+            abs_file_path = self.get_possible_path(globals.script_dir + path, filename)
 
             with open(abs_file_path , 'wb') as f:
                 while True:
@@ -87,3 +87,19 @@ class HttpServices:
             time.sleep(300)
             self.logger.set_error_log('Restart thread : ' + thread_name)
             self.thread_controller.restart_thread(thread_name)
+
+    def get_possible_path(self, path, file_name):
+        file_path = os.path.join(path, file_name)
+        if FileModule().if_exists_file(file_path):
+            return file_path
+        else:
+            copy_index = 0
+            while True:
+                copy_index += 1
+                file_extension = file_name[file_name.rindex('.'): len(file_name)]
+                new_file_name = file_name[: file_name.rindex('.')]
+                new_file_name = new_file_name + '(' + str(copy_index) + ')' + file_extension
+                new_path = os.path.join(path, new_file_name)
+                if FileModule().if_exists_file(file_path) is not True:
+                    break
+            return new_path
