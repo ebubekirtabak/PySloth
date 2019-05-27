@@ -69,6 +69,7 @@
       "type": "event*",
       "value": "",
       "selector": "//div[@class='v1Nh3 kIKUG  _bz0w']/a",
+      "keep_element_id": "instagram_download_element",
       "events": [
         {
           "delay": 0,

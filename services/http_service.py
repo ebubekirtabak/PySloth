@@ -90,7 +90,7 @@ class HttpServices:
 
     def get_possible_path(self, path, file_name):
         file_path = os.path.join(path, file_name)
-        if FileModule().if_exists_file(file_path):
+        if FileModule().if_exists_file(file_path) is not True:
             return file_path
         else:
             copy_index = 0
