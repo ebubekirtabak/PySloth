@@ -84,6 +84,7 @@
               "delay": 3,
               "sleep": 1,
               "type": "download",
+              "is_wait_for_load_element": true,
               "selectors": [
                 "//div[@class='eLAPa kPFhm']/div[@class='KL4Bh']/img[@class='FFVAD']",
                 "//div[@class='eLAPa RzuR0']/div[@class='KL4Bh']/img[@class='FFVAD']",
