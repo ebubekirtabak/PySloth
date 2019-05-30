@@ -4,13 +4,28 @@ Bu json dosyası scope adında json array formatında web sitesi  ayarlarını i
 Ayarlar **scope** objesi içersinde array formatında tutulur.Array içerisindeki her bir obje ayrı bir web sitesini tarama ayarlarıdır.
 Bu şekilde aynı anda birden fazla web sitesi ya da aynı web sites, farklı ayarlara göre taranılabilir.
 
-### SCOPENAME "" 
+### $scope_name"" 
 
-Konfigürasyonun genel adı.
+* *Required.
 
-### startUrl ""
+Your scope name.
 
-Tarama işleminin başlayacağı web adresi.
+### page 
+
+```json
+"page": {
+    "url": "https://example.com/list",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
+    "data": ""
+},
+```
+#### $url
+
+Start address. The scan starts from here.
+
+#### $user_agent
+
+User agent.
 
 ### SETTINGS {}
 
