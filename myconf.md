@@ -1,12 +1,12 @@
 ## MYCONF.JSON
 
-Bu json dosyası scope adında json array formatında web sitesi  ayarlarını içeren bir obje barındırır.
-Ayarlar **scope** objesi içersinde array formatında tutulur.Array içerisindeki her bir obje ayrı bir web sitesini tarama ayarlarıdır.
-Bu şekilde aynı anda birden fazla web sitesi ya da aynı web sites, farklı ayarlara göre taranılabilir.
+This json file contains an object that contains web site settings in the json array format named "scope".
+The settings are kept in array format in the "scope" object. Each object in the array is a separate web site scan settings.
+In this way, multiple websites or the same website can be scanned according to different settings.
 
-### $scope_name"" 
+### $scope_name
 
-* *Required.
+*Required.
 
 Your scope name.
 
