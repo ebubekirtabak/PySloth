@@ -27,6 +27,15 @@ Start address. The scan starts from here.
 
 User agent.
 
+### $reporting 
+
+````json
+  "reporting": {
+      "page_count": 0,
+      "download_counter": 0
+  },
+````
+
 ### SETTINGS {}
 
 ```json
