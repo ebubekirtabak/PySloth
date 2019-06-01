@@ -36,6 +36,8 @@ User agent.
   },
 ````
 
+*required 
+
 ### SETTINGS {}
 
 ```json
@@ -44,6 +46,8 @@ User agent.
     "download_time_sleep": 5,
     "thread_limit": 3,
     "session_id": "Button event tester",
+    "role": "main || scanner || downloader",
+    "is_go_again_history": false,
     "driver": {
         "driver_path": "your browser driver path",
         "driver_arguments": [
