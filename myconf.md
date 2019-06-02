@@ -44,7 +44,11 @@ User agent.
 "settings": {
     "search_time_sleep": 60,
     "download_time_sleep": 5,
-    "thread_limit": 3,
+    "multi_process": {
+     "time_out": 300,
+     "limit": 3,
+     "base": "mongo || memory"
+    },
     "session_id": "Button event tester",
     "role": "main || scanner || downloader",
     "is_go_again_history": false,
