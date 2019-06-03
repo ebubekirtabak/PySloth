@@ -67,20 +67,31 @@ class Scope:
         return func(database_setting)
 
     def call_page(self, url, search_item):
-        if isinstance(search_item, SearchItemModel) is not True:
-            search_item = namedtuple("SearchItemModel", search_item.keys())(*search_item.values())
+        try:
+            if (type(search_item) is not SearchItemModel):
+                search_item = namedtuple("SearchItemModel", search_item.keys())(*search_item.values())
+            else:
+                search_item = ThreadModel(search_item[1], search_item[2], search_item[3],
+                                           search_item[4], search_item[5], search_item[6],
+                                           search_item[7], search_item[8])
+            if 'data' in search_item:
+                data = search_item.data
+            else:
+                data = None
 
-        if 'data' in search_item:
-            data = search_item.data
-        else:
-            data = None
-
-        if search_item.enable_javascript is not True:
-            html_content = UrlHelpers().get_page_html_content(url=url, data=data, headers=search_item.headers)
-            self.parse_page(html_content, search_item)
-        else:
-            # javascript enable
-            self.call_page_with_javascript(url, search_item)
+            if search_item.enable_javascript is not True:
+                html_content = UrlHelpers().get_page_html_content(url=url, data=data, headers=search_item.headers)
+                self.parse_page(html_content, search_item)
+            else:
+                # javascript enable
+                self.call_page_with_javascript(url, search_item)
+        except Exception as e:
+            print("start_thread_error: " + str(e))
+            Logger().set_error_log("start_thread_error: " + str(e))
+            value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                print('Error %s: %s' % (value.filename, value.strerror))
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
     def call_page_with_javascript(self, url, search_item):
         # javascript is enable
@@ -234,8 +245,9 @@ class Scope:
                                             args["headers"], args["thread_name"]),
                                      name=args["thread_name"])
         elif thread_model.type == "call_page":
+            Logger().set_log("Added calpage thread: " + args["url"])
             thread = kthread.KThread(target=self.call_page,
-                                     args=(args["url"], args["search_item"], args["thread_name"]),
+                                     args=(args["url"], args["search_item"]),
                                      name=args["thread_name"])
 
         try:
@@ -248,7 +260,7 @@ class Scope:
         except Exception as e:
             print("start_thread_error: " + str(e))
             Logger().set_error_log("start_thread_error: " + str(e))
-            type, value, traceback = sys.exc_info()
+            value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
                 print('Error %s: %s' % (value.filename, value.strerror))
                 Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
@@ -323,7 +335,7 @@ class Scope:
 
                     except Exception as e:
                         print("Error: " + str(e))
-                        type, value, traceback = sys.exc_info()
+                        value, traceback = sys.exc_info()
                         Logger().set_error_log('Error: ' + str(e))
                         if hasattr(value, 'filename'):
                             print('Error opening %s: %s' % (value.filename, value.strerror))
