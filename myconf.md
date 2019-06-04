@@ -30,10 +30,10 @@ User agent.
 ### $reporting 
 
 ````json
-  "reporting": {
-      "page_count": 0,
-      "download_counter": 0
-  },
+"reporting": {
+    "page_count": 0,
+    "download_counter": 0
+},
 ````
 
 *required 
@@ -61,6 +61,13 @@ User agent.
     }
 },
 ```
+##### $multi_process
+
+Multi process limit and configurations.
+
+###### $time_out
+
+Process milisecond time out limit. 
 
 ##### $search_time_sleep
 
@@ -72,11 +79,6 @@ Bu şekilde botun kara listeye girme sorunu şözülür.
 ##### $download_time_sleep
 
 Herhangi bir dosya indirildiğinde parçacığın bir sonraki parçağı açana kadarki bekleme süresi.
-
-##### $thread_limit
-
-Tarama için açılacak maksimum parçacık limitidir.
-Bu şekilde program işlemci gücüne göre çalışacak şekilde ayarlanır.
 
 ##### $session_id
 
