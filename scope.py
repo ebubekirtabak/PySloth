@@ -68,12 +68,9 @@ class Scope:
 
     def call_page(self, url, search_item):
         try:
-            if (type(search_item) is not SearchItemModel):
+            if type(search_item) is dict:
                 search_item = namedtuple("SearchItemModel", search_item.keys())(*search_item.values())
-            else:
-                search_item = ThreadModel(search_item[1], search_item[2], search_item[3],
-                                           search_item[4], search_item[5], search_item[6],
-                                           search_item[7], search_item[8])
+
             if 'data' in search_item:
                 data = search_item.data
             else:
