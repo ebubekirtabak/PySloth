@@ -68,7 +68,7 @@ class Scope:
 
     def call_page(self, url, search_item):
         try:
-            if type(search_item) is dict:
+            if not hasattr(search_item, 'enable_javascript'):
                 search_item = namedtuple("SearchItemModel", search_item.keys())(*search_item.values())
 
             if 'data' in search_item:
