@@ -55,6 +55,11 @@ class SeleniumHtmlHelpers:
 
         for element in elements:
             download = action['download']
+            '''if 'is_wait_for_load_element' in action and action['is_wait_for_load_element'] is True:
+                WebDriverWait(self.doc, 30).until(
+                    expected_conditions.invisibility_of_element_located(element)
+                )'''
+
             url = element.get_attribute(download['download_attribute'])
             thread_model = ThreadModel("thread_" + str(time.time()))
             thread_model.target = 'http_service.download_image'
