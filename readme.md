@@ -9,11 +9,13 @@ PySloth is a programmable web bot. PySLoth can simulate user behavior. Can searc
 Install PySloth requirements.  
   
 ```pip install -r requirements.txt```  
-  
+
+### USAGE
+
 Create  a file from named ```myconf.json``` in project directory.  
   
 Copy content of ```conf.json``` file to your ```myconf.json``` file.  
-  
+
 Starting Web crawling:  
   
 ``` python main.py 'scope'  'scope_name'' ```  
