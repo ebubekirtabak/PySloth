@@ -82,6 +82,8 @@ class Scope:
             else:
                 # javascript enable
                 self.call_page_with_javascript(url, search_item)
+        except AttributeError as e:
+            print("AttributeError: " + str(e))
         except Exception as e:
             print("start_thread_error: " + str(e))
             Logger().set_error_log("start_thread_error: " + str(e))
