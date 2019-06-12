@@ -44,7 +44,7 @@ class HttpServices:
             if "max_file_length" in self.file_settings:
                 filename = FileModule().get_short_file_name(filename, self.file_settings["max_file_length"])
 
-            # filename = filename + "?ty=" + str(random.randint(1,9999999))
+            filename = filename + "?ty=" + str(random.randint(1,9999999))
 
             startTime = time.time()
             request = urllib.request.Request(url, headers=headers)
@@ -64,8 +64,6 @@ class HttpServices:
                     f.write(tmp)
 
             totalTimeTaken = str(float(round((endTime - startTime), 3)))
-            # print("Size: " + len(r.content) )
-            # print("Elapsed: " + str(r.elapsed))
             print("Time Taken: " + totalTimeTaken)
             print("thread_name: " + thread_name)
             self.thread_controller.remove_thread(thread_name)
