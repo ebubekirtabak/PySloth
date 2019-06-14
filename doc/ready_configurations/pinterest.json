@@ -32,7 +32,8 @@
         }
     },
     "reporting": {
-        "download_counter": 0, "page_count": 0
+        "download_counter": 0,
+        "page_count": 0
     },
     "login": {
         "events": [
