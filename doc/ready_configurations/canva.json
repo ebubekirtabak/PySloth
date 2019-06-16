@@ -1,0 +1,98 @@
+{
+  "settings": {
+    "search_time_sleep": 5,
+    "download_time_sleep": 5,
+    "session_id": "canva.com",
+    "role": "main",
+    "is_go_again_history": false,
+    "driver": {
+      "driver_path": "/usr/local/bin/chromedriver-72",
+      "driver_arguments": []
+    },
+    "multi_process": {
+      "time_out": 300,
+      "limit": 3,
+      "base": "mongo"
+    },
+    "database": {
+      "type": "MongoDB",
+      "name": "BotDatabase",
+      "history_collection_name": "history_collection",
+      "log_collection_name": "log_collection",
+      "thread_collection_name": "thread_collection",
+      "collection_name": "main_collection",
+      "uri": "mongodb://localhost:27017/",
+      "user_name": "admin"
+    },
+    "file_settings": {
+      "max_file_length": 150
+    }
+  },
+  "reporting": {
+    "download_counter": 0,
+    "page_count": 0
+  },
+  "scope_name": "canva.com",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64",
+  "accept_language": "'en-US,en;q=0.5'",
+  "page": {
+    "url": "https://www.canva.com/photos/search/dollar%20bank%20note/"
+  },
+  "history": {
+    "to": "database",
+    "collection_name": "history_collection",
+    "control": {
+      "from": "database",
+      "progress": "skip"
+    }
+  },
+  "isPagination": true,
+  "isLogger": true,
+  "pagination": {
+    "urlClass": "//div[@class='hd-middle-right yui-pg-container narrowYSearchMargin']/a[@class='yui-pg-next']",
+    "!ifExistsClass": "no-popunder",
+    "attrib": "href"
+  },
+  "script_actions": [
+    {
+      "type": "excute_script",
+      "sleep": 5,
+      "actions": [
+        {
+          "type": "excute_script",
+          "script": "window.scrollTo(0, document.body.scrollHeight);",
+          "delay": 1
+        }
+      ]
+    },
+    {
+      "type": "download_loop",
+      "value": "",
+      "selector": "//div[@class='_1HAK-xJrhdmbiBNACoyK64']/a[@class='_3C6pUZJOZJusWLIhOqcxxZ']/img[@class='_2-mdMBMcTflU_Yn4BTesIV _1xHwr15CE9cPMNGOn0zEj _3EFgY4hgcCWkizLKnETyXZ']",
+      "download": {
+        "download_folder": "/downloads/canva",
+        "download_attribute": "src",
+        "headers": {
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64"
+        }
+      },
+      "events": [],
+      "desc": ""
+    },
+    {
+      "type": "excute_script",
+      "sleep": 5,
+      "actions": [
+        {
+          "type": "excute_script",
+          "script": "window.scrollTo(0, document.body.scrollHeight);",
+          "delay": 1,
+          "sleep": 20
+        }
+      ]
+    },
+    {
+      "type": "**"
+    }
+  ]
+}
