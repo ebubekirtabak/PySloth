@@ -1,6 +1,5 @@
 import os
 import time
-import random
 import sys
 
 import globals
@@ -43,8 +42,6 @@ class HttpServices:
 
             if "max_file_length" in self.file_settings:
                 filename = FileModule().get_short_file_name(filename, self.file_settings["max_file_length"])
-
-            filename = filename + "?ty=" + str(random.randint(1,9999999))
 
             startTime = time.time()
             request = urllib.request.Request(url, headers=headers)
