@@ -74,8 +74,6 @@ class SeleniumHtmlHelpers:
             thread_model.start_time = 0
             thread_model.stop_time = 0
             self.scope.thread_controller.add_thread(thread_model)
-            return True
-
 
     def is_not_exists_element(self, id, event):
         if 'keep_element_id' in event:
