@@ -67,7 +67,6 @@
     },
     {
       "type": "download_loop",
-      "value": "",
       "selector": "//a[@class='_3C6pUZJOZJusWLIhOqcxxZ']/div[@class='_3m9mUAL4zpbPiItUrKRMRI _2ZqSAcHUVLWyl0gBO3O7OB']/img",
       "download": {
         "download_folder": "/downloads/canva",
