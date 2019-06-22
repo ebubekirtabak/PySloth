@@ -25,3 +25,8 @@ Starting Web crawling:
   Table Of Content
   
   - SCOPE
+      - Settings
+        - Multi Process
+        - Database
+        - File Settings
+      - Script Actions
