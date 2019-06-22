@@ -29,4 +29,6 @@ Starting Web crawling:
         - Multi Process
         - Database
         - File Settings
+        
+      - History
       - Script Actions
