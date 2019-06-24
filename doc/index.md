@@ -21,6 +21,10 @@ Starting Web crawling:
   
 ``` python main.py 'scope'  'scope_name'' ```  
   
+  ### Ready Configurations
+  - instagram
+  - Pinterest
+  - Freepik
   
   Table Of Content
   
