@@ -87,7 +87,7 @@ session kaydı sayesinde kaldığı yerden devam ettirilir.
 
 #### $driver {}
 
-Web driver için konfigürasyon ayalarını barındırır.
+Configuration settings for Web Driver.
 
 ##### $driver_path
 
