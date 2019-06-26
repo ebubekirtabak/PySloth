@@ -40,4 +40,24 @@ Starting Web crawling:
       
 ### How To Programming PySloth ? 
 
+#### Script Actions
+
+Script Actions are emulated by taking commands in Json format.
+
+``json
+  "script_actions": [
+    {
+      "type": "excute_script",
+      "sleep": 5,
+      "actions": [
+        {
+          "type": "excute_script",
+          "script": "window.scrollTo(0, document.body.scrollHeight);",
+          "delay": 1
+        }
+      ]
+    }
+    ]
+```
+
 ... coming soon.
