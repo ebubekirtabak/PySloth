@@ -44,6 +44,17 @@ Starting Web crawling:
 
 Script Actions are emulated by taking commands in Json format.
 
+#### $type
+
+Action item type
+
+type list:
+
+- click
+- excute_script
+- download
+
+
 ``json
   "script_actions": [
     {
