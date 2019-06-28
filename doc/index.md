@@ -53,6 +53,9 @@ type list:
 - click
 - excute_script
 - download
+- download_loop
+- event
+- event*
 
 
 ``json
