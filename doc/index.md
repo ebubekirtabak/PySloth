@@ -51,11 +51,12 @@ Action item type
 type list:
 
 - click
+
 - excute_script
 - download
 - download_loop
 - event
-- event*
+- event*`
 
 
 ``json
