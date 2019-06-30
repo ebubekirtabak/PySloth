@@ -51,6 +51,7 @@ PySloth can download file from web site.
 -  zip
 -  exe
 - .etc
+- Blob stream
 
 #### Convert Table to xlsx. (Coming) 
 
