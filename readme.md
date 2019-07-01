@@ -50,8 +50,8 @@ PySloth can download file from web site.
 - image (jpeg, png, jpg, .etc)
 -  zip
 -  exe
-- .etc
 - Blob stream
+- .etc
 
 #### Convert Table to xlsx. (Coming) 
 
