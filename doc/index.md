@@ -51,7 +51,6 @@ Action item type
 type list:
 
 - click
-
 - excute_script
 - download
 - download_loop
