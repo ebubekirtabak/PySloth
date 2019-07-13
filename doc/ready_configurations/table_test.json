@@ -1,0 +1,93 @@
+{
+    "settings": {
+        "search_time_sleep": 5,
+        "download_time_sleep": 5,
+        "thread_time_out": 300,
+        "thread_limit": 15,
+        "thread_controller": "mongo",
+        "session_id": "Planetary_Fact_Sheet_Metric",
+        "role": "main",
+        "is_go_again_history": false,
+        "multi_process": {
+            "time_out": 300,
+            "limit": 10,
+            "base": "mongo"
+        },
+        "driver": {
+            "driver_path": "/usr/lib/chromium-browser/chromedriver",
+            "driver_arguments": []
+        },
+        "database": {
+            "type": "MongoDB",
+            "name": "BotDatabase",
+            "history_collection_name": "history_collection",
+            "log_collection_name": "log_collection",
+            "thread_collection_name": "thread_collection",
+            "collection_name": "main_collection",
+            "uri": "mongodb://localhost:27017/",
+            "user_name": "admin"
+        },
+        "file_settings": {
+            "max_file_length": 150
+        }
+    },
+    "reporting": {
+        "download_counter": 0,
+        "page_count": 0
+    },
+    "login": {
+        "events": [
+            {
+                "selector": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
+                "delay": 0,
+                "sleep": 0,
+                "actions": [
+                  { "type": "click", "delay": 1 }
+                ]
+            }
+        ]
+    },
+    "page": {
+        "url": "https://www.ncdc.noaa.gov/cdo-web/datatools/records",
+        "user_agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "accept_language": "'en-US,en;q=0.5'"
+    },
+    "scope_name": "Planetary_Fact_Sheet_Metric",
+    "history": {
+        "to": "database",
+        "collection_name": "history_collection",
+        "control": {
+            "from": "database",
+            "progress": "skip"
+        }
+    },
+    "isPagination": true,
+    "isLogger": true,
+    "script_actions": [
+        {
+            "type": "",
+            "value": "",
+            "selector": "",
+            "desc":""
+        }
+    ],
+    "search_item": {
+        "class_names": [
+            "//div[@class='pinWrapper']/div[contains(concat(' ', normalize-space(@class), ' '),' XiG zI7 iyn Hsu ')]/a"
+        ],
+        "type": "loop",
+        "enable_javascript": true,
+        "attrib": "href",
+        "download_attrib": false,
+        "download_folder": "/downloads/pinterest",
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+            "Accept-Language": "'en-US,en;q=0.5'"
+        },
+        "for_item": [
+        ],
+        "search_item": {
+            "className": "//div[@class='z_c_g']/div[@class='z_e_a']/div[@class='z_e_b']/img[@class='z_e_h']"
+        }
+    }
+}
