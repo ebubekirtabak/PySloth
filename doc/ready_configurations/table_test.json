@@ -35,20 +35,8 @@
         "download_counter": 0,
         "page_count": 0
     },
-    "login": {
-        "events": [
-            {
-                "selector": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
-                "delay": 0,
-                "sleep": 0,
-                "actions": [
-                  { "type": "click", "delay": 1 }
-                ]
-            }
-        ]
-    },
     "page": {
-        "url": "https://www.ncdc.noaa.gov/cdo-web/datatools/records",
+        "url": "https://nssdc.gsfc.nasa.gov/planetary/factsheet/",
         "user_agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
         "accept_language": "'en-US,en;q=0.5'"
     },
@@ -73,7 +61,7 @@
     ],
     "search_item": {
         "class_names": [
-            "//div[@class='pinWrapper']/div[contains(concat(' ', normalize-space(@class), ' '),' XiG zI7 iyn Hsu ')]/a"
+            "//table"
         ],
         "type": "loop",
         "enable_javascript": true,
