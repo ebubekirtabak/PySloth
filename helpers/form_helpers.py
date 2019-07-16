@@ -4,6 +4,7 @@ from collections import namedtuple
 from selenium.common.exceptions import NoSuchElementException
 from logger import Logger
 
+
 class FormHelpers:
 
     def __init__(self, driver):
