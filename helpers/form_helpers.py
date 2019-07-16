@@ -8,7 +8,6 @@ class FormHelpers:
 
     def __init__(self, driver):
         self.driver = driver
-        pass
 
     def submit_form(self, form):
         try:
