@@ -74,7 +74,7 @@ class EventMaker:
                     if type == 'click':
                         self.set_click(element, action)
                     elif type == 'navigate_to':
-                        self.driver.navigate().to(action['to']);
+                        self.driver.navigate().to(action['to'])
                     elif type == 'click_action_element':
                         self.set_click_action_element(self.driver, action)
                     elif type == 'click_with_command':
