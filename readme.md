@@ -17,7 +17,13 @@ Create  a file from named ```myconf.json``` in project directory.
 Copy content of ```conf.json``` file to your ```myconf.json``` file.  
 
 Starting Web crawling:  
-  
+
+From file:
+
+``` python main.py 'scope_file'  'folder_name' 'scope_name.json' ```    
+
+From myconf:
+
 ``` python main.py 'scope'  'scope_name'' ```  
   
 ### $scope_name  
