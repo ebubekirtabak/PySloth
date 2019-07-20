@@ -97,7 +97,10 @@ class EventMaker:
 
         except NoSuchElementException as e:
             print("-- NoSuchElementException: " + str(e))
-
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                print('Error %s: %s' % (value.filename, value.strerror))
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
         except Exception as e:
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
