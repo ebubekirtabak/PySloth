@@ -16,7 +16,6 @@ class EventMaker:
     def __init__(self, driver, selenium_helper=None):
         self.driver = driver
         self.selenium_helper = selenium_helper
-        pass
 
     def push_event(self, driver, event):
         if driver is not None:
