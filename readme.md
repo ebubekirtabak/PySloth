@@ -60,6 +60,16 @@ PySloth can download file from web site.
 - .etc
 
 #### Redirect to url function. (New)
+````json
+"script_actions": [
+  { ... },
+  {
+    "type": 'navigate_to',
+    "to": 'https://github.com'
+  },
+  { ... }
+]
+````
 
 #### Convert Table to xlsx. (Coming) 
 
