@@ -91,7 +91,7 @@
     ],
     "search_item": {
         "class_names": [
-            "//div[@class='pinWrapper']/div[contains(concat(' ', normalize-space(@class), ' '),' XiG zI7 iyn Hsu ')]/a"
+            "//div[@class='gridCentered']/div[@class='Yl- MIw Hb7']/div[@class='zI7 iyn Hsu']//div[contains(concat(' ', normalize-space(@class), ' '),' XiG zI7 iyn Hsu ')]/div[@class='pinWrapper']/a"
         ],
         "type": "loop",
         "enable_javascript": true,

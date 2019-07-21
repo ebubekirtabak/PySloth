@@ -16,7 +16,6 @@ class EventMaker:
     def __init__(self, driver, selenium_helper=None):
         self.driver = driver
         self.selenium_helper = selenium_helper
-        pass
 
     def push_event(self, driver, event):
         if driver is not None:
@@ -73,6 +72,8 @@ class EventMaker:
                     type = action['type']
                     if type == 'click':
                         self.set_click(element, action)
+                    elif type == 'navigate_to':
+                        self.driver.navigate().to(action['to'])
                     elif type == 'click_action_element':
                         self.set_click_action_element(self.driver, action)
                     elif type == 'click_with_command':
@@ -95,7 +96,10 @@ class EventMaker:
 
         except NoSuchElementException as e:
             print("-- NoSuchElementException: " + str(e))
-
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                print('Error %s: %s' % (value.filename, value.strerror))
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
         except Exception as e:
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):

@@ -28,6 +28,8 @@ class SeleniumHtmlHelpers:
         type = script_actions['type']
         if type == "event*":
             self.event_loop(doc, script_actions)
+        elif type == 'navigate_to':
+            doc.get(script_actions['to'])
         elif type == "download_loop":
             self.download_loop(doc, script_actions)
         elif type == "event":

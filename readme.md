@@ -59,5 +59,7 @@ PySloth can download file from web site.
 - Blob stream
 - .etc
 
+#### Redirect to url function. (New)
+
 #### Convert Table to xlsx. (Coming) 
 
