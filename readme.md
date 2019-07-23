@@ -33,6 +33,7 @@ From myconf:
   "scope_name": "example.com scope",  
   "settings": { ... }  
 }  
+
 ```  
   
 ### Main features  
