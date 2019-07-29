@@ -1,6 +1,5 @@
 from collections import namedtuple
 
-import scope
 import sys
 
 from modules.file_module import FileModule
@@ -9,6 +8,8 @@ from scope import Scope
 
 
 def main():
+    global scope_variables
+    scope_variables = {}
     if len(sys.argv) > 1 and sys.argv[1] == 'scope':
         scope_model = ScopeReaderService().get_scope(scope_name=sys.argv[2])
         Scope(scope_model).start()
