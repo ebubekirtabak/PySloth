@@ -5,5 +5,6 @@ class VariableHelpers:
     def __init__(self):
         pass
 
-    def set_variable(self, variable_name, variable_value):
+    @staticmethod
+    def set_variable(variable_name, variable_value):
         scope_variables[variable_name] = variable_value
