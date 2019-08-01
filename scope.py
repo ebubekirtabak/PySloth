@@ -39,8 +39,6 @@ class Scope:
         self.form_helpers = None
         self.user_model = UserModel()
 
-        # self.scope.reporting = {"download_counter": 0, "page_count": 0}
-
     def start(self):
         if 'database' in self.scope.settings:
             self.database = self.select_database(self.scope.settings['database'])
@@ -352,11 +350,11 @@ class Scope:
                     i = i + 1
                     self.thread_controller.remove_thread(thread_name)
 
-
     def shutdown(self):
         print("All process is successfull ")
         Logger().set_log("scrappy is finished...")
         exit(0)
+
 
 def insert_db(setting, collection, data):
     global settings
