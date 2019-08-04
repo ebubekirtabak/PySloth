@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from event_maker import EventMaker
+from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
 
 
@@ -38,6 +39,9 @@ class SeleniumHtmlHelpers:
             event_maker.push_event(doc, script_actions)
         elif type == "function":
             event_maker.push_event(doc, script_actions)
+        elif type == '$_GET_VARIABLE':
+            element = doc.find_element_by_xpath(script_actions['selector'])
+            VariableHelpers().set_variable(script_actions['variable_name'], element.get_attribute('value'))
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
