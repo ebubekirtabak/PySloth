@@ -41,14 +41,11 @@ class SeleniumHtmlHelpers:
             event_maker.push_event(doc, script_actions)
         elif type == '$_GET_VARIABLE':
             element = doc.find_element_by_xpath(script_actions['selector'])
-            VariableHelpers().set_variable(script_actions['variable_name'], element.get_attribute('value'))
+            VariableHelpers().set_variable(script_actions['variable_name'], element.get_attribute(script_actions['attribute_name']))
         elif type == '$_SET_VARIABLE':
             element = doc.find_element_by_xpath(script_actions['selector'])
             value = VariableHelpers().get_variable(script_actions['variable_name'])
             element.send_keys(value)
-        elif type == '$_GET_ATTRIBUTE':
-            element = doc.find_element_by_xpath(script_actions['selector'])
-            VariableHelpers().set_variable(script_actions['variable_name'], element.get_attribute(script_actions['attribute_name']))
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
