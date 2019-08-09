@@ -24,6 +24,8 @@ class ScopeReaderService:
                 scope = data['scope']
                 for item in scope:
                     if item['scope_name'] == scope_name:
-                        return item
+                        break
+                    return item
+
         except Exception as e:
             print(str(e))
