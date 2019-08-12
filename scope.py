@@ -17,10 +17,8 @@ from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
 from event_maker import EventMaker
 from models.thread_model import ThreadModel
-from modules.file_module import FileModule
 from helpers.form_helpers import FormHelpers
 from logger import Logger
-from models.search_item_model import SearchItemModel
 from helpers.url_helpers import UrlHelpers
 from lxml.html import fromstring
 
