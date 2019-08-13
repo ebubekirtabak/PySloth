@@ -76,6 +76,7 @@
             "type": "$_SET_VARIABLE",
             "variable_name": "email_addres",
             "value": "",
+            "target_attr": "value",
             "selector": "//*[@id='email']",
             "desc":""
         }
