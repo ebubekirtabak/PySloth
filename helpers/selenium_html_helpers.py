@@ -44,8 +44,9 @@ class SeleniumHtmlHelpers:
             VariableHelpers().set_variable(script_actions['variable_name'], element.get_attribute(script_actions['attribute_name']))
         elif type == '$_SET_VARIABLE':
             element = doc.find_element_by_xpath(script_actions['selector'])
+            target = script_actions['target_attr']
             value = VariableHelpers().get_variable(script_actions['variable_name'])
-            element.send_keys(value)
+            doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
