@@ -13,6 +13,7 @@ venv/
 session/
 downloads/
 memory_logs/
+scopes/
 myconf.json
 log.txt
 error_log.txt

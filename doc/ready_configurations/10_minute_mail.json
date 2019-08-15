@@ -1,0 +1,103 @@
+{
+    "settings": {
+        "search_time_sleep": 5,
+        "download_time_sleep": 5,
+        "thread_time_out": 300,
+        "thread_limit": 15,
+        "thread_controller": "mongo",
+        "session_id": "10_minute_mail",
+        "role": "main",
+        "is_go_again_history": false,
+        "multi_process": {
+            "time_out": 300,
+            "limit": 10,
+            "base": "mongo"
+        },
+        "driver": {
+            "driver_path": "/usr/local/bin/chromedriver-75",
+            "driver_arguments": []
+        },
+        "database": {
+            "type": "MongoDB",
+            "name": "BotDatabase",
+            "history_collection_name": "history_collection",
+            "log_collection_name": "log_collection",
+            "thread_collection_name": "thread_collection",
+            "collection_name": "main_collection",
+            "uri": "mongodb://localhost:27017/",
+            "user_name": "admin"
+        },
+        "file_settings": {
+            "max_file_length": 150
+        }
+    },
+    "reporting": {
+        "download_counter": 0,
+        "page_count": 0
+    },
+    "page": {
+        "url": "https://10minutemail.com/10MinuteMail/index.html",
+        "user_agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "accept_language": "'en-US,en;q=0.5'"
+    },
+    "scope_name": "10_minute_mail",
+    "history": {
+        "to": "database",
+        "collection_name": "history_collection",
+        "control": {
+            "from": "database",
+            "progress": "skip"
+        }
+    },
+    "isPagination": true,
+    "isLogger": true,
+    "script_actions": [
+        {
+            "type": "$_GET_VARIABLE",
+            "variable_name": "email_addres",
+            "attribute_name": "value",
+            "selector": "//*[@id='mailAddress']"
+        },
+        {
+            "type": "$_GET_VARIABLE",
+            "variable_name": "user_name",
+            "value": "pysloth_bot2"
+        },
+       {
+            "type": "$_GET_VARIABLE",
+            "variable_name": "password",
+            "value": "testPassword324_"
+        },
+        {
+            "type": "navigate_to",
+            "to": "https://login.mailchimp.com/signup/"
+        },
+        {
+            "type": "$_SET_VARIABLE",
+            "variable_name": "email_addres",
+            "target_attr": "value",
+            "selector": "//*[@id='email']"
+        },
+        {
+            "type": "$_SET_VARIABLE",
+            "variable_name": "user_name",
+            "target_attr": "value",
+            "selector": "//*[@id='new_username']"
+        },
+        {
+            "type": "$_SET_VARIABLE",
+            "variable_name": "password",
+            "target_attr": "send_keys",
+            "selector": "//*[@id='new_password']"
+        },
+        {
+            "type": "event",
+            "selector": "//*[@id='create-account']",
+            "delay": 3,
+            "sleep": 5,
+            "actions": [
+                { "type": "click" }
+            ]
+        }
+    ]
+}
