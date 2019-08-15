@@ -14,7 +14,7 @@
             "base": "mongo"
         },
         "driver": {
-            "driver_path": "/usr/lib/chromium-browser/chromedriver",
+            "driver_path": "/usr/local/bin/chromedriver-75",
             "driver_arguments": []
         },
         "database": {
@@ -56,29 +56,48 @@
             "type": "$_GET_VARIABLE",
             "variable_name": "email_addres",
             "attribute_name": "value",
-            "value": "",
-            "selector": "//*[@id='mailAddress']",
-            "desc":""
+            "selector": "//*[@id='mailAddress']"
         },
         {
             "type": "$_GET_VARIABLE",
-            "variable_name": "email_addres_attribute",
-            "attribute_name": "class",
-            "value": "",
-            "selector": "//*[@id='mailAddress']",
-            "desc":""
+            "variable_name": "user_name",
+            "value": "pysloth_bot2"
+        },
+       {
+            "type": "$_GET_VARIABLE",
+            "variable_name": "password",
+            "value": "testPassword324_"
         },
         {
             "type": "navigate_to",
-            "to": "https://www.strava.com/register/free"
+            "to": "https://login.mailchimp.com/signup/"
         },
         {
             "type": "$_SET_VARIABLE",
             "variable_name": "email_addres",
-            "value": "",
             "target_attr": "value",
-            "selector": "//*[@id='email']",
-            "desc":""
+            "selector": "//*[@id='email']"
+        },
+        {
+            "type": "$_SET_VARIABLE",
+            "variable_name": "user_name",
+            "target_attr": "value",
+            "selector": "//*[@id='new_username']"
+        },
+        {
+            "type": "$_SET_VARIABLE",
+            "variable_name": "password",
+            "target_attr": "send_keys",
+            "selector": "//*[@id='new_password']"
+        },
+        {
+            "type": "event",
+            "selector": "//*[@id='create-account']",
+            "delay": 3,
+            "sleep": 5,
+            "actions": [
+                { "type": "click" }
+            ]
         }
     ]
 }
