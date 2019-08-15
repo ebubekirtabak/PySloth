@@ -8,11 +8,11 @@ class TestVariableHelpers(unittest.TestCase):
         VariableHelpers().load_scope_variables()
 
     def test_set_variable(self):
-        VariableHelpers().load_scope_variables()
         VariableHelpers().set_variable('test', 'test_value')
 
     def test_get_variables(self):
-        VariableHelpers().load_scope_variables()
+        self.test_load_scope_variable()
+        self.test_set_variable()
         assert VariableHelpers().get_variable('test') == 'test_value'
 
 
