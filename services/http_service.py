@@ -34,7 +34,6 @@ class HttpServices:
             path = kwargs[1]
             thread_name = kwargs[3]
 
-            print("Downloaded: " + url)
             filename = url.split('/')[-1]
 
             if '?' in filename:
@@ -43,6 +42,7 @@ class HttpServices:
             if "max_file_length" in self.file_settings:
                 filename = FileModule().get_short_file_name(filename, self.file_settings["max_file_length"])
 
+            print("Downloaded: " + url + ' Filename: ' + filename)
             startTime = time.time()
             request = urllib.request.Request(url, headers=headers)
             contents = urllib.request.urlopen(request)
@@ -95,6 +95,6 @@ class HttpServices:
                 new_file_name = file_name[: file_name.rindex('.')]
                 new_file_name = new_file_name + '(' + str(copy_index) + ')' + file_extension
                 new_path = os.path.join(path, new_file_name)
-                if FileModule().if_exists_file(file_path) is not True:
+                if FileModule().if_exists_file(new_path) is not True:
                     break
             return new_path
