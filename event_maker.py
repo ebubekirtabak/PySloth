@@ -7,6 +7,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 
 from logger import Logger
+from helpers.variable_helpers import VariableHelpers
 
 
 class EventMaker:
@@ -39,6 +40,8 @@ class EventMaker:
                             "scroll": self.set_scroll,
                             "style": self.set_style,
                             "excute_script": self.set_excute_script,
+                            "$_GET_VARIABLE": self.get_variable,
+                            "$_SET_VARIABLE": self.set_variable,
                             "nothing": lambda: self.nothing,
                         }
 
@@ -135,6 +138,23 @@ class EventMaker:
 
     def set_excute_script(self, element, action):
         self.driver.execute_script(action['script'])
+
+    def get_variable(self, element, script_actions):
+        if 'value' in script_actions:
+            VariableHelpers().set_variable(
+                script_actions['variable_name'],
+                script_actions['value'])
+        else:
+            VariableHelpers().set_variable(script_actions['variable_name'],
+                                           element.get_attribute(script_actions['attribute_name']))
+
+    def set_variable(self, element, script_actions):
+        target = script_actions['target_attr']
+        value = VariableHelpers().get_variable(script_actions['variable_name'])
+        if target == 'send_keys':
+            element.send_keys(value)
+        else:
+            self.driver.execute_script("arguments[0]." + target + " = '" + value + "';", element)
 
     def download(self):
         pass

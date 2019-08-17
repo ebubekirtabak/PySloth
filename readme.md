@@ -20,11 +20,11 @@ Starting Web crawling:
 
 From file:
 
-``` python main.py 'scope_file'  'folder_name' 'scope_name.json' ```    
+``` python main.py scope_file folder_name scope_name.json ```    
 
 From myconf:
 
-``` python main.py 'scope'  'scope_name'' ```  
+``` python main.py scope  scope_name' ```  
   
 ### $scope_name  
   
@@ -37,7 +37,14 @@ From myconf:
 ```  
   
 ### Main features  
+
+#### Variable Helpers
+
+PySloth can read and save variable from web element. PySloth is then used in the variable that it saves on any website. 
+In this example, you can see how you subscribe to another website by getting a temporary email address.
   
+![Variable Helpers](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/variable_helpers.gif "Variable Helpers")
+
 #### Login   
 
 PySloth can login any website.

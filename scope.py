@@ -17,10 +17,8 @@ from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
 from event_maker import EventMaker
 from models.thread_model import ThreadModel
-from modules.file_module import FileModule
 from helpers.form_helpers import FormHelpers
 from logger import Logger
-from models.search_item_model import SearchItemModel
 from helpers.url_helpers import UrlHelpers
 from lxml.html import fromstring
 
@@ -38,8 +36,6 @@ class Scope:
         self.http_services = HttpServices(self.settings, self.thread_controller)
         self.form_helpers = None
         self.user_model = UserModel()
-
-        # self.scope.reporting = {"download_counter": 0, "page_count": 0}
 
     def start(self):
         if 'database' in self.scope.settings:
@@ -352,11 +348,11 @@ class Scope:
                     i = i + 1
                     self.thread_controller.remove_thread(thread_name)
 
-
     def shutdown(self):
         print("All process is successfull ")
         Logger().set_log("scrappy is finished...")
         exit(0)
+
 
 def insert_db(setting, collection, data):
     global settings
