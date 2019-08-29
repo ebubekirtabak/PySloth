@@ -25,3 +25,7 @@ class VariableHelpers:
         except Exception as e:
             print('Error: ' + str(e))
             return None
+
+    @staticmethod
+    def delete_variable(variable_name):
+        del scope_variables[variable_name]
