@@ -155,9 +155,7 @@ class MongoThreadController:
         except Exception as e:
             self.logger.set_error_log("auto_thread_stopper(): " + str(e))
             type, value, traceback = sys.exc_info()
-            print('Error opening %s: %s' % (value.filename, value.strerror))
-            self.logger.set_error_log('Error opening %s: %s' % (value.filename, value.strerror))
-
+            self.logger.set_error_log('Error opening %s: %s' % (value.filename, value.strerror), True)
             time.sleep(10)
             self.thread_controller()
 
