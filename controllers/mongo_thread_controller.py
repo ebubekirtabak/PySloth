@@ -145,8 +145,6 @@ class MongoThreadController:
                 different = int(different / 1000)
                 if different > self.multi_process['time_out']:
                     self.logger.set_log(thread.name + ' Timeout...', True)
-                    '''if 'stop_time' in thread:
-                        thread.stop_time = now_time'''
                     self.add_thread(self.active_thread_array[index])
                     del self.active_thread_array[index]
 
