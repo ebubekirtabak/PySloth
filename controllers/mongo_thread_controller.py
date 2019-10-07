@@ -59,11 +59,9 @@ class MongoThreadController:
             self.logger.set_error_log("mongo_thread_controller -> thread_controller(): " + str(e))
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
-                print('Error %s: %s' % (value.filename, value.strerror))
-                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror), True)
 
-            print(sys.exc_info()[0])
-            self.logger.set_error_log(str(sys.exc_info()[0]))
+            self.logger.set_error_log(str(sys.exc_info()[0]), True)
             time.sleep(10)
             self.thread_controller()
 
@@ -75,7 +73,7 @@ class MongoThreadController:
         if len(self.active_thread_array) < self.multi_process['limit']:
             thread_model = self.thread_starter(thread_model)
             if thread_model is not None:
-                print("Start Thread: " + thread_model.name)
+                self.logger.set_log("Start Thread: " + thread_model.name, True)
                 self.active_thread_array.append(thread_model)
             else:
                 self.logger.set_log("cancel duplicate url thread : ")
