@@ -9,13 +9,13 @@ import mongo
             "progress": "skip"
         }
     } 
-    '''
+'''
 
-class history_control:
+
+class HistoryControl:
 
     def __init__(self, history):
         self.history = history
-
 
     def history_control(self, history, data):
         control = self.history["control"]
