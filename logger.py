@@ -9,14 +9,19 @@ class Logger:
     def __init__(self):
         pass
 
-    def set_log(self, data):
+    def set_log(self, data, is_print_to_console=False):
+        if is_print_to_console:
+            print("Error:" + data)
+
         abs_file_path = os.path.join(script_dir, 'log.txt')
         with open(abs_file_path, 'a') as the_file:
             the_file.write( str(time.strftime('%c')) + " : " + data)
             the_file.write('\n')
 
-    def set_error_log(self, data):
-        print("Error:" + data)
+    def set_error_log(self, data, is_print_to_console=False):
+        if is_print_to_console:
+            print("Error:" + data)
+
         from modules.file_module import FileModule
         FileModule().write_file_line(script_dir, file_name='error_log.txt', line='Error: ' + str(time.strftime('%c')) + " : " + data)
 
