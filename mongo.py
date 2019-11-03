@@ -1,8 +1,5 @@
 from pymongo import MongoClient
 import logger
-import sys
-# http://api.mongodb.com/python/current/tutorial.html
-from pprint import pprint
 
 
 def connect_database(database):
@@ -44,8 +41,6 @@ def insert(db, collection, data):
             # print('Error opening %s: %s' % (value.filename, value.strerror))
             print(e)
             return 400
-
-# def get_object(db, collection):
 
 
 def get_find_one(db, collection, query):
