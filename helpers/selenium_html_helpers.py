@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from event_maker import EventMaker
+from helpers.cookie_helpers import CookieHelpers
 from helpers.form_helpers import FormHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
@@ -43,6 +44,9 @@ class SeleniumHtmlHelpers:
         elif type == "form":
             self.form_helpers = FormHelpers(doc)
             self.form_helpers.submit_form(script_actions)
+        elif type == 'save_cookie':
+            cookie_helpers = CookieHelpers(doc, self.scope)
+            cookie_helpers.save_cookie(script_actions)
         elif type == '$_GET_VARIABLE':
             if 'value' in script_actions:
                 VariableHelpers().set_variable(
