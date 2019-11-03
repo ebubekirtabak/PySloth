@@ -16,6 +16,7 @@ class FormHelpers:
             for input in form.inputs:
                 input = namedtuple("InputModel", input.keys())(*input.values())
                 input_element = self.driver.find_element_by_xpath(input.selector)
+                input_element.click()
                 input_element.send_keys(input.value)
 
             submit = self.driver.find_element_by_xpath(form.submit['selector'])
@@ -26,5 +27,5 @@ class FormHelpers:
                 print('Error %s: %s' % (value.filename, value.strerror))
                 Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
-            Logger().set_error_log('submit_form() -> ' + str(e))
+            Logger().set_error_log('submit_form() -> ' + str(e), True)
 
