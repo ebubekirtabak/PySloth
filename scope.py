@@ -100,6 +100,10 @@ class Scope:
             chromedriver = driver['driver_path']
             os.environ["webdriver.chrome.driver"] = chromedriver
             driver = webdriver.Chrome(chromedriver, chrome_options=chrome_options)
+            if hasattr(self.scope, 'before_actions'):
+                selenium_html_helper = SeleniumHtmlHelpers(self)
+                selenium_html_helper.parse_html_with_js(driver, self.scope.before_actions)
+
             driver.get(url)
             event_maker = EventMaker(driver)
 

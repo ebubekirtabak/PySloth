@@ -89,6 +89,20 @@
                 "page_count": 0,
                 "download_counter": 0
             },
+            "before_actions": [
+              {
+                "type": "navigate_to",
+                "to": "https://www.linkedin.com"
+              },
+              {
+                  "type": "load_cookie_from_database",
+                  "name": "linkedin_cookie"
+              },
+              {
+                "type": "navigate_to",
+                "to": "https://www.linkedin.com/feed/"
+              }
+            ],
             "script_actions": [
                 {
                     "type": "",
