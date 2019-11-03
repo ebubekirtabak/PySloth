@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from event_maker import EventMaker
+from helpers.form_helpers import FormHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
 
@@ -39,6 +40,9 @@ class SeleniumHtmlHelpers:
             event_maker.push_event(doc, script_actions)
         elif type == "function":
             event_maker.push_event(doc, script_actions)
+        elif type == "form":
+            self.form_helpers = FormHelpers(doc)
+            self.form_helpers.submit_form(script_actions)
         elif type == '$_GET_VARIABLE':
             if 'value' in script_actions:
                 VariableHelpers().set_variable(
