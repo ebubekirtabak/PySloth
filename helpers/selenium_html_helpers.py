@@ -42,8 +42,8 @@ class SeleniumHtmlHelpers:
         elif type == "function":
             event_maker.push_event(doc, script_actions)
         elif type == "form":
-            self.form_helpers = FormHelpers(doc)
-            self.form_helpers.submit_form(script_actions)
+            form_helpers = FormHelpers(doc)
+            form_helpers.submit_form(script_actions)
         elif type == 'save_cookie':
             cookie_helpers = CookieHelpers(doc, self.scope)
             cookie_helpers.save_cookie(script_actions)
