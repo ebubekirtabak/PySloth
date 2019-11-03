@@ -42,7 +42,7 @@ class EventMaker:
                             "excute_script": self.set_excute_script,
                             "$_GET_VARIABLE": self.get_variable,
                             "$_SET_VARIABLE": self.set_variable,
-                            "nothing": lambda: self.nothing,
+                            "nothing": self.set_nothing,
                         }
 
                         func = switcher.get(action['type'], lambda: "nothing")
@@ -127,6 +127,9 @@ class EventMaker:
 
     def set_scroll(self):
         return ""
+
+    def set_nothing(self, element, action):
+        pass
 
     def set_style(self, element, action):
         scriptSetAttrValue = "arguments[0].setAttribute(arguments[1],arguments[2])"
