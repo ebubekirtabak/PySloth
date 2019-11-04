@@ -66,6 +66,10 @@ class SeleniumHtmlHelpers:
                 element.send_keys(value)
             else:
                 doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
+        elif type == 'parse_html_list':
+            self.parse_html_list(doc, script_actions)
+
+
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
@@ -120,4 +124,28 @@ class SeleniumHtmlHelpers:
                 return True
         else:
             return True
+
+    def parse_html_list(self, doc, action):
+        selected_elements = doc.find_elements_by_xpath(action['selector'])
+        parseList = []
+        index = 0
+        for element in selected_elements:
+            parseList.append({})
+            for object in action['object_list']:
+                child_element = element.find_elements_by_xpath(object['selector'])[0]
+                parseList[index][object['name']] = self.get_attribute_from_element(
+                    child_element, object['attribute_name']
+                )
+                print(object)
+            index = index + 1
+            print(parseList)
+
+    @staticmethod
+    def get_attribute_from_element(element, attribute):
+        try:
+            index = ['text', 'html'].index(attribute)
+            return element.text
+        except:
+            return element.get_attribute(attribute)
+
 
