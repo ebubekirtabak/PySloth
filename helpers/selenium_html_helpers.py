@@ -68,7 +68,9 @@ class SeleniumHtmlHelpers:
                 doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
         elif type == 'parse_html_list':
             self.parse_html_list(doc, script_actions)
-
+        elif type == 'switch_to_frame':
+            frame = doc.find_element_by_xpath(script_actions['selector'])
+            doc.switch_to.frame(frame)
 
 
     def event_loop(self, doc, action):
