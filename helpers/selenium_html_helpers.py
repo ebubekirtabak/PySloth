@@ -73,6 +73,8 @@ class SeleniumHtmlHelpers:
         elif type == 'switch_to_frame':
             frame = doc.find_element_by_xpath(script_actions['selector'])
             doc.switch_to.frame(frame)
+        elif type == 'switch_to_parent_frame':
+            doc.switch_to.default_content()
 
 
     def event_loop(self, doc, action):
