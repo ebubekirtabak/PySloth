@@ -6,6 +6,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from event_maker import EventMaker
 from helpers.cookie_helpers import CookieHelpers
+from helpers.element_helpers import ElementHelpers
 from helpers.form_helpers import FormHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
