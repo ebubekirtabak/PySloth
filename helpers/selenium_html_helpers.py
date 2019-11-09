@@ -8,6 +8,7 @@ from event_maker import EventMaker
 from helpers.cookie_helpers import CookieHelpers
 from helpers.element_helpers import ElementHelpers
 from helpers.form_helpers import FormHelpers
+from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
 
@@ -75,6 +76,12 @@ class SeleniumHtmlHelpers:
             doc.switch_to.frame(frame)
         elif type == 'switch_to_parent_frame':
             doc.switch_to.default_content()
+        elif type == 'run_recaptcha_helper':
+            image_url = VariableHelpers().get_variable('recaptcha_image')
+            keyword = VariableHelpers().get_variable('recaptcha_keyword')
+            size = VariableHelpers().get_variable('size')
+            RecaptchaHelpers().solveCaptcha(image_url, keyword, size)
+
 
 
     def event_loop(self, doc, action):
