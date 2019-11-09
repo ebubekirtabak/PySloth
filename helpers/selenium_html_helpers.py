@@ -57,7 +57,8 @@ class SeleniumHtmlHelpers:
                     script_actions['value'])
             else:
                 element = doc.find_element_by_xpath(script_actions['selector'])
-                VariableHelpers().set_variable(script_actions['variable_name'], element.get_attribute(script_actions['attribute_name']))
+                value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
+                VariableHelpers().set_variable(script_actions['variable_name'], value)
         elif type == '$_SET_VARIABLE':
             element = doc.find_element_by_xpath(script_actions['selector'])
             target = script_actions['target_attr']
