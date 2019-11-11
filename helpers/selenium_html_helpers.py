@@ -81,6 +81,7 @@ class SeleniumHtmlHelpers:
             keyword = VariableHelpers().get_variable('recaptcha_keyword')
             size = VariableHelpers().get_variable('size')
             RecaptchaHelpers().solveCaptcha(image_url, keyword, size)
+            image_size = VariableHelpers().get_variable('image_size')
 
 
 
