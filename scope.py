@@ -244,7 +244,7 @@ class Scope:
                                             args["headers"], args["thread_name"]),
                                      name=args["thread_name"])
         elif thread_model.type == "call_page":
-            Logger().set_log("Added calpage thread: " + args["url"])
+            Logger().set_log("Added calpage thread: " + args["url"], True)
             thread = kthread.KThread(target=self.call_page,
                                      args=(args["url"], args["search_item"]),
                                      name=args["thread_name"])
@@ -254,7 +254,7 @@ class Scope:
             if hasattr(thread_model, 'thread_referance'):
                 thread_model.thread_referance = thread
 
-            Logger().set_log("Start Thread : " + args["thread_name"])
+            Logger().set_log("Start Thread : " + args["thread_name"], True)
             return thread
         except Exception as e:
             print("start_thread_error: " + str(e))
@@ -298,7 +298,7 @@ class Scope:
                 elements = html_content.xpath(class_name)
                 if len(elements) == 0:
                     Logger().set_error_log("The \"" + class_name + "\" class was not found at \""
-                                            + url + "\".")
+                                            + url + "\".", True)
 
                 for element in elements:  # get element list
                     if need_attr['if'] in element.attrib:
@@ -307,7 +307,7 @@ class Scope:
                         attrib = element.attrib[need_attr['else']]
 
                     try:
-                        Logger().set_log("Added Download List: " + url)
+                        Logger().set_log("Added Download List: " + url, True)
                         print("Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : " + str(self.scope.reporting["page_count"]) + " : " + folder_name)
                         if 'headers' in item:
                             headers = item['headers']
