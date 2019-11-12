@@ -2,7 +2,7 @@ from collections import namedtuple
 
 import scope
 import time
-import logger
+from logger import Logger
 import json
 import os
 import datetime, threading
@@ -18,6 +18,7 @@ class ThreadController:
         self.main_scope = main_scope
         self.settings = settings
         self.session_time = str(time.time())
+        self.logger = Logger()
         self.multi_process = self.settings["multi_process"]
         self.multi_process = namedtuple("MultiProcessModel", self.multi_process.keys())(*self.multi_process.values())
         self.controller = self.controller_switcher(self.multi_process.base)
@@ -27,7 +28,7 @@ class ThreadController:
         threading.Timer(30, self.auto_thread_controller).start()
 
     def auto_thread_controller(self):
-        print("run auto_thread_controller: " + str(datetime.datetime.now()))
+        self.logger.set_log("run auto_thread_controller: " + str(datetime.datetime.now()), True)
         self.controller_interval()
         self.controller.auto_thread_stopper()
         self.controller.thread_controller()
