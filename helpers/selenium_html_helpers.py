@@ -80,8 +80,25 @@ class SeleniumHtmlHelpers:
             image_url = VariableHelpers().get_variable('recaptcha_image')
             keyword = VariableHelpers().get_variable('recaptcha_keyword')
             size = VariableHelpers().get_variable('size')
-            RecaptchaHelpers().solveCaptcha(image_url, keyword, size)
             image_size = VariableHelpers().get_variable('image_size')
+            image_results = RecaptchaHelpers().solve_captcha(image_url, keyword, size, self.scope.settings.clarifia_api_key,
+                                             image_size)
+            table_rows = doc.find_elements_by_xpath("//div[@class='rc-imageselect-target']/table/tbody/tr")
+            for result in image_results:
+                if result['is_exists']:
+                    print('W: ' + str(result['w']) + ' h: ' + str(result['h']))
+                    row = table_rows[result['h']]
+                    columns = row.find_elements_by_xpath("./td[@role='button']")
+                    column = columns[result['w']]
+                    column.click()
+
+            time.sleep(2)
+            verify_button = doc.find_element_by_xpath("//*[@id='recaptcha-verify-button']")
+            verify_button.click()
+
+
+
+
 
 
 
