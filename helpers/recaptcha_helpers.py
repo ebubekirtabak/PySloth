@@ -67,8 +67,6 @@ class RecaptchaHelpers:
         size = self.get_calculate_size(image.size, image_size, size)
         w_level = int(image.size[0] / size['width'])
         h_level = int(image.size[0] / size['height'])
-        index = 0
-        h = 0
         for h in range(h_level):
             for i in range(w_level):
                 left = (i * size['width'])
