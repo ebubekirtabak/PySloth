@@ -85,7 +85,7 @@ class RecaptchaHelpers:
                     image_result.append({'w': i, 'h': h, 'is_exists': is_exists})
                 else:
                     image_result.append({'w': i, 'h': h, 'is_exists': False})
-        print(image_result)
+
         return image_result
 
     def get_objects_from_image(self, image, api_key):
@@ -99,7 +99,8 @@ class RecaptchaHelpers:
         else:
             return {'code': 400}
 
-    def parse_response_data(self, outputs):
+    @staticmethod
+    def parse_response_data(outputs):
         output = outputs[0]
         data = output['data']
         concepts = data['concepts']
@@ -110,7 +111,7 @@ class RecaptchaHelpers:
         image_height = image[1]
         if image_width > image_size['width']:
             diff = image_width - image_size['width']
-            width_rate =int((diff / image_size['width']) * 100)
+            width_rate = int((diff / image_size['width']) * 100)
             size['width'] = int(size['width'] + ((size['width'] / 100) * width_rate))
         else:
             diff = image_size['width'] - image_width
