@@ -96,12 +96,6 @@ class SeleniumHtmlHelpers:
             verify_button = doc.find_element_by_xpath("//*[@id='recaptcha-verify-button']")
             verify_button.click()
 
-
-
-
-
-
-
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
         elements = doc.find_elements_by_xpath(action['selector'])
@@ -158,18 +152,18 @@ class SeleniumHtmlHelpers:
 
     def parse_html_list(self, doc, action):
         selected_elements = doc.find_elements_by_xpath(action['selector'])
-        parseList = []
+        parse_list = []
         index = 0
         for element in selected_elements:
-            parseList.append({})
+            parse_list.append({})
             for object in action['object_list']:
                 child_element = element.find_elements_by_xpath(object['selector'])[0]
-                parseList[index][object['name']] = self.get_attribute_from_element(
+                parse_list[index][object['name']] = self.get_attribute_from_element(
                     child_element, object['attribute_name']
                 )
                 print(object)
             index = index + 1
-            print(parseList)
+            return parse_list
 
     @staticmethod
     def get_attribute_from_element(element, attribute):
