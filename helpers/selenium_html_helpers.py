@@ -161,7 +161,6 @@ class SeleniumHtmlHelpers:
                 parse_list[index][object['name']] = self.get_attribute_from_element(
                     child_element, object['attribute_name']
                 )
-                print(object)
             index = index + 1
             return parse_list
 

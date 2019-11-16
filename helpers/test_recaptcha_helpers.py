@@ -10,7 +10,7 @@ class TestRecaptchaHelpers(unittest.TestCase):
         size = {'height': 100, 'width': 100}
         keyword = 'bike'
         url = './payload.jpeg'
-        api_key = 'c1ffa0593f5341b9ab954fb2935e2f5b'
+        api_key = ''
         RecaptchaHelpers().solve_captcha(url, keyword, size, api_key)
 
     def test_get_calculate_size(self):
