@@ -156,10 +156,10 @@ class SeleniumHtmlHelpers:
         index = 0
         for element in selected_elements:
             parse_list.append({})
-            for object in action['object_list']:
-                child_element = element.find_elements_by_xpath(object['selector'])[0]
-                parse_list[index][object['name']] = self.get_attribute_from_element(
-                    child_element, object['attribute_name']
+            for action_object in action['object_list']:
+                child_element = element.find_elements_by_xpath(action_object ['selector'])[0]
+                parse_list[index][action_object ['name']] = self.get_attribute_from_element(
+                    child_element, action_object['attribute_name']
                 )
             index = index + 1
             return parse_list
