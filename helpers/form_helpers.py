@@ -1,4 +1,5 @@
 import sys
+import time
 from collections import namedtuple
 
 from selenium.common.exceptions import NoSuchElementException
@@ -17,7 +18,10 @@ class FormHelpers:
                 input = namedtuple("InputModel", input.keys())(*input.values())
                 input_element = self.driver.find_element_by_xpath(input.selector)
                 input_element.click()
-                input_element.send_keys(input.value)
+                for key in input.value:
+                    input_element.send_keys(key)
+                    time.sleep(0.1)
+
 
             submit = self.driver.find_element_by_xpath(form.submit['selector'])
             submit.click()
