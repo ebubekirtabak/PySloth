@@ -147,3 +147,8 @@ class RecaptchaHelpers:
 
         return False
 
+    ''' Solve With Speech to Text'''
+    @staticmethod
+    def solve_with_speech_to_text(file_name):
+        return SpeechToTextHelpers().convert_to_text(file_name)
+
