@@ -8,10 +8,15 @@ import requests
 from io import BytesIO
 
 from helpers.image_helpers import ImageHelpers
+from helpers.speech_to_text_helpers import SpeechToTextHelpers
 
 
 class RecaptchaHelpers:
     object_maps = {
+        'bridges': [
+            'bridges',
+            'bridge'
+        ],
         'bicycles': [
             'bicycles',
             'bike',
@@ -52,6 +57,7 @@ class RecaptchaHelpers:
             'crossing'
         ]
     }
+
     def __init__(self):
         pass
 
@@ -106,7 +112,8 @@ class RecaptchaHelpers:
         concepts = data['concepts']
         return concepts
 
-    def get_calculate_size(self, image, image_size, size):
+    @staticmethod
+    def get_calculate_size(image, image_size, size):
         image_width = image[0]
         image_height = image[1]
         if image_width > image_size['width']:
