@@ -4,6 +4,8 @@ import sys
 
 import globals
 from collections import namedtuple
+
+from helpers.variable_helpers import VariableHelpers
 from logger import Logger
 
 
@@ -33,6 +35,7 @@ class HttpServices:
             headers = kwargs[2]
             path = kwargs[1]
             thread_name = kwargs[3]
+            file_referance = kwargs[4]
 
             filename = url.split('/')[-1]
 
@@ -46,21 +49,25 @@ class HttpServices:
             startTime = time.time()
             request = urllib.request.Request(url, headers=headers)
             contents = urllib.request.urlopen(request)
-            endTime = time.time()
             self.logger.set_log("Download directory: " + globals.script_dir + path)
             if not os.path.exists(globals.script_dir + path):
                 os.makedirs(globals.script_dir + path)
 
             abs_file_path = self.get_possible_path(globals.script_dir + path, filename)
 
-            with open(abs_file_path , 'wb') as f:
+            with open(abs_file_path, 'wb') as f:
                 while True:
                     tmp = contents.read(1024)
                     if not tmp:
                         break
                     f.write(tmp)
 
+            endTime = time.time()
             totalTimeTaken = str(float(round((endTime - startTime), 3)))
+            if file_referance:
+                file_referance_object = {"path": abs_file_path, "file_name": filename}
+                VariableHelpers().set_variable(file_referance, file_referance_object)
+
             print("Time Taken: " + totalTimeTaken)
             print("thread_name: " + thread_name)
             self.thread_controller.remove_thread(thread_name)
@@ -83,7 +90,8 @@ class HttpServices:
             self.logger.set_error_log('Restart thread : ' + thread_name)
             self.thread_controller.restart_thread(thread_name)
 
-    def get_possible_path(self, path, file_name):
+    @staticmethod
+    def get_possible_path(path, file_name):
         file_path = os.path.join(path, file_name)
         if FileModule().if_exists_file(file_path) is not True:
             return file_path
