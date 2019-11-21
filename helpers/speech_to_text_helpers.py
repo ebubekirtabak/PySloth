@@ -30,4 +30,4 @@ class SpeechToTextHelpers:
         for result in response.results:
             print('Transcript: {}'.format(result.alternatives[0].transcript))
 
-        return response
+        return result.alternatives[0].transcript

@@ -95,6 +95,12 @@ class SeleniumHtmlHelpers:
             time.sleep(2)
             verify_button = doc.find_element_by_xpath("//*[@id='recaptcha-verify-button']")
             verify_button.click()
+        elif type == 'solve_rechaptcha_with_stt':
+            audio_file = VariableHelpers().get_variable('audio_file')
+            captcha_text = RecaptchaHelpers().solve_with_speech_to_text(audio_file['path'])
+            element = doc.find_element_by_xpath("//*[@id='audio-response']")
+            element.send_keys(captcha_text)
+            print(type)
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
@@ -126,7 +132,8 @@ class SeleniumHtmlHelpers:
                 "url": url,
                 "folder_name": download['download_folder'],
                 "headers": download['headers'],
-                "thread_name": thread_model.name
+                "thread_name": thread_model.name,
+                "file_referance": download['file_referance'],
             }
             thread_model.status = "wait"
             thread_model.type = "download_thread"
