@@ -66,7 +66,9 @@ class SeleniumHtmlHelpers:
             target = script_actions['target_attr']
             value = VariableHelpers().get_variable(script_actions['variable_name'])
             if target == 'send_keys':
-                element.send_keys(value)
+                for key in value:
+                    element.send_keys(key)
+                    time.sleep(0.2)
             else:
                 doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
         elif type == 'parse_html_list':
@@ -120,11 +122,6 @@ class SeleniumHtmlHelpers:
 
         for element in elements:
             download = action['download']
-            '''if 'is_wait_for_load_element' in action and action['is_wait_for_load_element'] is True:
-                WebDriverWait(self.doc, 30).until(
-                    expected_conditions.invisibility_of_element_located(element)
-                )'''
-
             url = element.get_attribute(download['download_attribute'])
             thread_model = ThreadModel("thread_" + str(time.time()))
             thread_model.target = 'http_service.download_image'
