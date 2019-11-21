@@ -241,7 +241,7 @@ class Scope:
         elif thread_model.type == "download_thread":
             thread = kthread.KThread(target=self.http_services.download_file,
                                      args=(args["url"], args["folder_name"],
-                                            args["headers"], args["thread_name"]),
+                                           args["headers"], args["thread_name"], args["file_referance"]),
                                      name=args["thread_name"])
         elif thread_model.type == "call_page":
             Logger().set_log("Added calpage thread: " + args["url"], True)
