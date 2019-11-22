@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from event_maker import EventMaker
+from helpers.auto_page_helpers import AutoPageHelpers
 from helpers.cookie_helpers import CookieHelpers
 from helpers.element_helpers import ElementHelpers
 from helpers.form_helpers import FormHelpers
@@ -19,6 +20,7 @@ class SeleniumHtmlHelpers:
         self.keep_elements = {}
 
     def parse_html_with_js(self, doc, script_actions):
+        AutoPageHelpers(doc).check_page_elements()
         for action in script_actions:
             if action['type'] != "**":
                 self.action_router(doc, action)
@@ -79,30 +81,12 @@ class SeleniumHtmlHelpers:
         elif type == 'switch_to_parent_frame':
             doc.switch_to.default_content()
         elif type == 'run_recaptcha_helper':
-            image_url = VariableHelpers().get_variable('recaptcha_image')
-            keyword = VariableHelpers().get_variable('recaptcha_keyword')
-            size = VariableHelpers().get_variable('size')
-            image_size = VariableHelpers().get_variable('image_size')
-            image_results = RecaptchaHelpers().solve_captcha(image_url, keyword, size, self.scope.settings.clarifia_api_key,
-                                             image_size)
-            table_rows = doc.find_elements_by_xpath("//div[@class='rc-imageselect-target']/table/tbody/tr")
-            for result in image_results:
-                if result['is_exists']:
-                    print('W: ' + str(result['w']) + ' h: ' + str(result['h']))
-                    row = table_rows[result['h']]
-                    columns = row.find_elements_by_xpath("./td[@role='button']")
-                    column = columns[result['w']]
-                    column.click()
-
-            time.sleep(2)
-            verify_button = doc.find_element_by_xpath("//*[@id='recaptcha-verify-button']")
-            verify_button.click()
+            self.run_recaptcha_helper(doc)
         elif type == 'solve_rechaptcha_with_stt':
             audio_file = VariableHelpers().get_variable('audio_file')
             captcha_text = RecaptchaHelpers().solve_with_speech_to_text(audio_file['path'])
             element = doc.find_element_by_xpath("//*[@id='audio-response']")
             element.send_keys(captcha_text)
-            print(type)
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
@@ -176,4 +160,23 @@ class SeleniumHtmlHelpers:
         except:
             return element.get_attribute(attribute)
 
+    def run_recaptcha_helper(self, doc):
+        image_url = VariableHelpers().get_variable('recaptcha_image')
+        keyword = VariableHelpers().get_variable('recaptcha_keyword')
+        size = VariableHelpers().get_variable('size')
+        image_size = VariableHelpers().get_variable('image_size')
+        image_results = RecaptchaHelpers().solve_captcha(image_url, keyword, size, self.scope.settings.clarifia_api_key,
+                                                         image_size)
+        table_rows = doc.find_elements_by_xpath("//div[@class='rc-imageselect-target']/table/tbody/tr")
+        for result in image_results:
+            if result['is_exists']:
+                print('W: ' + str(result['w']) + ' h: ' + str(result['h']))
+                row = table_rows[result['h']]
+                columns = row.find_elements_by_xpath("./td[@role='button']")
+                column = columns[result['w']]
+                column.click()
+
+        time.sleep(2)
+        verify_button = doc.find_element_by_xpath("//*[@id='recaptcha-verify-button']")
+        verify_button.click()
 
