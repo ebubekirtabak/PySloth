@@ -13,7 +13,6 @@ from urllib.request import urlopen
 import urllib.request
 
 from models.setting_model import SettingModel
-from modules import file_module
 from modules.file_module import FileModule
 
 
@@ -27,7 +26,8 @@ class HttpServices:
         if isinstance(self.settings, SettingModel):
             self.settings = namedtuple("SettingModel", self.settings.keys())(*self.settings.values())
 
-        self.file_settings = self.settings["file_settings"]
+        if self.settings is not None:
+            self.file_settings = self.settings["file_settings"]
 
     def download_file(self, *kwargs):
         try:
@@ -37,23 +37,23 @@ class HttpServices:
             thread_name = kwargs[3]
             file_referance = kwargs[4]
 
-            filename = url.split('/')[-1]
+            file_name = url.split('/')[-1]
 
-            if '?' in filename:
-                filename = filename.split('?')[0]
+            if '?' in file_name:
+                file_name = file_name.split('?')[0]
 
             if "max_file_length" in self.file_settings:
-                filename = FileModule().get_short_file_name(filename, self.file_settings["max_file_length"])
+                file_name = FileModule().get_short_file_name(file_name, self.file_settings["max_file_length"])
 
-            print("Downloaded: " + url + ' Filename: ' + filename)
-            startTime = time.time()
+            self.logger.set_log("Downloaded Started: " + url + ' Filename: ' + file_name, True)
+            start_time = time.time()
             request = urllib.request.Request(url, headers=headers)
             contents = urllib.request.urlopen(request)
-            self.logger.set_log("Download directory: " + globals.script_dir + path)
+            self.logger.set_log("Download directory: " + globals.script_dir + path, True)
             if not os.path.exists(globals.script_dir + path):
                 os.makedirs(globals.script_dir + path)
 
-            abs_file_path = self.get_possible_path(globals.script_dir + path, filename)
+            abs_file_path = self.get_possible_path(globals.script_dir + path, file_name)
 
             with open(abs_file_path, 'wb') as f:
                 while True:
@@ -62,15 +62,19 @@ class HttpServices:
                         break
                     f.write(tmp)
 
-            endTime = time.time()
-            totalTimeTaken = str(float(round((endTime - startTime), 3)))
+            end_time = time.time()
+            total_time_taken = str(float(round((end_time - start_time), 3)))
+            file_referance_object = {
+                "path": abs_file_path, "file_name": file_name, "url": url, "total_time": total_time_taken
+            }
             if file_referance:
-                file_referance_object = {"path": abs_file_path, "file_name": filename}
                 VariableHelpers().set_variable(file_referance, file_referance_object)
 
-            print("Time Taken: " + totalTimeTaken)
-            print("thread_name: " + thread_name)
-            self.thread_controller.remove_thread(thread_name)
+            if self.thread_controller is not None:
+                self.logger.set_log("Download complete: " + thread_name + " url: " + url, True)
+                self.thread_controller.remove_thread(thread_name)
+            else:
+                return file_referance_object
 
         except ConnectionResetError as e:
             self.logger.set_error_log('Error: ' + str(e))
