@@ -35,14 +35,14 @@ class AutoPageHelpers:
         time.sleep(2)
         download_button = self.doc.find_element_by_xpath("//a[@class='rc-audiochallenge-tdownload-link']")
         download_args = []
-        download_args[0] = download_button.get_attribute("href")
-        download_args[1] = {
+        download_args.append(download_button.get_attribute("href"))
+        download_args.append({
             "headers": {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML," +
                               "like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64"
             }
-        }
-        download_args[2] = "/downloads/audios"
+        })
+        download_args.append("/downloads/audios")
         http_service = HttpServices(None, None)
         audio_file = http_service.download_file(download_args)
 
