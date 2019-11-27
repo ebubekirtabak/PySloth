@@ -64,6 +64,7 @@ class MongoDatabaseHelpers:
                 selected_collection = self.db[collection]
                 selected_collection.update(
                     query, {"$set": data})
+                logger.Logger().set_log("update collection data")
             except Exception as e:
                 logger.Logger().set_error_log("MongoDB Helpers: update Error: " + str(e), True)
                 return 400
