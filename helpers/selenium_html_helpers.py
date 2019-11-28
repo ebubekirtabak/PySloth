@@ -55,14 +55,7 @@ class SeleniumHtmlHelpers:
             cookie_helpers = CookieHelpers(doc, self.scope)
             cookie_helpers.load_cookie_from_database()
         elif type == '$_GET_VARIABLE':
-            if 'value' in script_actions:
-                VariableHelpers().set_variable(
-                    script_actions['variable_name'],
-                    script_actions['value'])
-            else:
-                element = doc.find_element_by_xpath(script_actions['selector'])
-                value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
-                VariableHelpers().set_variable(script_actions['variable_name'], value)
+            self.get_variable(doc, script_actions)
         elif type == '$_SET_VARIABLE':
             element = doc.find_element_by_xpath(script_actions['selector'])
             target = script_actions['target_attr']
@@ -151,6 +144,21 @@ class SeleniumHtmlHelpers:
                 )
             index = index + 1
             return parse_list
+
+    @staticmethod
+    def get_variable(doc, script_actions):
+        if 'value' in script_actions:
+            VariableHelpers().set_variable(
+                script_actions['variable_name'],
+                script_actions['value'])
+        elif script_actions['selector'].startswith('@'):
+            #function
+            value = VariableHelpers().get_value_with_function(script_actions['selector'])
+            VariableHelpers().set_variable(script_actions['variable_name'], value)
+        else:
+            element = doc.find_element_by_xpath(script_actions['selector'])
+            value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
+            VariableHelpers().set_variable(script_actions['variable_name'], value)
 
     @staticmethod
     def get_attribute_from_element(element, attribute):
