@@ -6,6 +6,9 @@ import sys
 from collections import namedtuple
 
 import kthread
+from selenium.webdriver import Proxy
+from selenium.webdriver.common.proxy import ProxyType
+
 import mongo
 
 from selenium import webdriver

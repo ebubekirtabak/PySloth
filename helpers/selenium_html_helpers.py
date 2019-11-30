@@ -1,9 +1,11 @@
 import time
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
+import logger
 from event_maker import EventMaker
 from helpers.auto_page_helpers import AutoPageHelpers
 from helpers.cookie_helpers import CookieHelpers
@@ -147,18 +149,24 @@ class SeleniumHtmlHelpers:
 
     @staticmethod
     def get_variable(doc, script_actions):
-        if 'value' in script_actions:
-            VariableHelpers().set_variable(
-                script_actions['variable_name'],
-                script_actions['value'])
-        elif script_actions['selector'].startswith('@'):
-            #function
-            value = VariableHelpers().get_value_with_function(script_actions['selector'])
-            VariableHelpers().set_variable(script_actions['variable_name'], value)
-        else:
-            element = doc.find_element_by_xpath(script_actions['selector'])
-            value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
-            VariableHelpers().set_variable(script_actions['variable_name'], value)
+        try:
+            if 'value' in script_actions:
+                VariableHelpers().set_variable(
+                    script_actions['variable_name'],
+                    script_actions['value'])
+            elif script_actions['selector'].startswith('@'):
+                #function
+                value = VariableHelpers().get_value_with_function(script_actions['selector'])
+                VariableHelpers().set_variable(script_actions['variable_name'], value)
+            else:
+                element = doc.find_element_by_xpath(script_actions['selector'])
+                value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
+                VariableHelpers().set_variable(script_actions['variable_name'], value)
+        except Exception as e:
+                logger.Logger().set_error_log("GetVariable: Error: " + str(e))
+        except NoSuchElementException as e:
+                logger.Logger().set_error_log("NoSuchElementException: " + str(e))
+
 
     @staticmethod
     def get_attribute_from_element(element, attribute):
