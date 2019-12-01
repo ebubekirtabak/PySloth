@@ -11,7 +11,7 @@ class Logger:
 
     def set_log(self, data, is_print_to_console=False):
         if is_print_to_console:
-            print("Error:" + data)
+            print(data)
 
         abs_file_path = os.path.join(script_dir, 'log.txt')
         with open(abs_file_path, 'a') as the_file:

@@ -1,12 +1,17 @@
 import time
 
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
+import logger
 from event_maker import EventMaker
+from helpers.auto_page_helpers import AutoPageHelpers
 from helpers.cookie_helpers import CookieHelpers
+from helpers.element_helpers import ElementHelpers
 from helpers.form_helpers import FormHelpers
+from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
 
@@ -17,6 +22,7 @@ class SeleniumHtmlHelpers:
         self.keep_elements = {}
 
     def parse_html_with_js(self, doc, script_actions):
+        AutoPageHelpers(doc).check_page_elements()
         for action in script_actions:
             if action['type'] != "**":
                 self.action_router(doc, action)
@@ -51,19 +57,15 @@ class SeleniumHtmlHelpers:
             cookie_helpers = CookieHelpers(doc, self.scope)
             cookie_helpers.load_cookie_from_database()
         elif type == '$_GET_VARIABLE':
-            if 'value' in script_actions:
-                VariableHelpers().set_variable(
-                    script_actions['variable_name'],
-                    script_actions['value'])
-            else:
-                element = doc.find_element_by_xpath(script_actions['selector'])
-                VariableHelpers().set_variable(script_actions['variable_name'], element.get_attribute(script_actions['attribute_name']))
+            self.get_variable(doc, script_actions)
         elif type == '$_SET_VARIABLE':
             element = doc.find_element_by_xpath(script_actions['selector'])
             target = script_actions['target_attr']
             value = VariableHelpers().get_variable(script_actions['variable_name'])
             if target == 'send_keys':
-                element.send_keys(value)
+                for key in value:
+                    element.send_keys(key)
+                    time.sleep(0.2)
             else:
                 doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
         elif type == 'parse_html_list':
@@ -71,7 +73,15 @@ class SeleniumHtmlHelpers:
         elif type == 'switch_to_frame':
             frame = doc.find_element_by_xpath(script_actions['selector'])
             doc.switch_to.frame(frame)
-
+        elif type == 'switch_to_parent_frame':
+            doc.switch_to.default_content()
+        elif type == 'run_recaptcha_helper':
+            self.run_recaptcha_helper(doc)
+        elif type == 'solve_rechaptcha_with_stt':
+            audio_file = VariableHelpers().get_variable('audio_file')
+            captcha_text = RecaptchaHelpers().solve_with_speech_to_text(audio_file['path'])
+            element = doc.find_element_by_xpath("//*[@id='audio-response']")
+            element.send_keys(captcha_text)
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
@@ -91,11 +101,6 @@ class SeleniumHtmlHelpers:
 
         for element in elements:
             download = action['download']
-            '''if 'is_wait_for_load_element' in action and action['is_wait_for_load_element'] is True:
-                WebDriverWait(self.doc, 30).until(
-                    expected_conditions.invisibility_of_element_located(element)
-                )'''
-
             url = element.get_attribute(download['download_attribute'])
             thread_model = ThreadModel("thread_" + str(time.time()))
             thread_model.target = 'http_service.download_image'
@@ -103,7 +108,8 @@ class SeleniumHtmlHelpers:
                 "url": url,
                 "folder_name": download['download_folder'],
                 "headers": download['headers'],
-                "thread_name": thread_model.name
+                "thread_name": thread_model.name,
+                "file_referance": download['file_referance'],
             }
             thread_model.status = "wait"
             thread_model.type = "download_thread"
@@ -129,18 +135,38 @@ class SeleniumHtmlHelpers:
 
     def parse_html_list(self, doc, action):
         selected_elements = doc.find_elements_by_xpath(action['selector'])
-        parseList = []
+        parse_list = []
         index = 0
         for element in selected_elements:
-            parseList.append({})
-            for object in action['object_list']:
-                child_element = element.find_elements_by_xpath(object['selector'])[0]
-                parseList[index][object['name']] = self.get_attribute_from_element(
-                    child_element, object['attribute_name']
+            parse_list.append({})
+            for action_object in action['object_list']:
+                child_element = element.find_elements_by_xpath(action_object ['selector'])[0]
+                parse_list[index][action_object ['name']] = self.get_attribute_from_element(
+                    child_element, action_object['attribute_name']
                 )
-                print(object)
             index = index + 1
-            print(parseList)
+            return parse_list
+
+    @staticmethod
+    def get_variable(doc, script_actions):
+        try:
+            if 'value' in script_actions:
+                VariableHelpers().set_variable(
+                    script_actions['variable_name'],
+                    script_actions['value'])
+            elif script_actions['selector'].startswith('@'):
+                #function
+                value = VariableHelpers().get_value_with_function(script_actions['selector'])
+                VariableHelpers().set_variable(script_actions['variable_name'], value)
+            else:
+                element = doc.find_element_by_xpath(script_actions['selector'])
+                value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
+                VariableHelpers().set_variable(script_actions['variable_name'], value)
+        except Exception as e:
+                logger.Logger().set_error_log("GetVariable: Error: " + str(e))
+        except NoSuchElementException as e:
+                logger.Logger().set_error_log("NoSuchElementException: " + str(e))
+
 
     @staticmethod
     def get_attribute_from_element(element, attribute):
@@ -150,4 +176,23 @@ class SeleniumHtmlHelpers:
         except:
             return element.get_attribute(attribute)
 
+    def run_recaptcha_helper(self, doc):
+        image_url = VariableHelpers().get_variable('recaptcha_image')
+        keyword = VariableHelpers().get_variable('recaptcha_keyword')
+        size = VariableHelpers().get_variable('size')
+        image_size = VariableHelpers().get_variable('image_size')
+        image_results = RecaptchaHelpers().solve_captcha(image_url, keyword, size, self.scope.settings.clarifia_api_key,
+                                                         image_size)
+        table_rows = doc.find_elements_by_xpath("//div[@class='rc-imageselect-target']/table/tbody/tr")
+        for result in image_results:
+            if result['is_exists']:
+                print('W: ' + str(result['w']) + ' h: ' + str(result['h']))
+                row = table_rows[result['h']]
+                columns = row.find_elements_by_xpath("./td[@role='button']")
+                column = columns[result['w']]
+                column.click()
+
+        time.sleep(2)
+        verify_button = doc.find_element_by_xpath("//*[@id='recaptcha-verify-button']")
+        verify_button.click()
 

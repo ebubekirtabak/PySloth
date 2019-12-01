@@ -1,3 +1,6 @@
+import random
+from datetime import datetime
+
 
 class VariableHelpers:
 
@@ -29,3 +32,13 @@ class VariableHelpers:
     @staticmethod
     def delete_variable(variable_name):
         del scope_variables[variable_name]
+
+    @staticmethod
+    def get_value_with_function(selector):
+        if selector == "@generate_uniq_number":
+            return VariableHelpers.generate_uniq_number()
+
+    @staticmethod
+    def generate_uniq_number():
+        random.seed(datetime.now())
+        return random.random()

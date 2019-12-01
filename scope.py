@@ -6,6 +6,9 @@ import sys
 from collections import namedtuple
 
 import kthread
+from selenium.webdriver import Proxy
+from selenium.webdriver.common.proxy import ProxyType
+
 import mongo
 
 from selenium import webdriver
@@ -103,7 +106,6 @@ class Scope:
             if hasattr(self.scope, 'before_actions'):
                 selenium_html_helper = SeleniumHtmlHelpers(self)
                 selenium_html_helper.parse_html_with_js(driver, self.scope.before_actions)
-
             driver.get(url)
             event_maker = EventMaker(driver)
 
@@ -142,7 +144,8 @@ class Scope:
                 else:
                     attrib = element.attrib['href']
 
-                if 'download_attrib' in search_item or hasattr(search_item, 'download_attrib') and search_item.download_attrib is True:
+                if 'download_attrib' in search_item or hasattr(search_item,
+                                                               'download_attrib') and search_item.download_attrib is True:
                     Logger().set_log("Added Download List: " + attrib)
                     print("Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : "
                           + str(self.scope.reporting["page_count"]) + " : " + search_item.download_folder)
@@ -241,10 +244,10 @@ class Scope:
         elif thread_model.type == "download_thread":
             thread = kthread.KThread(target=self.http_services.download_file,
                                      args=(args["url"], args["folder_name"],
-                                            args["headers"], args["thread_name"]),
+                                           args["headers"], args["thread_name"], args["file_referance"]),
                                      name=args["thread_name"])
         elif thread_model.type == "call_page":
-            Logger().set_log("Added calpage thread: " + args["url"])
+            Logger().set_log("Added calpage thread: " + args["url"], True)
             thread = kthread.KThread(target=self.call_page,
                                      args=(args["url"], args["search_item"]),
                                      name=args["thread_name"])
@@ -254,7 +257,7 @@ class Scope:
             if hasattr(thread_model, 'thread_referance'):
                 thread_model.thread_referance = thread
 
-            Logger().set_log("Start Thread : " + args["thread_name"])
+            Logger().set_log("Start Thread : " + args["thread_name"], True)
             return thread
         except Exception as e:
             print("start_thread_error: " + str(e))
@@ -290,7 +293,8 @@ class Scope:
                         dynamic_folder_sep = os.path.sep
 
                     if 'child_name_class' in item:
-                        folder_name = get_folder_name(html_content.xpath(item['child_name_class']), dynamic_folder_sep, folder_name)
+                        folder_name = get_folder_name(html_content.xpath(item['child_name_class']), dynamic_folder_sep,
+                                                      folder_name)
 
                     folder_name = folder_name.replace("${os.sep}", folder_sep)
 
@@ -298,7 +302,7 @@ class Scope:
                 elements = html_content.xpath(class_name)
                 if len(elements) == 0:
                     Logger().set_error_log("The \"" + class_name + "\" class was not found at \""
-                                            + url + "\".")
+                                           + url + "\".", True)
 
                 for element in elements:  # get element list
                     if need_attr['if'] in element.attrib:
@@ -307,8 +311,10 @@ class Scope:
                         attrib = element.attrib[need_attr['else']]
 
                     try:
-                        Logger().set_log("Added Download List: " + url)
-                        print("Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : " + str(self.scope.reporting["page_count"]) + " : " + folder_name)
+                        Logger().set_log("Added Download List: " + url, True)
+                        print(
+                            "Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : " + str(
+                                self.scope.reporting["page_count"]) + " : " + folder_name)
                         if 'headers' in item:
                             headers = item['headers']
                         else:

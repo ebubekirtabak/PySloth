@@ -1,0 +1,192 @@
+{
+    "settings": {
+        "search_time_sleep": 5,
+        "download_time_sleep": 5,
+        "thread_time_out": 300,
+        "thread_limit": 15,
+        "thread_controller": "mongo",
+        "session_id": "linkedin",
+        "role": "main",
+        "is_go_again_history": false,
+        "multi_process": {
+            "time_out": 300,
+            "limit": 10,
+            "base": "mongo"
+        },
+        "clarifia_api_key": "c1ffa0593f5341b9ab954fb2935e2f5b",
+        "driver": {
+            "driver_path": "/usr/local/bin/chromedriver-77",
+            "driver_arguments": []
+        },
+        "database": {
+            "type": "MongoDB",
+            "name": "BotDatabase",
+            "history_collection_name": "history_collection",
+            "log_collection_name": "log_collection",
+            "thread_collection_name": "thread_collection",
+            "collection_name": "main_collection",
+            "cookie_collection": "cookie_collection",
+            "uri": "mongodb://localhost:27017/",
+            "user_name": "admin"
+        },
+        "file_settings": {
+            "max_file_length": 150
+        }
+    },
+    "reporting": {
+        "download_counter": 0,
+        "page_count": 0
+    },
+    "page": {
+        "url": "https://patrickhlauke.github.io/recaptcha/",
+        "user_agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+        "accept_language": "'en-US,en;q=0.5'"
+    },
+    "scope_name": "linkedin",
+    "history": {
+        "to": "database",
+        "collection_name": "history_collection",
+        "control": {
+            "from": "database",
+            "progress": "skip"
+        }
+    },
+    "isPagination": true,
+    "isLogger": true,
+    "script_actions": [
+      {
+        "type": "save_cookie",
+        "name": "linkedin_cookie"
+      },
+        {
+            "type": "$_GET_VARIABLE",
+            "variable_name": "user_name",
+            "value": "jamison.breckon@iiron.us"
+        },
+       {
+            "type": "$_GET_VARIABLE",
+            "variable_name": "password",
+            "value": "Sparta21"
+        },
+      {
+          "type": "event",
+          "delay": 1,
+          "sleep": 1,
+          "actions": [
+            { "type": "nothing" }
+          ]
+      },
+      {
+        "type": "switch_to_frame",
+        "selector": "//div[@class='g-recaptcha']/div/div/iframe"
+      },
+      {
+        "type": "event",
+        "delay": 2,
+        "sleep": 0,
+        "actions": [
+          {
+            "type": "click"
+          }
+        ],
+        "selector": "//*[@id='recaptcha-anchor']"
+      },
+      {
+          "type": "event",
+          "delay": 1,
+          "sleep": 1,
+          "actions": [
+            { "type": "nothing" }
+          ]
+      },
+      {
+        "type": "switch_to_parent_frame"
+      },
+      {
+        "type": "switch_to_frame",
+        "selector": "//*[@title='recaptcha challenge']"
+      },
+      {
+        "type": "event",
+        "actions": [
+          {
+            "type": "click"
+          }
+        ],
+        "selector": "//button[@id='recaptcha-audio-button']"
+      },
+      {
+        "type": "switch_to_parent_frame"
+      },
+      {
+          "type": "event",
+          "delay": 1,
+          "sleep": 1,
+          "actions": [
+            { "type": "nothing" }
+          ]
+      },
+      {
+        "type": "switch_to_frame",
+        "selector": "//*[@title='recaptcha challenge']"
+      },
+      {
+        "type": "event*",
+        "selector": "//a[@class='rc-audiochallenge-tdownload-link']",
+        "events": [
+          {
+            "actions": [
+              {
+                "type": "download",
+                "selector": "//a[@class='rc-audiochallenge-tdownload-link']",
+                "download": {
+                    "download_attribute": "href",
+                    "download_folder": "/downloads/audios",
+                    "file_referance": "audio_file",
+                    "headers": {
+                      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36 OPR/54.0.2952.64"
+                    }
+                  }
+              }
+            ]
+          }
+        ]
+      },
+      {
+          "type": "event",
+          "delay": 1,
+          "sleep": 0,
+          "actions": [
+            { "type": "nothing" }
+          ]
+      },
+      {
+        "type": "solve_rechaptcha_with_stt"
+      },
+      {
+          "type": "event",
+          "delay": 1,
+          "sleep": 0,
+          "actions": [
+            { "type": "nothing" }
+          ]
+      },
+      {
+        "type": "event",
+        "actions": [
+          {
+            "type": "click"
+          }
+        ],
+        "selector": "//button[@id='recaptcha-verify-button']"
+      },
+      {
+          "type": "event",
+          "delay": 60,
+          "sleep": 60,
+          "actions": [
+            { "type": "nothing" }
+          ]
+      }
+    ]
+}

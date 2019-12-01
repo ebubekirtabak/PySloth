@@ -58,6 +58,17 @@ class MongoDatabaseHelpers:
                 logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e))
                 return 400
 
+    def update(self, collection, data, query):
+        if self.db != 400:
+            try:
+                selected_collection = self.db[collection]
+                selected_collection.update(
+                    query, {"$set": data})
+                logger.Logger().set_log("update collection data")
+            except Exception as e:
+                logger.Logger().set_error_log("MongoDB Helpers: update Error: " + str(e), True)
+                return 400
+
     def get_find(self, collection, query):
         return self.db[collection].find(query)
 
