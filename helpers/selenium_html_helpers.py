@@ -8,6 +8,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 import logger
 from event_maker import EventMaker
 from helpers.auto_page_helpers import AutoPageHelpers
+from helpers.condition_helpers import ConditionHelpers
 from helpers.cookie_helpers import CookieHelpers
 from helpers.element_helpers import ElementHelpers
 from helpers.form_helpers import FormHelpers
@@ -24,6 +25,9 @@ class SeleniumHtmlHelpers:
     def parse_html_with_js(self, doc, script_actions):
         AutoPageHelpers(doc).check_page_elements()
         for action in script_actions:
+            if action['type'] == "condition":
+                new_action = ConditionHelpers(doc, action).parse_condition()
+                self.action_router(doc, new_action)
             if action['type'] != "**":
                 self.action_router(doc, action)
             else:
@@ -163,9 +167,9 @@ class SeleniumHtmlHelpers:
                 value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
                 VariableHelpers().set_variable(script_actions['variable_name'], value)
         except Exception as e:
-                logger.Logger().set_error_log("GetVariable: Error: " + str(e))
+            logger.Logger().set_error_log("GetVariable: Error: " + str(e), True)
         except NoSuchElementException as e:
-                logger.Logger().set_error_log("NoSuchElementException: " + str(e))
+            logger.Logger().set_error_log("NoSuchElementException: " + str(e), True)
 
 
     @staticmethod
