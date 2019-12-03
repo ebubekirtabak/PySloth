@@ -144,12 +144,12 @@ class SeleniumHtmlHelpers:
         for element in selected_elements:
             parse_list.append({})
             for action_object in action['object_list']:
-                child_element = element.find_elements_by_xpath(action_object ['selector'])[0]
-                parse_list[index][action_object ['name']] = self.get_attribute_from_element(
-                    child_element, action_object['attribute_name']
-                )
+                print(action_object['selector'])
+                value = self.get_element_value(action_object, element)
+                parse_list[index][action_object['variable_name']] = value
             index = index + 1
-            return parse_list
+
+        return parse_list
 
     @staticmethod
     def get_variable(doc, script_actions):
