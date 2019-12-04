@@ -151,6 +151,22 @@ class SeleniumHtmlHelpers:
 
         return parse_list
 
+    def get_element_value(self, action_object, element):
+        try:
+            elements = element.find_elements_by_xpath(action_object['selector'])
+            values = []
+            for child_element in elements:
+                value = ElementHelpers().get_attribute_from_element(child_element, action_object['attribute_name'])
+                values.append(value)
+            return values
+
+        except Exception as e:
+            logger.Logger().set_error_log("GetVariable: Error: " + str(e), True)
+            return ''
+        except NoSuchElementException as e:
+            logger.Logger().set_error_log("NoSuchElementException: " + str(e), True)
+            return ''
+
     @staticmethod
     def get_variable(doc, script_actions):
         try:
