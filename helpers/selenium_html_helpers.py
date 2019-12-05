@@ -179,9 +179,12 @@ class SeleniumHtmlHelpers:
                 value = VariableHelpers().get_value_with_function(script_actions['selector'])
                 VariableHelpers().set_variable(script_actions['variable_name'], value)
             else:
-                element = doc.find_element_by_xpath(script_actions['selector'])
-                value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
-                VariableHelpers().set_variable(script_actions['variable_name'], value)
+                elements = doc.find_elements_by_xpath(script_actions['selector'])
+                index = 0
+                for element in elements:
+                    value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
+                    VariableHelpers().set_variable(script_actions['variable_name'] + '[' + str(index) + ']', value)
+                    index = index + 1
         except Exception as e:
             logger.Logger().set_error_log("GetVariable: Error: " + str(e), True)
         except NoSuchElementException as e:
