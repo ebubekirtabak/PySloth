@@ -190,7 +190,6 @@ class SeleniumHtmlHelpers:
         except NoSuchElementException as e:
             logger.Logger().set_error_log("NoSuchElementException: " + str(e), True)
 
-
     @staticmethod
     def get_attribute_from_element(element, attribute):
         try:
