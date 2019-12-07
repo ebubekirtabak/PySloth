@@ -73,7 +73,8 @@ class SeleniumHtmlHelpers:
             else:
                 doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
         elif type == 'parse_html_list':
-            self.parse_html_list(doc, script_actions)
+            values = self.parse_html_list(doc, script_actions)
+            VariableHelpers().set_variable(script_actions['variable_name'], values)
         elif type == 'switch_to_frame':
             frame = doc.find_element_by_xpath(script_actions['selector'])
             doc.switch_to.frame(frame)

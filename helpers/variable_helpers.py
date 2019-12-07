@@ -19,6 +19,7 @@ class VariableHelpers:
             VariableHelpers.load_scope_variables()
 
         scope_variables[variable_name] = variable_value
+        print(scope_variables)
 
     @staticmethod
     def get_variable(variable_name):
