@@ -94,6 +94,9 @@ class EventMaker:
                                                  args=(element, action))
                         thread.start()
 
+                    if 'sleep' in action:
+                        time.sleep(action['sleep'])
+
                 if 'sleep' in event:
                     time.sleep(event['sleep'])
 
