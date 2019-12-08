@@ -19,7 +19,6 @@ class VariableHelpers:
             VariableHelpers.load_scope_variables()
 
         scope_variables[variable_name] = variable_value
-        print(scope_variables)
 
     @staticmethod
     def get_variable(variable_name):
@@ -38,8 +37,15 @@ class VariableHelpers:
     def get_value_with_function(selector):
         if selector == "@generate_uniq_number":
             return VariableHelpers.generate_uniq_number()
+        elif selector == "@get_scope_variables":
+            return VariableHelpers.get_scope_variables()
 
     @staticmethod
     def generate_uniq_number():
         random.seed(datetime.now())
         return random.random()
+
+    @staticmethod
+    def get_scope_variables():
+        global scope_variables
+        return scope_variables
