@@ -1,3 +1,6 @@
+from selenium.common.exceptions import NoSuchElementException
+
+
 class ConditionHelpers:
 
     def __init__(self, doc, action):
@@ -12,7 +15,10 @@ class ConditionHelpers:
 
     def if_selector(self, condition):
         selector = condition['if_selector']
-        if self.doc.find_element_by_xpath(selector) is not None:
-            return condition['if']
-        else:
+        try:
+            if self.doc.find_element_by_xpath(selector) is not None:
+                return condition['if']
+            else:
+                return None
+        except NoSuchElementException:
             return None
