@@ -145,7 +145,6 @@ class SeleniumHtmlHelpers:
         for element in selected_elements:
             parse_list.append({})
             for action_object in action['object_list']:
-                print(action_object['selector'])
                 value = self.get_element_value(action_object, element)
                 parse_list[index][action_object['variable_name']] = value
             index = index + 1
