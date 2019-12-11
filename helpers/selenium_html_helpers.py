@@ -62,6 +62,8 @@ class SeleniumHtmlHelpers:
         elif type == 'load_cookie_from_database':
             cookie_helpers = CookieHelpers(doc, self.scope)
             cookie_helpers.load_cookie_from_database()
+        elif type == 'clear_variables':
+            VariableHelpers().load_scope_variables()
         elif type == '$_GET_VARIABLE':
             self.get_variable(doc, script_actions)
         elif type == '$_SET_VARIABLE':
