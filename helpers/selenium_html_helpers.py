@@ -29,6 +29,8 @@ class SeleniumHtmlHelpers:
                 new_action = ConditionHelpers(doc, action).parse_condition()
                 self.action_router(doc, new_action)
             if action['type'] != "**":
+            elif action['type'] == "driver_event":
+                self.driver_action_router(doc, action)
                 self.action_router(doc, action)
             else:
                WebDriverWait(doc, 30).until(
@@ -87,6 +89,11 @@ class SeleniumHtmlHelpers:
             captcha_text = RecaptchaHelpers().solve_with_speech_to_text(audio_file['path'])
             element = doc.find_element_by_xpath("//*[@id='audio-response']")
             element.send_keys(captcha_text)
+
+    def driver_action_router(self, doc, driver_action):
+        action = driver_action['action']
+        if action == "navigation_back":
+            doc.back()
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
