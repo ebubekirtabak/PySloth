@@ -1,5 +1,7 @@
 import time
+import json
 
+from collections import namedtuple
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -12,6 +14,7 @@ from helpers.condition_helpers import ConditionHelpers
 from helpers.cookie_helpers import CookieHelpers
 from helpers.element_helpers import ElementHelpers
 from helpers.form_helpers import FormHelpers
+from helpers.mongo_database_helpers import MongoDatabaseHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
@@ -29,6 +32,8 @@ class SeleniumHtmlHelpers:
                 new_action = ConditionHelpers(doc, action).parse_condition()
                 self.action_router(doc, new_action)
             if action['type'] != "**":
+            elif action['type'] == "database":
+                self.database_action_router(doc, action)
             elif action['type'] == "driver_event":
                 self.driver_action_router(doc, action)
                 self.action_router(doc, action)
@@ -96,6 +101,16 @@ class SeleniumHtmlHelpers:
         action = driver_action['action']
         if action == "navigation_back":
             doc.back()
+
+    def database_action_router(self, doc, database_action):
+        action = database_action['action']
+        if action == "push_to_database":
+            value = VariableHelpers().get_value_with_function(database_action['selector'])
+            database = self.scope.settings.database
+            MongoDatabaseHelpers(database).insert(
+                database_action['collection_name'],
+                value
+            )
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
