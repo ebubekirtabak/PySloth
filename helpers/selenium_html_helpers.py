@@ -30,12 +30,15 @@ class SeleniumHtmlHelpers:
         for action in script_actions:
             if action['type'] == "condition":
                 new_action = ConditionHelpers(doc, action).parse_condition()
-                self.action_router(doc, new_action)
-            if action['type'] != "**":
+                if new_action is not None:
+                    self.action_router(doc, new_action)
             elif action['type'] == "database":
                 self.database_action_router(doc, action)
             elif action['type'] == "driver_event":
                 self.driver_action_router(doc, action)
+            elif action['type'] == "rerun_actions":
+                self.parse_html_with_js(doc, script_actions)
+            elif action['type'] != "**":
                 self.action_router(doc, action)
             else:
                WebDriverWait(doc, 30).until(
