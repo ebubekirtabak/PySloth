@@ -172,11 +172,19 @@ class SeleniumHtmlHelpers:
         for element in selected_elements:
             parse_list.append({})
             for action_object in action['object_list']:
-                value = self.get_element_value(action_object, element)
+                value = self.get_object_value(action_object, element)
                 parse_list[index][action_object['variable_name']] = value
             index = index + 1
 
         return parse_list
+
+    def get_object_value(self, action_object, element):
+        if action_object['type'] == 'parse_html_list':
+            value = self.parse_html_list(element, action_object)
+            return value
+        else:
+            value = self.get_element_value(action_object, element)
+            return value
 
     def get_element_value(self, action_object, element):
         try:
