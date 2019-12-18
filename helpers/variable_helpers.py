@@ -17,8 +17,14 @@ class VariableHelpers:
         global scope_variables
         if scope_variables is None:
             VariableHelpers.load_scope_variables()
-
-        scope_variables[variable_name] = variable_value
+        if variable_name in scope_variables:
+            if type(scope_variables[variable_name]).__name__ == 'list':
+                scope_variables[variable_name].append(variable_value)
+            elif type(scope_variables[variable_name]).__name__ == 'dict':
+                value = scope_variables[variable_name]
+                scope_variables[variable_name] = [value, variable_value]
+        else:
+            scope_variables[variable_name] = variable_value
 
     @staticmethod
     def get_variable(variable_name):
