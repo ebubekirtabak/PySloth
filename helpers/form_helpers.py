@@ -22,7 +22,6 @@ class FormHelpers:
                     input_element.send_keys(key)
                     time.sleep(0.1)
 
-
             submit = self.driver.find_element_by_xpath(form.submit['selector'])
             submit.click()
         except NoSuchElementException as e:

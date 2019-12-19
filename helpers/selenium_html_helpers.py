@@ -210,7 +210,7 @@ class SeleniumHtmlHelpers:
                     script_actions['variable_name'],
                     script_actions['value'])
             elif script_actions['selector'].startswith('@'):
-                #function
+                # function
                 value = VariableHelpers().get_value_with_function(script_actions['selector'])
                 VariableHelpers().set_variable(script_actions['variable_name'], value)
             else:
