@@ -18,6 +18,7 @@ from helpers.mongo_database_helpers import MongoDatabaseHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
+from modules.file_module import FileModule
 
 
 class SeleniumHtmlHelpers:
@@ -117,10 +118,29 @@ class SeleniumHtmlHelpers:
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
-        elements = doc.find_elements_by_xpath(action['selector'])
-        for element in elements:
+        element_list = doc.find_elements_by_xpath(action['selector'])
+        index = 0
+        while index < len(element_list):
+            element_list = doc.find_elements_by_xpath(action['selector'])
+            element = element_list[index]
             if self.is_not_exists_element(element.id, action):
                 event_maker.push_event_to_element(element, action['events'])
+                if "after_actions" in action:
+                    self.run_after_action(doc, action["after_actions"])
+            index += 1
+
+    def run_after_action(self, doc, actions):
+        for action in actions:
+            type = action['type']
+            if type == "import_script_actions":
+                file = FileModule().read_file(file_name=action['file'])
+                if file['success'] is True:
+                    scope_data = json.loads(file['data'])
+                    scope_model = namedtuple("ScopeModel", scope_data.keys())(*scope_data.values())
+                    if hasattr(scope_model, 'script_actions'):
+                        self.parse_html_with_js(doc, scope_model.script_actions)
+                else:
+                    print('FileNotFoundError: ' + action['file'] + '')
 
     def download_loop(self, doc, action):
         if 'selector' in action:
