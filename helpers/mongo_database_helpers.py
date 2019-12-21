@@ -50,12 +50,12 @@ class MongoDatabaseHelpers:
             try:
                 selected_collection = self.db[collection]
                 result = selected_collection.insert_many(data)
-                if result.inserted_id is not None:
+                if len(result.inserted_ids) > 0:
                     logger.Logger().set_log("insert data")
                 else:
-                    logger.Logger().set_error_log("mongo insert data error")
+                    logger.Logger().set_error_log("mongo insert data error", True)
             except Exception as e:
-                logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e))
+                logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e), True)
                 return 400
 
     def update(self, collection, data, query):
