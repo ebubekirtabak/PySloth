@@ -100,6 +100,9 @@ class SeleniumHtmlHelpers:
             captcha_text = RecaptchaHelpers().solve_with_speech_to_text(audio_file['path'])
             element = doc.find_element_by_xpath("//*[@id='audio-response']")
             element.send_keys(captcha_text)
+        elif type == 'quit':
+            self.scope.thread_controller.stop_thread_controller()
+            quit(0)
 
     def driver_action_router(self, doc, driver_action):
         action = driver_action['action']
