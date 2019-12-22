@@ -28,10 +28,11 @@ class ThreadController:
         threading.Timer(30, self.auto_thread_controller).start()
 
     def auto_thread_controller(self):
-        self.logger.set_log("run auto_thread_controller: " + str(datetime.datetime.now()), True)
-        self.controller_interval()
-        self.controller.auto_thread_stopper()
-        self.controller.thread_controller()
+        if hasattr(self, 'controller'):
+            self.logger.set_log("run auto_thread_controller: " + str(datetime.datetime.now()), True)
+            self.controller_interval()
+            self.controller.auto_thread_stopper()
+            self.controller.thread_controller()
 
     def controller_switcher(self, type):
         switcher = {
@@ -59,6 +60,10 @@ class ThreadController:
 
     def history_check(self, url):
         return self.controller.history_check(url)
+
+    def stop_thread_controller(self):
+        threading.Timer(30, self.auto_thread_controller).cancel()
+        del self.controller
 
 
 
