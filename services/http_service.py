@@ -28,6 +28,8 @@ class HttpServices:
 
         if self.settings is not None:
             self.file_settings = self.settings["file_settings"]
+        else:
+            self.file_settings = {}
 
     def download_file(self, *kwargs):
         try:
