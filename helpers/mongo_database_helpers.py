@@ -69,6 +69,9 @@ class MongoDatabaseHelpers:
                 logger.Logger().set_error_log("MongoDB Helpers: update Error: " + str(e), True)
                 return 400
 
+    def delete(self, collection, query):
+        self.db[collection].delete_one(query)
+
     def get_find(self, collection, query):
         return self.db[collection].find(query)
 
