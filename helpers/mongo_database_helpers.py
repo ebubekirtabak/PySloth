@@ -11,7 +11,6 @@ class MongoDatabaseHelpers:
         self.db = db
 
     def connect_database(self, database):
-        print(database)
         client = MongoClient(database['uri'])
         try:
             if database['name'] in client.list_database_names():
