@@ -14,6 +14,7 @@ from selenium import webdriver
 from helpers.selenium_html_helpers import SeleniumHtmlHelpers
 from models.setting_model import SettingModel
 from models.user_model import UserModel
+from services.web_driver_loader_service import WebDriverLoderService
 from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
 from event_maker import EventMaker
@@ -91,41 +92,33 @@ class Scope:
 
     def call_page_with_javascript(self, url, search_item):
         # javascript is enable
-        driver = self.settings.driver
-        chrome_options = webdriver.ChromeOptions()
-        if 'driver_arguments' in driver:
-            for argument in driver['driver_arguments']:
-                chrome_options.add_argument(argument)
+        driver = WebDriverLoderService(self.settings.driver).init_web_driver()
+        if hasattr(self.scope, 'before_actions'):
+            selenium_html_helper = SeleniumHtmlHelpers(self)
+            selenium_html_helper.parse_html_with_js(driver, self.scope.before_actions)
 
-        if 'driver_path' in driver:
-            chromedriver = driver['driver_path']
-            os.environ["webdriver.chrome.driver"] = chromedriver
-            driver = webdriver.Chrome(chromedriver, chrome_options=chrome_options)
-            if hasattr(self.scope, 'before_actions'):
-                selenium_html_helper = SeleniumHtmlHelpers(self)
-                selenium_html_helper.parse_html_with_js(driver, self.scope.before_actions)
-            driver.get(url)
-            event_maker = EventMaker(driver)
+        driver.get(url)
+        event_maker = EventMaker(driver)
 
-            if hasattr(self.scope, 'login') and self.user_model.is_login is not True:
-                self.form_helpers = FormHelpers(driver)
-                for event in self.scope.login['events']:
+        if hasattr(self.scope, 'login') and self.user_model.is_login is not True:
+            self.form_helpers = FormHelpers(driver)
+            for event in self.scope.login['events']:
+                event_maker.push_event(driver, event=event)
+            forms = self.scope.login['forms']
+
+            for form in forms:
+                self.form_helpers.submit_form(form)
+
+        if hasattr(self.scope, 'script_actions'):
+            selenium_html_helper = SeleniumHtmlHelpers(self)
+            selenium_html_helper.parse_html_with_js(driver, self.scope.script_actions)
+
+        if hasattr(self.scope, 'search_item'):
+            if 'events' in search_item:
+                for event in search_item['events']:
                     event_maker.push_event(driver, event=event)
 
-                forms = self.scope.login['forms']
-                for form in forms:
-                    self.form_helpers.submit_form(form)
-
-            if hasattr(self.scope, 'script_actions'):
-                selenium_html_helper = SeleniumHtmlHelpers(self)
-                selenium_html_helper.parse_html_with_js(driver, self.scope.script_actions)
-
-            if hasattr(self.scope, 'search_item'):
-                if 'events' in search_item:
-                    for event in search_item['events']:
-                        event_maker.push_event(driver, event=event)
-
-                self.parse_page(driver, search_item)
+            self.parse_page(driver, search_item)
 
         response = driver.page_source
         doc = fromstring(response)
