@@ -1,7 +1,7 @@
 import os
 
+from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
-from selenium.webdriver.chrome import webdriver
 
 
 class WebDriverLoderService:
@@ -12,9 +12,9 @@ class WebDriverLoderService:
     def init_web_driver(self):
         type = self.driver_options['driver_type']
         if type == 'chrome':
-            return self.init_chrome_driver(self.driver_options)
+            return self.init_chrome_driver()
         elif type == 'opera':
-            return self.init_opera_driver(self.driver_options)
+            return self.init_opera_driver()
 
     def init_chrome_driver(self):
         driver = self.driver_options
@@ -23,21 +23,11 @@ class WebDriverLoderService:
             for argument in driver['driver_arguments']:
                 chrome_options.add_argument(argument)
 
-        if 'driver_path' in driver:
-            proxy = {'address': '185.195.213.132:3199'}
-            capabilities = dict(DesiredCapabilities.CHROME)
-            capabilities['proxy'] = {
-                'proxyType': 'MANUAL',
-                'httpProxy': proxy['address'],
-                'ftpProxy': proxy['address'],
-                'sslProxy': proxy['address'],
-                'noProxy': '',
-                'class': "org.openqa.selenium.Proxy",
-                'autodetect': False,
-                'socksUsername': 'uojvnupuj-rtf3j',
-                'socksPassword': 'Ur7hX0gRmJ'
-            }
+        capabilities = dict(DesiredCapabilities.CHROME)
+        if 'proxy' in driver:
+            capabilities['proxy'] = driver['proxy']
 
+        if 'driver_path' in driver:
             chromedriver = driver['driver_path']
             os.environ["webdriver.chrome.driver"] = chromedriver
             web_driver = webdriver.Chrome(chromedriver, chrome_options=chrome_options, desired_capabilities=capabilities)
