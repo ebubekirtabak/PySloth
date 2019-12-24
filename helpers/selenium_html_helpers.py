@@ -108,6 +108,8 @@ class SeleniumHtmlHelpers:
         action = driver_action['action']
         if action == "navigation_back":
             doc.back()
+        elif action == "refresh_page":
+            doc.refresh()
 
     def database_action_router(self, doc, database_action):
         action = database_action['action']
