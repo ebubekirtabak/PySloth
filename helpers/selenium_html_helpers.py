@@ -146,6 +146,8 @@ class SeleniumHtmlHelpers:
                         self.parse_html_with_js(doc, scope_model.script_actions)
                 else:
                     print('FileNotFoundError: ' + action['file'] + '')
+            else:
+                self.action_router(doc, action)
 
     def download_loop(self, doc, action):
         if 'selector' in action:
