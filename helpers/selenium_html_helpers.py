@@ -35,8 +35,6 @@ class SeleniumHtmlHelpers:
                     self.action_router(doc, new_action)
             elif action['type'] == "database":
                 self.database_action_router(doc, action)
-            elif action['type'] == "driver_event":
-                self.driver_action_router(doc, action)
             elif action['type'] == "rerun_actions":
                 self.parse_html_with_js(doc, script_actions)
             elif action['type'] != "**":
@@ -100,6 +98,8 @@ class SeleniumHtmlHelpers:
             captcha_text = RecaptchaHelpers().solve_with_speech_to_text(audio_file['path'])
             element = doc.find_element_by_xpath("//*[@id='audio-response']")
             element.send_keys(captcha_text)
+        elif type == "driver_event":
+            self.driver_action_router(doc, script_actions)
         elif type == 'quit':
             self.scope.thread_controller.stop_thread_controller()
             quit(0)
