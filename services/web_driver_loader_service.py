@@ -28,7 +28,7 @@ class WebDriverLoderService:
         if 'proxy' in driver:
             capabilities['proxy'] = driver['proxy']
 
-        if 'auth_proxy':
+        if 'auth_proxy' in driver:
             proxy_extension = ChromeAuthProxyService(driver['auth_proxy']).init_proxy()
             chrome_options.add_extension(proxy_extension)
 
