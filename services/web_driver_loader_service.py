@@ -2,6 +2,7 @@ import os
 
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
+from web_driver_services.chrome_auth_proxy_service import ChromeAuthProxyService
 
 
 class WebDriverLoderService:
