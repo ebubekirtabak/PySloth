@@ -14,6 +14,8 @@ session/
 downloads/
 memory_logs/
 scopes/
+custom_scripts/
 myconf.json
 log.txt
 error_log.txt
+geckodriver.log
