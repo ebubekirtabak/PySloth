@@ -27,6 +27,10 @@ class WebDriverLoderService:
         if 'proxy' in driver:
             capabilities['proxy'] = driver['proxy']
 
+        if 'auth_proxy':
+            proxy_extension = ChromeAuthProxyService(driver['auth_proxy']).init_proxy()
+            chrome_options.add_extension(proxy_extension)
+
         if 'driver_path' in driver:
             chromedriver = driver['driver_path']
             os.environ["webdriver.chrome.driver"] = chromedriver
