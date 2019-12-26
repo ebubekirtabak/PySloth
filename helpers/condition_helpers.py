@@ -12,6 +12,8 @@ class ConditionHelpers:
             type = condition['type']
             if type == 'if_selector':
                 return self.if_selector(condition)
+            elif type == 'if_not_selector':
+                return self.if_not_selector(condition)
 
     def if_selector(self, condition):
         selector = condition['if_selector']
@@ -22,3 +24,14 @@ class ConditionHelpers:
                 return None
         except NoSuchElementException:
             return None
+    def if_not_selector(self, condition):
+        selector = condition['if_not_selector']
+        try:
+            if self.doc.find_element_by_xpath(selector) is None:
+                return condition['if']
+            elif 'else' in condition:
+                return condition['else']
+            else:
+                return None
+        except NoSuchElementException:
+            return condition['if']
