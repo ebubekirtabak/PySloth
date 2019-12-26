@@ -23,7 +23,11 @@ class ConditionHelpers:
             else:
                 return None
         except NoSuchElementException:
-            return None
+            if 'else' in condition:
+                return condition['else']
+            else:
+                return None
+
     def if_not_selector(self, condition):
         selector = condition['if_not_selector']
         try:
