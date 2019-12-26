@@ -65,6 +65,20 @@ class FileModule:
                                  + str(e))
             return {"success": False, "error_message": "File not found."}
 
+    def write_file(self, file_dir=script_dir, file_name=None, data=None):
+        try:
+            print(file_dir)
+            self.check_directory(file_dir)
+            abs_file_path = os.path.join(file_dir, file_name)
+            print(abs_file_path)
+            with open(abs_file_path, 'a') as the_file:
+                the_file.write(data)
+
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
     def write_file_line(self, dir=script_dir, file_name=None, line=None):
         try:
             self.check_directory(dir)
