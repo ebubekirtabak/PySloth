@@ -170,3 +170,6 @@ class MongoThreadController:
     def history_check(self, url):
         return mongo.isExists(self.database, self.database_setting['history_collection_name'], {'url': url})
 
+    def get_thread_list(self):
+        buffer_threads = mongo.find_all(self.database, self.database_setting['thread_collection_name'], {})
+        return {"active_threads": self.active_thread_array, "buffer_threads": buffer_threads}
