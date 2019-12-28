@@ -20,19 +20,31 @@ class ThreadController:
         self.session_time = str(time.time())
         self.logger = Logger()
         self.multi_process = self.settings["multi_process"]
+        self.controller = None
+        self.timer = None
+        self.init_controller()
+
+    def init_controller(self):
         self.multi_process = namedtuple("MultiProcessModel", self.multi_process.keys())(*self.multi_process.values())
         self.controller = self.controller_switcher(self.multi_process.base)
+        self.init_timer()
         self.controller_interval()
 
+    def init_timer(self):
+        self.timer = threading.Timer(30, self.auto_thread_controller)
+
     def controller_interval(self):
-        threading.Timer(30, self.auto_thread_controller).start()
+        if hasattr(self, 'timer') and self.timer.is_alive() is not True:
+            self.timer.start()
 
     def auto_thread_controller(self):
         if hasattr(self, 'controller'):
-            self.logger.set_log("run auto_thread_controller: " + str(datetime.datetime.now()), True)
             self.controller_interval()
             self.controller.auto_thread_stopper()
             self.controller.thread_controller()
+            self.check_controller_list()
+        else:
+            self.stop_thread_controller()
 
     def controller_switcher(self, type):
         switcher = {
@@ -42,6 +54,16 @@ class ThreadController:
         }
 
         return switcher.get(type, lambda: "nothing")
+
+    def check_controller_list(self):
+        try:
+            threads = self.controller.get_thread_list()
+            print("Ative threads: " + str(len(threads['active_threads'])))
+            if len(threads['active_threads']) == 0 and len(threads['buffer_threads']) == 0:
+                self.stop_thread_controller()
+                self.logger.set_log(str(datetime.datetime.now()) + " : " + "Thread Controller has been stoped.", True)
+        except Exception as e:
+            self.logger.set_error_log(str(datetime.datetime.now()) + " : " + str(e))
 
     def add_thread(self, thread_model):
         self.controller.add_thread(thread_model)
@@ -62,8 +84,14 @@ class ThreadController:
         return self.controller.history_check(url)
 
     def stop_thread_controller(self):
-        threading.Timer(30, self.auto_thread_controller).cancel()
-        del self.controller
+        if self.timer.is_alive():
+            self.timer.cancel()
+
+        if hasattr(self, 'timer'):
+            del self.timer
+
+        if hasattr(self, 'controller'):
+            del self.controller
 
 
 
