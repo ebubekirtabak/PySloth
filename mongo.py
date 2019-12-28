@@ -51,6 +51,10 @@ def find_and_delete(db, collection, query):
     return db[collection].find_one_and_delete(query)
 
 
+def find_all(db, collection, query):
+    return db[collection].find_all(query)
+
+
 def get_length(db, collection):
     return db[collection].count()
 
