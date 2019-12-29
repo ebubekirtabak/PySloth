@@ -113,11 +113,22 @@ class SeleniumHtmlHelpers:
 
     def database_action_router(self, doc, database_action):
         action = database_action['action']
+        database = self.scope.settings.database
+        value = VariableHelpers().get_value_with_function(database_action['selector'])
+        collection_name = database_action['collection_name']
+        if ':' in database_action['collection_name']:
+            selector_items = database_action['collection_name'].split(':')
+            collection_name = selector_items[0]
+            value = value[selector_items[1]]
+
         if action == "push_to_database":
-            value = VariableHelpers().get_value_with_function(database_action['selector'])
-            database = self.scope.settings.database
             MongoDatabaseHelpers(database).insert(
-                database_action['collection_name'],
+                collection_name,
+                value
+            )
+        elif action == 'push_array_to_database':
+            MongoDatabaseHelpers(database).insert_many(
+                collection_name,
                 value
             )
 
