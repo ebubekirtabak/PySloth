@@ -11,7 +11,11 @@ class WebDriverLoderService:
         self.driver_options = driver_options
 
     def init_web_driver(self):
-        type = self.driver_options['driver_type']
+        if 'driver_type' in self.driver_options:
+            type = self.driver_options['driver_type']
+        else:
+            type = 'chrome'
+
         if type == 'chrome':
             return self.init_chrome_driver()
         elif type == 'opera':
