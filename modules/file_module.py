@@ -79,6 +79,16 @@ class FileModule:
             print(e)
             return False
 
+    @staticmethod
+    def delete_file(file_dir=script_dir, file_name=None):
+        full_path = file_dir + file_name
+        if os.path.exists(full_path):
+            os.remove(full_path)
+            return True
+        else:
+            print("The file does not exist")
+            return False
+
     def write_file_line(self, dir=script_dir, file_name=None, line=None):
         try:
             self.check_directory(dir)
