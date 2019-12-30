@@ -110,6 +110,9 @@ class SeleniumHtmlHelpers:
             self.scope.thread_controller.stop_thread_controller()
             quit(0)
 
+        if "after_actions" in script_actions:
+            self.run_after_action(doc, script_actions["after_actions"])
+
     def driver_action_router(self, doc, driver_action):
         action = driver_action['action']
         if action == "navigation_back":
