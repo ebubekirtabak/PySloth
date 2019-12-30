@@ -24,6 +24,7 @@ from modules.file_module import FileModule
 class SeleniumHtmlHelpers:
     def __init__(self, scope):
         self.scope = scope
+        self.scope_model = scope.scope
         self.keep_elements = {}
 
     def parse_html_with_js(self, doc, script_actions):
@@ -103,6 +104,8 @@ class SeleniumHtmlHelpers:
             element.send_keys(captcha_text)
         elif type == "driver_event":
             self.driver_action_router(doc, script_actions)
+        elif type == "rerun_actions":
+            self.parse_html_with_js(doc, self.scope_model.script_actions)
         elif type == 'quit':
             self.scope.thread_controller.stop_thread_controller()
             quit(0)
