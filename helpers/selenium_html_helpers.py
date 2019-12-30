@@ -233,11 +233,15 @@ class SeleniumHtmlHelpers:
     def get_element_value(self, action_object, element):
         try:
             elements = element.find_elements_by_xpath(action_object['selector'])
-            values = []
-            for child_element in elements:
-                value = ElementHelpers().get_attribute_from_element(child_element, action_object['attribute_name'])
-                values.append(value)
-            return values
+            if len(elements) == 1:
+                value = ElementHelpers().get_attribute_from_element(elements[0], action_object['attribute_name'])
+                return value
+            else:
+                values = []
+                for child_element in elements:
+                    value = ElementHelpers().get_attribute_from_element(child_element, action_object['attribute_name'])
+                    values.append(value)
+                return values
 
         except Exception as e:
             logger.Logger().set_error_log("GetVariable: Error: " + str(e), True)
