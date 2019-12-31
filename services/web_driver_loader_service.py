@@ -2,6 +2,8 @@ import os
 
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
+
+from logger import Logger
 from web_driver_services.chrome_auth_proxy_service import ChromeAuthProxyService
 
 
@@ -16,12 +18,16 @@ class WebDriverLoderService:
         else:
             type = 'chrome'
 
-        if type == 'chrome':
-            return self.init_chrome_driver()
-        elif type == 'opera':
-            return self.init_opera_driver()
-        elif type == 'firefox':
-            return self.init_firefox_driver()
+        try:
+            if type == 'chrome':
+                return self.init_chrome_driver()
+            elif type == 'opera':
+                return self.init_opera_driver()
+            elif type == 'firefox':
+                return self.init_firefox_driver()
+        except Exception as e:
+            Logger().set_error_log("WebDriver LoadException: " + str(e), True)
+            return None
 
     def init_chrome_driver(self):
         driver = self.driver_options
@@ -42,6 +48,7 @@ class WebDriverLoderService:
             chromedriver = driver['driver_path']
             os.environ["webdriver.chrome.driver"] = chromedriver
             web_driver = webdriver.Chrome(chromedriver, chrome_options=chrome_options, desired_capabilities=capabilities)
+
             return web_driver
         else:
             return None
