@@ -13,14 +13,17 @@ class Logger:
     def __init__(self):
         pass
 
-    def set_log(self, data, is_print_to_console=False):
+    @staticmethod
+    def set_log(data, is_print_to_console=False):
         if is_print_to_console:
             print(data)
 
-        abs_file_path = os.path.join(script_dir, 'log.txt')
-        with open(abs_file_path, 'a') as the_file:
-            the_file.write( str(time.strftime('%c')) + " : " + data)
-            the_file.write('\n')
+        session_id = globals.configs['session_id']
+        FileModule().write_file_line(
+            logs_dir,
+            file_name='log_' + session_id + '.txt',
+            line=time.strftime('%c') + " : " + str(data)
+        )
 
     @staticmethod
     def set_error_log(data, is_print_to_console=False):
