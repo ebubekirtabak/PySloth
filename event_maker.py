@@ -17,6 +17,7 @@ class EventMaker:
     def __init__(self, driver, selenium_helper=None):
         self.driver = driver
         self.selenium_helper = selenium_helper
+        self.logger = Logger()
 
     def push_event(self, driver, event):
         if driver is not None:
@@ -52,10 +53,17 @@ class EventMaker:
                         time.sleep(event['sleep'])
 
             except NoSuchElementException as e:
-                print("-- NoSuchElementException: " + str(e))
-
+                self.logger.set_error_log("-- NoSuchElementException: " + str(e), True)
+                type, value, traceback = sys.exc_info()
+                if hasattr(value, 'filename'):
+                    print('Error %s: %s' % (value.filename, value.strerror))
+                    Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
             except Exception as e:
-                print("Push Event ->: " + str(e))
+                self.logger.set_error_log("Push Event ->: " + str(e), True)
+                type, value, traceback = sys.exc_info()
+                if hasattr(value, 'filename'):
+                    print('Error %s: %s' % (value.filename, value.strerror))
+                    Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
         else:
             return None
@@ -103,12 +111,13 @@ class EventMaker:
                     time.sleep(event['sleep'])
 
         except NoSuchElementException as e:
-            print("-- NoSuchElementException: " + str(e))
+            self.logger.set_error_log("-- NoSuchElementException: " + str(e), True)
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
                 print('Error %s: %s' % (value.filename, value.strerror))
                 Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
         except Exception as e:
+            self.logger.set_error_log("Push Event To Element () ->: " + str(e), True)
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
                 print('Error %s: %s' % (value.filename, value.strerror))
