@@ -20,6 +20,8 @@ class WebDriverLoderService:
             return self.init_chrome_driver()
         elif type == 'opera':
             return self.init_opera_driver()
+        elif type == 'firefox':
+            return self.init_firefox_driver()
 
     def init_chrome_driver(self):
         driver = self.driver_options
@@ -46,3 +48,26 @@ class WebDriverLoderService:
 
     def init_opera_driver(self, driver):
         pass
+    def init_firefox_driver(self):
+        driver = self.driver_options
+        options = webdriver.FirefoxOptions()
+
+        if 'driver_arguments' in driver:
+            for argument in driver['driver_arguments']:
+                options.add_argument(argument)
+
+        capabilities = dict(DesiredCapabilities.FIREFOX)
+        if 'proxy' in driver:
+            capabilities['proxy'] = driver['proxy']
+
+        if 'driver_path' in driver:
+            driver_path = driver['driver_path']
+            os.environ["webdriver.firefox.driver"] = driver_path
+            browser = webdriver.Firefox(
+                executable_path=driver_path,
+                firefox_options=options,
+                desired_capabilities=capabilities
+            )
+            return browser
+        else:
+            return None
