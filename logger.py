@@ -1,6 +1,8 @@
 import sys
 import time
 import os
+import uuid
+
 import globals
 
 
@@ -11,7 +13,8 @@ logs_dir = script_dir + '/logs/'
 class Logger:
 
     def __init__(self):
-        pass
+        if hasattr(globals.configs, 'session_id'):
+            globals.configs['session_id'] = str(uuid.uuid1())
 
     @staticmethod
     def set_log(data, is_print_to_console=False):
