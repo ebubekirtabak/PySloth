@@ -86,14 +86,9 @@ class Scope:
                 # javascript enable
                 self.call_page_with_javascript(url, search_item)
         except AttributeError as e:
-            print("AttributeError: " + str(e))
+            Logger().set_error_log("AttributeError: " + str(e), True)
         except Exception as e:
-            print("start_thread_error: " + str(e))
-            Logger().set_error_log("start_thread_error: " + str(e))
-            value, traceback = sys.exc_info()
-            if hasattr(value, 'filename'):
-                print('Error %s: %s' % (value.filename, value.strerror))
-                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
+            Logger().set_error_log("start_thread_error: " + str(e), True)
 
     def call_page_with_javascript(self, url, search_item):
         # javascript is enable
