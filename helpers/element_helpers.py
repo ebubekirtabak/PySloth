@@ -15,6 +15,6 @@ class ElementHelpers:
 
     @staticmethod
     def get_style_from_element(element, attr):
-        return  element.value_of_css_property(attr)
+        return element.value_of_css_property(attr)
 
 
