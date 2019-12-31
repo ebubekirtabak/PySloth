@@ -55,3 +55,25 @@ class VariableHelpers:
     def get_scope_variables():
         global scope_variables
         return scope_variables
+
+    @staticmethod
+    def is_exists_variable(variable_name):
+        global scope_variables
+        if ":" in variable_name:
+            names = variable_name.split(':')
+            variable = scope_variables[names[0]]
+            names = names[1:]
+            for name in names:
+                if variable is None:
+                    return False
+                elif name in variable:
+                    variable = variable[name]
+                else:
+                    return False
+
+            return True
+
+        elif variable_name in scope_variables:
+            return True
+        else:
+            return False
