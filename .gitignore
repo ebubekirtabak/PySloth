@@ -13,6 +13,7 @@ venv/
 session/
 downloads/
 memory_logs/
+logs/
 scopes/
 custom_scripts/
 myconf.json
