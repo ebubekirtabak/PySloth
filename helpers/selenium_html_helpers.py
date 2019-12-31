@@ -51,6 +51,7 @@ class SeleniumHtmlHelpers:
 
     def action_router(self, doc, script_actions):
         event_maker = EventMaker(doc, self)
+        logger.Logger().set_log(script_actions)
         type = script_actions['type']
         if type == "event*":
             self.event_loop(doc, script_actions)
@@ -165,7 +166,7 @@ class SeleniumHtmlHelpers:
                     if hasattr(scope_model, 'script_actions'):
                         self.parse_html_with_js(doc, scope_model.script_actions)
                 else:
-                    print('FileNotFoundError: ' + action['file'] + '')
+                    logger.Logger().set_log('FileNotFoundError: ' + action['file'] + '', True)
             else:
                 self.action_router(doc, action)
 
