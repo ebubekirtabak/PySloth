@@ -1,11 +1,15 @@
 from selenium.common.exceptions import NoSuchElementException
 
+from helpers.variable_helpers import VariableHelpers
+from logger import Logger
+
 
 class ConditionHelpers:
 
     def __init__(self, doc, action):
         self.doc = doc
         self.action = action
+        self.logger = Logger()
 
     def parse_condition(self):
         for condition in self.action['conditions']:
@@ -14,6 +18,10 @@ class ConditionHelpers:
                 return self.if_selector(condition)
             elif type == 'if_not_selector':
                 return self.if_not_selector(condition)
+            elif type == 'if_exists_variable':
+                return self.if_exists_variable(condition)
+            elif type == 'if_not_exists_variable':
+                return self.if_not_exists_variable(condition)
 
     def if_selector(self, condition):
         selector = condition['if_selector']
@@ -39,3 +47,35 @@ class ConditionHelpers:
                 return None
         except NoSuchElementException:
             return condition['if']
+
+    def if_exists_variable(self, condition):
+        try:
+            if VariableHelpers().is_exists_variable(condition['variable_name']):
+                return condition['if']
+            elif 'else' in condition:
+                return condition['else']
+            else:
+                return None
+        except Exception as e:
+            self.logger.set_error_log('Error if_exists_variable: ' + str(e))
+            if 'else' in condition:
+                return condition['else']
+            else:
+                return None
+
+    def if_not_exists_variable(self, condition):
+        try:
+            self.logger.set_log('if_not_exists_variable')
+            if VariableHelpers().is_exists_variable(condition['variable_name']) is not True:
+                return condition['if']
+            elif 'else' in condition:
+                return condition['else']
+            else:
+                return None
+        except Exception as e:
+            self.logger.set_error_log('Error if_exists_variable: ' + str(e))
+            if 'else' in condition:
+                return condition['else']
+            else:
+                return None
+
