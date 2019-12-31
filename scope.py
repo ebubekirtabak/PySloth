@@ -3,6 +3,8 @@
 import os
 import time
 import sys
+import uuid
+import globals
 from collections import namedtuple
 
 import kthread
@@ -27,10 +29,13 @@ from lxml.html import fromstring
 script_dir = os.path.dirname(__file__)
 
 
+
 class Scope:
 
     def __init__(self, scope, database=None):
         self.scope = scope
+        self.scope.settings['session_id'] = str(uuid.uuid1())
+        globals.configs['session_id'] = self.scope.settings['session_id']
         self.database = database
         self.settings = self.scope.settings
         self.thread_controller = ThreadController(self.settings, self)
