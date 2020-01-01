@@ -1,3 +1,4 @@
+import inspect
 import time
 import json
 
@@ -248,10 +249,10 @@ class SeleniumHtmlHelpers:
                 return values
 
         except Exception as e:
-            logger.Logger().set_error_log("GetVariable: Error: " + str(e), True)
+            logger.Logger().set_error_log(str(inspect.currentframe().f_back.f_lineno) + "GetVariable: Error: " + str(e), True)
             return ''
         except NoSuchElementException as e:
-            logger.Logger().set_error_log("NoSuchElementException: " + str(e), True)
+            logger.Logger().set_error_log(str(inspect.currentframe().f_back.f_lineno) + "NoSuchElementException: " + str(e), True)
             return ''
 
     @staticmethod
