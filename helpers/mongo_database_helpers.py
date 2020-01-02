@@ -86,3 +86,7 @@ class MongoDatabaseHelpers:
     def is_exists(self, collection, data):
         selected_collection = self.db[collection]
         return selected_collection.find(data).count() > 0
+
+    def is_exists_field(self, collection, query):
+        results = self.db[collection].find(query)
+        return results.count() > 0
