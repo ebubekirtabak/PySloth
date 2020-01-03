@@ -17,3 +17,15 @@ class ScriptRunnerService:
             subprocess.call(['python3', self.script_options['script']])
         elif type == "python3":
             subprocess.call(['python3', self.script_options['script']])
+
+    def get_script_result(self):
+
+        type = self.script_options['type']
+        process_output = ''
+        if type == "python":
+            process_output = subprocess.check_output(['python3', self.script_options['script']])
+        elif type == "python3":
+            process_output = subprocess.check_output(['python3', self.script_options['script']])
+
+        self.logger.set_log("get_script_result: " + process_output)
+        return process_output
