@@ -1,4 +1,6 @@
 import inspect
+import os
+import sys
 import time
 import json
 
@@ -20,6 +22,7 @@ from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
 from modules.file_module import FileModule
+from services.script_runner_service import ScriptRunnerService
 
 
 class SeleniumHtmlHelpers:
@@ -104,6 +107,9 @@ class SeleniumHtmlHelpers:
             captcha_text = RecaptchaHelpers().solve_with_speech_to_text(audio_file['path'])
             element = doc.find_element_by_xpath("//*[@id='audio-response']")
             element.send_keys(captcha_text)
+        elif type == 'run_custom_script':
+            script_service = ScriptRunnerService(script_actions['custom_script'])
+            script_service.run()
         elif type == "driver_event":
             self.driver_action_router(doc, script_actions)
         elif type == "rerun_actions":

@@ -103,6 +103,24 @@ PySloth can download file from web site.
 - Blob stream
 - .etc
 
+#### Custom Script Support
+
+````json
+"script_actions": [
+    { ... },
+    {
+      "type": "run_custom_script",
+      "delay": 0,
+      "sleep": 0,
+      "custom_script": {
+        "type": "python",
+        "custom_script": "custom_scripts/proxy_tester.py"
+      }
+    },
+    { ... }
+]
+````
+
 #### Redirect to url function. (New)
 ````json
 "script_actions": [
