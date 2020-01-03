@@ -30,6 +30,7 @@ class SeleniumHtmlHelpers:
         self.scope = scope
         self.scope_model = scope.scope
         self.keep_elements = {}
+        self.element_helpers = ElementHelpers()
 
     def parse_html_with_js(self, doc, script_actions):
         AutoPageHelpers(doc).check_page_elements()
@@ -238,31 +239,10 @@ class SeleniumHtmlHelpers:
             value = self.parse_html_list(element, action_object)
             return value
         else:
-            value = self.get_element_value(action_object, element)
+            value = self.element_helpers.get_element_value(action_object, element)
             return value
 
-    def get_element_value(self, action_object, element):
-        try:
-            elements = element.find_elements_by_xpath(action_object['selector'])
-            if len(elements) == 1:
-                value = ElementHelpers().get_attribute_from_element(elements[0], action_object['attribute_name'])
-                return value
-            else:
-                values = []
-                for child_element in elements:
-                    value = ElementHelpers().get_attribute_from_element(child_element, action_object['attribute_name'])
-                    values.append(value)
-                return values
-
-        except Exception as e:
-            logger.Logger().set_error_log(str(inspect.currentframe().f_back.f_lineno) + "GetVariable: Error: " + str(e), True)
-            return ''
-        except NoSuchElementException as e:
-            logger.Logger().set_error_log(str(inspect.currentframe().f_back.f_lineno) + "NoSuchElementException: " + str(e), True)
-            return ''
-
-    @staticmethod
-    def get_variable(doc, script_actions):
+    def get_variable(self, doc, script_actions):
         try:
             if 'value' in script_actions:
                 VariableHelpers().set_variable(
@@ -274,11 +254,16 @@ class SeleniumHtmlHelpers:
                 VariableHelpers().set_variable(script_actions['variable_name'], value)
             else:
                 elements = doc.find_elements_by_xpath(script_actions['selector'])
-                index = 0
-                for element in elements:
-                    value = ElementHelpers().get_attribute_from_element(element, script_actions['attribute_name'])
-                    VariableHelpers().set_variable(script_actions['variable_name'] + '[' + str(index) + ']', value)
-                    index = index + 1
+                if len(elements) == 1:
+                    value = self.element_helpers.get_attribute_from_element(elements[0], script_actions['attribute_name'])
+                    VariableHelpers().set_variable(script_actions['variable_name'], value)
+                else:
+                    values = []
+                    for element in elements:
+                        value = self.element_helpers.get_attribute_from_element(element, script_actions['attribute_name'])
+                        values.append(value)
+
+                    VariableHelpers().set_variable(script_actions['variable_name'], values)
         except Exception as e:
             logger.Logger().set_error_log("GetVariable: Error: " + str(e), True)
         except NoSuchElementException as e:
