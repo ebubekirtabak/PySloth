@@ -1,6 +1,3 @@
-import inspect
-import os
-import sys
 import time
 import json
 
@@ -10,7 +7,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-import logger
 from event_maker import EventMaker
 from helpers.auto_page_helpers import AutoPageHelpers
 from helpers.condition_helpers import ConditionHelpers
@@ -20,6 +16,7 @@ from helpers.form_helpers import FormHelpers
 from helpers.mongo_database_helpers import MongoDatabaseHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
+from logger import Logger
 from models.thread_model import ThreadModel
 from modules.file_module import FileModule
 from services.script_runner_service import ScriptRunnerService
@@ -31,6 +28,7 @@ class SeleniumHtmlHelpers:
         self.scope_model = scope.scope
         self.keep_elements = {}
         self.element_helpers = ElementHelpers()
+        self.logger = Logger()
 
     def parse_html_with_js(self, doc, script_actions):
         AutoPageHelpers(doc).check_page_elements()
@@ -56,7 +54,7 @@ class SeleniumHtmlHelpers:
 
     def action_router(self, doc, script_actions):
         event_maker = EventMaker(doc, self)
-        logger.Logger().set_log(script_actions)
+        self.logger.set_log(script_actions)
         type = script_actions['type']
         if type == "event*":
             self.event_loop(doc, script_actions)
@@ -265,9 +263,9 @@ class SeleniumHtmlHelpers:
 
                     VariableHelpers().set_variable(script_actions['variable_name'], values)
         except Exception as e:
-            logger.Logger().set_error_log("GetVariable: Error: " + str(e), True)
+            self.logger.set_error_log("GetVariable: Error: " + str(e), True)
         except NoSuchElementException as e:
-            logger.Logger().set_error_log("NoSuchElementException: " + str(e), True)
+            self.logger.set_error_log("NoSuchElementException: " + str(e), True)
 
     @staticmethod
     def get_attribute_from_element(element, attribute):
