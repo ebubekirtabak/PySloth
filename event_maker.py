@@ -17,6 +17,7 @@ class EventMaker:
     def __init__(self, driver, selenium_helper=None):
         self.driver = driver
         self.selenium_helper = selenium_helper
+        self.logger = Logger()
 
     def push_event(self, driver, event):
         if driver is not None:
@@ -52,10 +53,17 @@ class EventMaker:
                         time.sleep(event['sleep'])
 
             except NoSuchElementException as e:
-                print("-- NoSuchElementException: " + str(e))
-
+                self.logger.set_error_log("-- NoSuchElementException: " + str(e), True)
+                type, value, traceback = sys.exc_info()
+                if hasattr(value, 'filename'):
+                    print('Error %s: %s' % (value.filename, value.strerror))
+                    Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
             except Exception as e:
-                print("Push Event ->: " + str(e))
+                self.logger.set_error_log("Push Event ->: " + str(e), True)
+                type, value, traceback = sys.exc_info()
+                if hasattr(value, 'filename'):
+                    print('Error %s: %s' % (value.filename, value.strerror))
+                    Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
         else:
             return None
@@ -81,6 +89,8 @@ class EventMaker:
                         self.set_click_action_element(self.driver, action)
                     elif type == 'click_with_command':
                         self.set_click_with_command(element, action)
+                    elif type == "scroll_to_element":
+                        self.set_scroll_to_element(element)
                     elif type == 'scroll':
                         self.set_scroll(element, action)
                     elif type == 'style':
@@ -94,16 +104,20 @@ class EventMaker:
                                                  args=(element, action))
                         thread.start()
 
+                    if 'sleep' in action:
+                        time.sleep(action['sleep'])
+
                 if 'sleep' in event:
                     time.sleep(event['sleep'])
 
         except NoSuchElementException as e:
-            print("-- NoSuchElementException: " + str(e))
+            self.logger.set_error_log("-- NoSuchElementException: " + str(e), True)
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
                 print('Error %s: %s' % (value.filename, value.strerror))
                 Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
         except Exception as e:
+            self.logger.set_error_log("Push Event To Element () ->: " + str(e), True)
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
                 print('Error %s: %s' % (value.filename, value.strerror))
@@ -116,6 +130,16 @@ class EventMaker:
         action.move_to_element(element)
         action.click()
         action.perform()
+
+    def set_scroll_to_element(self, element):
+        # self.driver.execute_script("arguments[0].scrollIntoView()", element)
+        desired_y = (element.size['height'] / 2) + element.location['y']
+        window_h = self.driver.execute_script('return window.innerHeight')
+        window_y = self.driver.execute_script('return window.pageYOffset')
+        current_y = (window_h / 2) + window_y
+        scroll_y_by = desired_y - current_y
+
+        self.driver.execute_script("window.scrollBy(0, arguments[0]);", scroll_y_by)
 
     def set_click_action_element(self, element, action):
         if 'selector' in action:

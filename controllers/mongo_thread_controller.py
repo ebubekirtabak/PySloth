@@ -29,7 +29,7 @@ class MongoThreadController:
             lent = mongo.get_length(self.database, self.database_setting['thread_collection_name'])
             self.logger.set_log("Mongo Thread Controller : Active : " +
                        str(active_thread_length) + " : Array : " +
-                       str(lent))
+                       str(lent), True)
             if active_thread_length == 0 and lent == 0:
                 self.main_scope.shutdown()
             elif active_thread_length < self.multi_process["limit"] and lent > 0:
@@ -52,7 +52,7 @@ class MongoThreadController:
                     thread_object['thread_referance'] = thread_referance
 
                 thread_model = namedtuple("ThreadModel", thread_object.keys(), rename=True)(*thread_object.values())
-                print("start thread: " + thread_model.name)
+                self.logger.set_log("start thread: " + thread_model.name, True)
                 self.active_thread_array.append(thread_model)
 
         except Exception as e:
@@ -69,7 +69,7 @@ class MongoThreadController:
         return dict((key, value) for (key, value) in cls)
 
     def add_thread(self, thread_model):
-        self.logger.set_log("added Thread : " + thread_model.name)
+        self.logger.set_log("added Thread : " + thread_model.name, True)
         if len(self.active_thread_array) < self.multi_process['limit']:
             thread_model = self.thread_starter(thread_model)
             if thread_model is not None:
@@ -159,7 +159,7 @@ class MongoThreadController:
         index = 0
         for thread_item in self.active_thread_array:
             if thread_item.name == name:
-                self.logger.set_log("Restart thread : " + name)
+                self.logger.set_log("Restart thread : " + name, True)
                 self.add_thread(self.active_thread_array[index])
                 del self.active_thread_array[index]
                 break
@@ -170,3 +170,6 @@ class MongoThreadController:
     def history_check(self, url):
         return mongo.isExists(self.database, self.database_setting['history_collection_name'], {'url': url})
 
+    def get_thread_list(self):
+        buffer_threads = mongo.find_all(self.database, self.database_setting['thread_collection_name'], {})
+        return {"active_threads": self.active_thread_array, "buffer_threads": buffer_threads}

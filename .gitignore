@@ -13,7 +13,11 @@ venv/
 session/
 downloads/
 memory_logs/
+logs/
 scopes/
+tmp_scopes/
+custom_scripts/
 myconf.json
 log.txt
 error_log.txt
+geckodriver.log

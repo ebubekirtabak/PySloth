@@ -11,7 +11,6 @@ class MongoDatabaseHelpers:
         self.db = db
 
     def connect_database(self, database):
-        print(database)
         client = MongoClient(database['uri'])
         try:
             if database['name'] in client.list_database_names():
@@ -50,13 +49,27 @@ class MongoDatabaseHelpers:
             try:
                 selected_collection = self.db[collection]
                 result = selected_collection.insert_many(data)
-                if result.inserted_id is not None:
+                if len(result.inserted_ids) > 0:
                     logger.Logger().set_log("insert data")
                 else:
-                    logger.Logger().set_error_log("mongo insert data error")
+                    logger.Logger().set_error_log("mongo insert data error", True)
             except Exception as e:
-                logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e))
+                logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e), True)
                 return 400
+
+    def update(self, collection, data, query):
+        if self.db != 400:
+            try:
+                selected_collection = self.db[collection]
+                selected_collection.update(
+                    query, {"$set": data})
+                logger.Logger().set_log("update collection data")
+            except Exception as e:
+                logger.Logger().set_error_log("MongoDB Helpers: update Error: " + str(e), True)
+                return 400
+
+    def delete(self, collection, query):
+        self.db[collection].delete_one(query)
 
     def get_find(self, collection, query):
         return self.db[collection].find(query)
@@ -73,3 +86,7 @@ class MongoDatabaseHelpers:
     def is_exists(self, collection, data):
         selected_collection = self.db[collection]
         return selected_collection.find(data).count() > 0
+
+    def is_exists_field(self, collection, query):
+        results = self.db[collection].find(query)
+        return results.count() > 0

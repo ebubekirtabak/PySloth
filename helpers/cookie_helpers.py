@@ -23,6 +23,5 @@ class CookieHelpers:
                 cookie['expiry'] = int(cookie['expiry'])
             self.driver.add_cookie(cookie)
 
-
     def get_cookie(self):
         return self.cookies

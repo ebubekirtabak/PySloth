@@ -45,6 +45,41 @@ In this example, you can see how you subscribe to another website by getting a t
   
 ![Variable Helpers](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/variable_helpers.gif "Variable Helpers")
 
+#### Conditional Scraping
+
+PySloth can process dynamic conditions.
+
+````json
+{
+  "type": "condition",
+  "conditions": [
+    {
+      "type": "if_selector",
+      "if_selector": "//table[1]/tbody/tr[2]/td/font/b[text() = 'Error']",
+      "if": [
+        {
+          "type": "driver_event",
+          "action": "refresh_page",
+        },
+        {
+          "type": "rerun_actions"
+        },
+        {
+          ....
+        }
+      ],
+      "else": [
+        ...,
+        {
+          ....
+        },
+        ....
+      ]
+    }
+  ]
+}
+````
+
 #### Login   
 
 PySloth can login any website.
@@ -54,6 +89,7 @@ PySloth can login any website.
 #### User Actions  
   
 ![User Actions](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/script_actions.gif "User Actions")
+
 #### Download File
 
 PySloth can download file from web site.
@@ -62,10 +98,28 @@ PySloth can download file from web site.
 - mp3
 - mp4
 - image (jpeg, png, jpg, .etc)
--  zip
--  exe
+- zip
+- exe
 - Blob stream
 - .etc
+
+#### Custom Script Support
+
+````json
+"script_actions": [
+    { ... },
+    {
+      "type": "run_custom_script",
+      "delay": 0,
+      "sleep": 0,
+      "custom_script": {
+        "type": "python",
+        "custom_script": "custom_scripts/proxy_tester.py"
+      }
+    },
+    { ... }
+]
+````
 
 #### Redirect to url function. (New)
 ````json

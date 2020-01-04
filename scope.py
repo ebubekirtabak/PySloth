@@ -3,9 +3,12 @@
 import os
 import time
 import sys
+import uuid
+import globals
 from collections import namedtuple
 
 import kthread
+
 import mongo
 
 from selenium import webdriver
@@ -13,6 +16,7 @@ from selenium import webdriver
 from helpers.selenium_html_helpers import SeleniumHtmlHelpers
 from models.setting_model import SettingModel
 from models.user_model import UserModel
+from services.web_driver_loader_service import WebDriverLoderService
 from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
 from event_maker import EventMaker
@@ -25,10 +29,13 @@ from lxml.html import fromstring
 script_dir = os.path.dirname(__file__)
 
 
+
 class Scope:
 
     def __init__(self, scope, database=None):
         self.scope = scope
+        self.scope.settings['session_id'] = str(uuid.uuid1())
+        globals.configs['session_id'] = self.scope.settings['session_id']
         self.database = database
         self.settings = self.scope.settings
         self.thread_controller = ThreadController(self.settings, self)
@@ -79,53 +86,39 @@ class Scope:
                 # javascript enable
                 self.call_page_with_javascript(url, search_item)
         except AttributeError as e:
-            print("AttributeError: " + str(e))
+            Logger().set_error_log("AttributeError: " + str(e), True)
         except Exception as e:
-            print("start_thread_error: " + str(e))
-            Logger().set_error_log("start_thread_error: " + str(e))
-            value, traceback = sys.exc_info()
-            if hasattr(value, 'filename'):
-                print('Error %s: %s' % (value.filename, value.strerror))
-                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
+            Logger().set_error_log("start_thread_error: " + str(e), True)
 
     def call_page_with_javascript(self, url, search_item):
         # javascript is enable
-        driver = self.settings.driver
-        chrome_options = webdriver.ChromeOptions()
-        if 'driver_arguments' in driver:
-            for argument in driver['driver_arguments']:
-                chrome_options.add_argument(argument)
+        driver = WebDriverLoderService(self.settings.driver).init_web_driver()
+        if hasattr(self.scope, 'before_actions'):
+            selenium_html_helper = SeleniumHtmlHelpers(self)
+            selenium_html_helper.parse_html_with_js(driver, self.scope.before_actions)
 
-        if 'driver_path' in driver:
-            chromedriver = driver['driver_path']
-            os.environ["webdriver.chrome.driver"] = chromedriver
-            driver = webdriver.Chrome(chromedriver, chrome_options=chrome_options)
-            if hasattr(self.scope, 'before_actions'):
-                selenium_html_helper = SeleniumHtmlHelpers(self)
-                selenium_html_helper.parse_html_with_js(driver, self.scope.before_actions)
+        driver.get(url)
+        event_maker = EventMaker(driver)
 
-            driver.get(url)
-            event_maker = EventMaker(driver)
+        if hasattr(self.scope, 'login') and self.user_model.is_login is not True:
+            self.form_helpers = FormHelpers(driver)
+            for event in self.scope.login['events']:
+                event_maker.push_event(driver, event=event)
+            forms = self.scope.login['forms']
 
-            if hasattr(self.scope, 'login') and self.user_model.is_login is not True:
-                self.form_helpers = FormHelpers(driver)
-                for event in self.scope.login['events']:
+            for form in forms:
+                self.form_helpers.submit_form(form)
+
+        if hasattr(self.scope, 'script_actions'):
+            selenium_html_helper = SeleniumHtmlHelpers(self)
+            selenium_html_helper.parse_html_with_js(driver, self.scope.script_actions)
+
+        if hasattr(self.scope, 'search_item'):
+            if 'events' in search_item:
+                for event in search_item['events']:
                     event_maker.push_event(driver, event=event)
 
-                forms = self.scope.login['forms']
-                for form in forms:
-                    self.form_helpers.submit_form(form)
-
-            if hasattr(self.scope, 'script_actions'):
-                selenium_html_helper = SeleniumHtmlHelpers(self)
-                selenium_html_helper.parse_html_with_js(driver, self.scope.script_actions)
-
-            if hasattr(self.scope, 'search_item'):
-                if 'events' in search_item:
-                    for event in search_item['events']:
-                        event_maker.push_event(driver, event=event)
-
-                self.parse_page(driver, search_item)
+            self.parse_page(driver, search_item)
 
         response = driver.page_source
         doc = fromstring(response)
@@ -142,7 +135,8 @@ class Scope:
                 else:
                     attrib = element.attrib['href']
 
-                if 'download_attrib' in search_item or hasattr(search_item, 'download_attrib') and search_item.download_attrib is True:
+                if 'download_attrib' in search_item or hasattr(search_item,
+                                                               'download_attrib') and search_item.download_attrib is True:
                     Logger().set_log("Added Download List: " + attrib)
                     print("Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : "
                           + str(self.scope.reporting["page_count"]) + " : " + search_item.download_folder)
@@ -241,10 +235,10 @@ class Scope:
         elif thread_model.type == "download_thread":
             thread = kthread.KThread(target=self.http_services.download_file,
                                      args=(args["url"], args["folder_name"],
-                                            args["headers"], args["thread_name"]),
+                                           args["headers"], args["thread_name"], args["file_referance"]),
                                      name=args["thread_name"])
         elif thread_model.type == "call_page":
-            Logger().set_log("Added calpage thread: " + args["url"])
+            Logger().set_log("Added calpage thread: " + args["url"], True)
             thread = kthread.KThread(target=self.call_page,
                                      args=(args["url"], args["search_item"]),
                                      name=args["thread_name"])
@@ -254,7 +248,7 @@ class Scope:
             if hasattr(thread_model, 'thread_referance'):
                 thread_model.thread_referance = thread
 
-            Logger().set_log("Start Thread : " + args["thread_name"])
+            Logger().set_log("Start Thread : " + args["thread_name"], True)
             return thread
         except Exception as e:
             print("start_thread_error: " + str(e))
@@ -290,7 +284,8 @@ class Scope:
                         dynamic_folder_sep = os.path.sep
 
                     if 'child_name_class' in item:
-                        folder_name = get_folder_name(html_content.xpath(item['child_name_class']), dynamic_folder_sep, folder_name)
+                        folder_name = get_folder_name(html_content.xpath(item['child_name_class']), dynamic_folder_sep,
+                                                      folder_name)
 
                     folder_name = folder_name.replace("${os.sep}", folder_sep)
 
@@ -298,7 +293,7 @@ class Scope:
                 elements = html_content.xpath(class_name)
                 if len(elements) == 0:
                     Logger().set_error_log("The \"" + class_name + "\" class was not found at \""
-                                            + url + "\".")
+                                           + url + "\".", True)
 
                 for element in elements:  # get element list
                     if need_attr['if'] in element.attrib:
@@ -307,8 +302,10 @@ class Scope:
                         attrib = element.attrib[need_attr['else']]
 
                     try:
-                        Logger().set_log("Added Download List: " + url)
-                        print("Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : " + str(self.scope.reporting["page_count"]) + " : " + folder_name)
+                        Logger().set_log("Added Download List: " + url, True)
+                        print(
+                            "Download List: " + str(self.scope.reporting["download_counter"]) + " : from page : " + str(
+                                self.scope.reporting["page_count"]) + " : " + folder_name)
                         if 'headers' in item:
                             headers = item['headers']
                         else:
