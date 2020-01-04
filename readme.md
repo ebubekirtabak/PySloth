@@ -98,8 +98,8 @@ PySloth can download file from web site.
 - mp3
 - mp4
 - image (jpeg, png, jpg, .etc)
--  zip
--  exe
+- zip
+- exe
 - Blob stream
 - .etc
 
