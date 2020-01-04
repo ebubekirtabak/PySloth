@@ -227,6 +227,17 @@ class SeleniumHtmlHelpers:
             parse_list.append({})
             for action_object in action['object_list']:
                 value = self.get_object_value(action_object, element)
+                self.logger.set_log("Object_list loop: " + value)
+                if 'custom_scripts' in action_object:
+                    custom_scripts = action_object['custom_scripts']
+                    if isinstance(value, list):
+                        for val in value:
+                            custom_scripts['script'] = custom_scripts['script'] + ' ' + val
+                            val = ScriptRunnerService(custom_scripts).get_script_result(val)
+                    else:
+                        custom_scripts['script'] = custom_scripts['script'] + ' ' + value
+                        value = ScriptRunnerService(custom_scripts).get_script_result(value)
+
                 parse_list[index][action_object['variable_name']] = value
             index = index + 1
 
@@ -242,26 +253,36 @@ class SeleniumHtmlHelpers:
 
     def get_variable(self, doc, script_actions):
         try:
+            value = ''
             if 'value' in script_actions:
-                VariableHelpers().set_variable(
-                    script_actions['variable_name'],
-                    script_actions['value'])
+                value = script_actions['value']
             elif script_actions['selector'].startswith('@'):
                 # function
                 value = VariableHelpers().get_value_with_function(script_actions['selector'])
-                VariableHelpers().set_variable(script_actions['variable_name'], value)
             else:
                 elements = doc.find_elements_by_xpath(script_actions['selector'])
                 if len(elements) == 1:
                     value = self.element_helpers.get_attribute_from_element(elements[0], script_actions['attribute_name'])
-                    VariableHelpers().set_variable(script_actions['variable_name'], value)
                 else:
-                    values = []
+                    value = []
                     for element in elements:
-                        value = self.element_helpers.get_attribute_from_element(element, script_actions['attribute_name'])
-                        values.append(value)
+                        element_value = self.element_helpers.get_attribute_from_element(
+                            element, script_actions['attribute_name']
+                        )
+                        value.append(element_value)
 
-                    VariableHelpers().set_variable(script_actions['variable_name'], values)
+            if 'custom_scripts' in script_actions:
+                if isinstance(value, list):
+                    for val in value:
+                        custom_scripts = script_actions['custom_scripts']
+                        custom_scripts['script'] = custom_scripts['script'] + ' ' + val
+                        val = ScriptRunnerService(custom_scripts).get_script_result(val)
+                else:
+                    custom_scripts = script_actions['custom_scripts']
+                    custom_scripts['script'] = custom_scripts['script'] + ' ' + value
+                    value = ScriptRunnerService(custom_scripts).get_script_result(value)
+
+            VariableHelpers().set_variable(script_actions['variable_name'], value)
         except Exception as e:
             self.logger.set_error_log("GetVariable: Error: " + str(e), True)
         except NoSuchElementException as e:
