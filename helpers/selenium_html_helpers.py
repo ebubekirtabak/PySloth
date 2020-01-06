@@ -16,10 +16,12 @@ from helpers.form_helpers import FormHelpers
 from helpers.mongo_database_helpers import MongoDatabaseHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
-from logger import Logger
+import logger
 from models.thread_model import ThreadModel
 from modules.file_module import FileModule
 from services.script_runner_service import ScriptRunnerService
+
+from logger import Logger
 
 
 class SeleniumHtmlHelpers:
@@ -229,15 +231,16 @@ class SeleniumHtmlHelpers:
             parse_list.append({})
             for action_object in action['object_list']:
                 value = self.get_object_value(action_object, element)
-                self.logger.set_log("Object_list loop: " + value)
                 if 'custom_scripts' in action_object:
                     custom_scripts = action_object['custom_scripts']
                     if isinstance(value, list):
+                        new_values = []
                         for val in value:
-                            custom_scripts['script'] = custom_scripts['script'] + ' ' + val
                             val = ScriptRunnerService(custom_scripts).get_script_result(val)
+                            new_values.append(val)
+
+                        value = new_values
                     else:
-                        custom_scripts['script'] = custom_scripts['script'] + ' ' + value
                         value = ScriptRunnerService(custom_scripts).get_script_result(value)
 
                 parse_list[index][action_object['variable_name']] = value
@@ -275,13 +278,15 @@ class SeleniumHtmlHelpers:
 
             if 'custom_scripts' in script_actions:
                 if isinstance(value, list):
+                    new_values = []
                     for val in value:
                         custom_scripts = script_actions['custom_scripts']
-                        custom_scripts['script'] = custom_scripts['script'] + ' ' + val
                         val = ScriptRunnerService(custom_scripts).get_script_result(val)
+                        new_values.append(val)
+
+                    value = new_values
                 else:
                     custom_scripts = script_actions['custom_scripts']
-                    custom_scripts['script'] = custom_scripts['script'] + ' ' + value
                     value = ScriptRunnerService(custom_scripts).get_script_result(value)
 
             VariableHelpers().set_variable(script_actions['variable_name'], value)
