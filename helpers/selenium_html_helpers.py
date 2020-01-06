@@ -31,7 +31,9 @@ class SeleniumHtmlHelpers:
         self.logger = Logger()
 
     def parse_html_with_js(self, doc, script_actions):
-        AutoPageHelpers(doc).check_page_elements()
+        if self.scope.settings.is_page_helper:
+            AutoPageHelpers(doc).check_page_elements()
+
         for action in script_actions:
             if action['type'] == "condition":
                 new_action = ConditionHelpers(doc, action).parse_condition()
