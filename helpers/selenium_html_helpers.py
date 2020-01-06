@@ -115,6 +115,8 @@ class SeleniumHtmlHelpers:
             script_service.run()
         elif type == "driver_event":
             self.driver_action_router(doc, script_actions)
+        elif type == "database":
+            self.database_action_router(doc, script_actions)
         elif type == "rerun_actions":
             self.parse_html_with_js(doc, self.scope_model.script_actions)
         elif type == 'quit':
