@@ -1,3 +1,4 @@
+import threading
 import time
 import json
 
@@ -31,6 +32,21 @@ class SeleniumHtmlHelpers:
         self.keep_elements = {}
         self.element_helpers = ElementHelpers()
         self.logger = Logger()
+        if self.scope.settings.time_out:
+            print("TimeOut: " + str(self.scope.settings.time_out))
+            kill_thread = threading.Thread(target=self.force_kill)
+            kill_thread.start()
+
+    def force_kill(self):
+        time.sleep(self.scope.settings.time_out)
+        print("****** Force Killer *******")
+        try:
+            self.scope.thread_controller.stop_thread_controller()
+        except Exception as e:
+            print("Error:" + str(e))
+        self.scope.driver.quit()
+        quit(0)
+        exit()
 
     def parse_html_with_js(self, doc, script_actions):
         if self.scope.settings.is_page_helper:
