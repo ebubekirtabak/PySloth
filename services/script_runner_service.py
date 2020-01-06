@@ -26,22 +26,19 @@ class ScriptRunnerService:
                 process_output = subprocess.check_output('python ' + self.script_options['script'] + ' ' + params, shell=True)
             elif type == "python3":
                 if isinstance(params, list):
-                    command = ['python3', self.script_options['script']]
                     result = []
                     for param in params:
+                        command = ['python3', self.script_options['script']]
                         command.append(param)
                         self.logger.set_log("run script: " + str(command))
                         process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
                         result.append(process_output.decode("utf-8"))
-
                 else:
-                    command = ['python3', self.script_options['script']]
-                    command.append(params)
-
+                    command = ['python3', self.script_options['script'], params]
                     self.logger.set_log("run script: " + str(command))
                     process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
                     result = process_output.decode("utf-8")
-                    self.logger.set_log("script result: " + result, True)
+                    self.logger.set_log("script result: " + result)
 
 
             return result
