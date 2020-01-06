@@ -47,6 +47,7 @@ class Scope:
         self.http_services = HttpServices(self.settings, self.thread_controller)
         self.form_helpers = None
         self.user_model = UserModel()
+        self.driver = None
 
     def start(self):
         if 'database' in self.scope.settings:
@@ -96,18 +97,18 @@ class Scope:
 
     def call_page_with_javascript(self, url, search_item):
         # javascript is enable
-        driver = WebDriverLoderService(self.settings.driver).init_web_driver()
+        self.driver = WebDriverLoderService(self.settings.driver).init_web_driver()
         if hasattr(self.scope, 'before_actions'):
             selenium_html_helper = SeleniumHtmlHelpers(self)
-            selenium_html_helper.parse_html_with_js(driver, self.scope.before_actions)
+            selenium_html_helper.parse_html_with_js(self.driver, self.scope.before_actions)
 
-        driver.get(url)
-        event_maker = EventMaker(driver)
+        self.driver.get(url)
+        event_maker = EventMaker(self.driver)
 
         if hasattr(self.scope, 'login') and self.user_model.is_login is not True:
-            self.form_helpers = FormHelpers(driver)
+            self.form_helpers = FormHelpers(self.driver)
             for event in self.scope.login['events']:
-                event_maker.push_event(driver, event=event)
+                event_maker.push_event(self.driver, event=event)
             forms = self.scope.login['forms']
 
             for form in forms:
@@ -115,19 +116,19 @@ class Scope:
 
         if hasattr(self.scope, 'script_actions'):
             selenium_html_helper = SeleniumHtmlHelpers(self)
-            selenium_html_helper.parse_html_with_js(driver, self.scope.script_actions)
+            selenium_html_helper.parse_html_with_js(self.driver, self.scope.script_actions)
 
         if hasattr(self.scope, 'search_item'):
             if 'events' in search_item:
                 for event in search_item['events']:
-                    event_maker.push_event(driver, event=event)
+                    event_maker.push_event(self.driver, event=event)
 
-            self.parse_page(driver, search_item)
+            self.parse_page(self.driver, search_item)
 
-        response = driver.page_source
+        response = self.driver.page_source
         doc = fromstring(response)
         doc.make_links_absolute(url)
-        driver.quit()
+        self.driver.quit()
 
     def parse_page(self, doc, search_item):
 
