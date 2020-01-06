@@ -73,7 +73,7 @@ class VariableHelpers:
 
             return True
 
-        elif variable_name in scope_variables:
+        elif variable_name in scope_variables and len(scope_variables[variable_name]) != 0:
             return True
         else:
             return False
