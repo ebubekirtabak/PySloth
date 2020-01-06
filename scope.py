@@ -34,8 +34,12 @@ class Scope:
 
     def __init__(self, scope, database=None):
         self.scope = scope
-        self.scope.settings['session_id'] = str(uuid.uuid1())
-        globals.configs['session_id'] = self.scope.settings['session_id']
+        if ('session_id' in globals.configs) is False:
+            self.scope.settings['session_id'] = str(uuid.uuid1())
+            globals.configs['session_id'] = self.scope.settings['session_id']
+        else:
+            self.scope.settings['session_id'] = globals.configs['session_id']
+        print("Session Id: " + globals.configs['session_id'])
         self.database = database
         self.settings = self.scope.settings
         self.thread_controller = ThreadController(self.settings, self)
