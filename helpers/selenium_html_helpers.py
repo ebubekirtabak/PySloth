@@ -44,6 +44,8 @@ class SeleniumHtmlHelpers:
             self.scope.thread_controller.stop_thread_controller()
         except Exception as e:
             print("Error:" + str(e))
+        self.scope.driver.stop_client()
+        self.scope.driver.close()
         self.scope.driver.quit()
         quit(0)
         exit()
@@ -138,6 +140,7 @@ class SeleniumHtmlHelpers:
         elif type == 'quit':
             self.scope.thread_controller.stop_thread_controller()
             quit(0)
+            self.force_kill()
 
         if "after_actions" in script_actions:
             self.run_after_action(doc, script_actions["after_actions"])
