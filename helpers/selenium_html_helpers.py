@@ -44,9 +44,14 @@ class SeleniumHtmlHelpers:
             self.scope.thread_controller.stop_thread_controller()
         except Exception as e:
             print("Error:" + str(e))
-        self.scope.driver.stop_client()
-        self.scope.driver.close()
-        self.scope.driver.quit()
+
+        try:
+            self.scope.driver.stop_client()
+            self.scope.driver.close()
+            self.scope.driver.quit()
+        except Exception as e:
+            print("Driver Stop Error:" + str(e))
+
         quit(0)
         exit()
 
