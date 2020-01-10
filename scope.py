@@ -101,8 +101,15 @@ class Scope:
         if hasattr(self.scope, 'before_actions'):
             selenium_html_helper = SeleniumHtmlHelpers(self)
             selenium_html_helper.parse_html_with_js(self.driver, self.scope.before_actions)
+        try:
+            self.driver.get(url)
+        except Exception as e:
+            Logger().set_error_log("DriverLoadException: " + str(e), True)
+        finally:
+            self.driver.close()
+            self.driver.quit()
+            return
 
-        self.driver.get(url)
         event_maker = EventMaker(self.driver)
 
         if hasattr(self.scope, 'login') and self.user_model.is_login is not True:
@@ -115,8 +122,11 @@ class Scope:
                 self.form_helpers.submit_form(form)
 
         if hasattr(self.scope, 'script_actions'):
-            selenium_html_helper = SeleniumHtmlHelpers(self)
-            selenium_html_helper.parse_html_with_js(self.driver, self.scope.script_actions)
+            try:
+                selenium_html_helper = SeleniumHtmlHelpers(self)
+                selenium_html_helper.parse_html_with_js(self.driver, self.scope.script_actions)
+            except Exception as e:
+                Logger().set_error_log("SeleniumHtmlHelperError: " + str(e))
 
         if hasattr(self.scope, 'search_item'):
             if 'events' in search_item:
