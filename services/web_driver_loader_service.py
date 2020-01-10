@@ -27,7 +27,7 @@ class WebDriverLoderService:
             except Exception as e:
                 Logger().set_error_log("WebDriver LoadException: " + str(e), True)
                 Logger().set_error_log("auto_load_driver() running: " + str(e), True)
-                return self.auto_load_driver()
+                return None
         else:
           return self.auto_load_driver()
 
