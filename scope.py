@@ -106,8 +106,6 @@ class Scope:
         except Exception as e:
             Logger().set_error_log("DriverLoadException: " + str(e), True)
         finally:
-            self.driver.close()
-            self.driver.quit()
             return
 
         event_maker = EventMaker(self.driver)
