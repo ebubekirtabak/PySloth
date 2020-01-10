@@ -33,9 +33,11 @@ class SeleniumHtmlHelpers:
         self.element_helpers = ElementHelpers()
         self.logger = Logger()
         if self.scope.settings.time_out:
-            print("TimeOut: " + str(self.scope.settings.time_out))
-            kill_thread = threading.Thread(target=self.force_kill)
-            kill_thread.start()
+            try:
+                kill_thread = threading.Thread(target=self.force_kill)
+                kill_thread.start()
+            except Exception as e:
+                print("Error:" + str(e))
 
     def force_kill(self):
         time.sleep(self.scope.settings.time_out)
@@ -202,7 +204,7 @@ class SeleniumHtmlHelpers:
                     if hasattr(scope_model, 'script_actions'):
                         self.parse_html_with_js(doc, scope_model.script_actions)
                 else:
-                    logger.Logger().set_log('FileNotFoundError: ' + action['file'] + '', True)
+                    logger.Logger().set_log('_run_after_action FileNotFoundError: ' + action['file'] + '', True)
             else:
                 self.action_router(doc, action)
 
