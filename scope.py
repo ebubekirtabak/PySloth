@@ -105,8 +105,8 @@ class Scope:
             self.driver.get(url)
         except Exception as e:
             Logger().set_error_log("DriverLoadException: " + str(e), True)
-        finally:
             return
+
 
         event_maker = EventMaker(self.driver)
 
