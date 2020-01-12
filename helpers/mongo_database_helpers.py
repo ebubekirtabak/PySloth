@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+
 import logger
 
 
@@ -21,6 +22,7 @@ class MongoDatabaseHelpers:
                 self.db = client[database['name']]
                 return self.db
         except Exception as e:
+            print("MongoDB Helpers: connect database: " + str(e))
             logger.Logger().set_error_log("MongoDB Helpers: connect database: " + str(e))
             return 400
 
@@ -38,6 +40,9 @@ class MongoDatabaseHelpers:
                 result = selected_collection.insert_one(data)
                 if result.inserted_id is not None:
                     logger.Logger().set_log("insert data")
+                    logger.Logger().set_log('--------- DATA ----------')
+                    logger.Logger().set_log(data)
+                    logger.Logger().set_log('--------- DATA ----------')
                 else:
                     logger.Logger().set_error_log("mongo insert data error")
             except Exception as e:
@@ -51,6 +56,9 @@ class MongoDatabaseHelpers:
                 result = selected_collection.insert_many(data)
                 if len(result.inserted_ids) > 0:
                     logger.Logger().set_log("insert data")
+                    logger.Logger().set_log('--------- DATA ----------')
+                    logger.Logger().set_log(data)
+                    logger.Logger().set_log('--------- DATA ----------')
                 else:
                     logger.Logger().set_error_log("mongo insert data error", True)
             except Exception as e:

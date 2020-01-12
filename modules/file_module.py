@@ -48,7 +48,7 @@ class FileModule:
                 return {"success": False}
         except Exception as e:
             logger.set_error_log("read_file -> (" + dir + file_name + "): "
-                                 + str(e))
+                                 + str(e), True)
             return {"success": False, "error_message": "File not found."}
 
     @staticmethod
@@ -62,7 +62,7 @@ class FileModule:
                 return {"success": False}
         except Exception as e:
             logger.set_error_log("read_file -> (" + dir + file_name + "): "
-                                 + str(e))
+                                 + str(e), True)
             return {"success": False, "error_message": "File not found."}
 
     def write_file(self, file_dir=script_dir, file_name=None, data=None):

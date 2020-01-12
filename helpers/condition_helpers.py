@@ -79,3 +79,19 @@ class ConditionHelpers:
             else:
                 return None
 
+    def if_variable_not_null(self, condition):
+        try:
+            if VariableHelpers().is_exists_variable(condition['variable_name']):
+                return condition['if']
+            elif 'else' in condition:
+                return condition['else']
+            else:
+                return None
+        except Exception as e:
+            self.logger.set_error_log('Error if_exists_variable: ' + str(e))
+            if 'else' in condition:
+                return condition['else']
+            else:
+                return None
+
+

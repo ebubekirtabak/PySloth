@@ -1,11 +1,12 @@
 import random
 from datetime import datetime
 
+from logger import Logger
 
 class VariableHelpers:
 
     def __init__(self):
-        pass
+        self.logger = Logger()
 
     @staticmethod
     def load_scope_variables():
@@ -15,6 +16,11 @@ class VariableHelpers:
     @staticmethod
     def set_variable(variable_name, variable_value):
         global scope_variables
+        if isinstance(variable_value, list):
+            Logger().set_log("Variable name: " + variable_name + " : value: " + str(variable_value))
+        elif isinstance(variable_value, str):
+            Logger().set_log("Variable name: " + variable_name + " : value: " + variable_value)
+
         if scope_variables is None:
             VariableHelpers.load_scope_variables()
         if variable_name in scope_variables:
