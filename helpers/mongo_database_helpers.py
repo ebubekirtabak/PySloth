@@ -47,6 +47,19 @@ class MongoDatabaseHelpers:
                     logger.Logger().set_error_log("mongo insert data error")
             except Exception as e:
                 logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e))
+
+    def upsert(self, collection, key, data):
+        if self.db != 400:
+            try:
+                selected_collection = self.db[collection]
+                result = selected_collection.update(key, data, upsert=True)
+                if result.inserted_id is not None:
+                    logger.Logger().set_log('--------- DATA ----------')
+                    logger.Logger().set_log(data)
+                else:
+                    logger.Logger().set_error_log("mongo upsert data error")
+            except Exception as e:
+                logger.Logger().set_error_log("MongoDB Helpers: upsert Error: " + str(e))
                 return 400
 
     def insert_many(self, collection, data):
