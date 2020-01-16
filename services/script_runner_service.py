@@ -10,13 +10,21 @@ class ScriptRunnerService:
         self.logger = Logger()
 
     def run(self):
+        try:
+            type = self.script_options['type']
 
-        type = self.script_options['type']
+            command = [type, self.script_options['script']]
+            if 'params' in self.script_options:
+                params = self.script_options['params']
+                for param in params:
+                    command.append(param)
 
-        if type == "python":
-            subprocess.call(['python3', self.script_options['script']])
-        elif type == "python3":
-            subprocess.call(['python3', self.script_options['script']])
+                self.logger.set_log("run script: " + str(command))
+                process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
+                result = process_output.decode("utf-8")
+                self.logger.set_log("script result: " + result)
+        except Exception as e:
+            self.logger.set_log("custom_script Exception: " + str(e), True)
 
     def get_script_result(self, params):
         try:
