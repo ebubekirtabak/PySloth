@@ -32,12 +32,12 @@ class SeleniumHtmlHelpers:
         self.keep_elements = {}
         self.element_helpers = ElementHelpers()
         self.logger = Logger()
-        if self.scope.settings.time_out:
+        '''if self.scope.settings.time_out:
             try:
                 kill_thread = threading.Thread(target=self.force_kill)
                 kill_thread.start()
             except Exception as e:
-                print("Error:" + str(e))
+                print("Error:" + str(e))'''
 
     def force_kill(self):
         time.sleep(self.scope.settings.time_out)
