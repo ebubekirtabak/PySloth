@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 import chromedriver_autoinstaller
 from selenium import webdriver
@@ -26,7 +27,8 @@ class WebDriverLoderService:
                     return self.init_firefox_driver()
             except Exception as e:
                 Logger().set_error_log("WebDriver LoadException: " + str(e), True)
-                Logger().set_error_log("auto_load_driver() running: " + str(e), True)
+                value, traceback = sys.exc_info()
+                Logger().set_error_log('Exception Details %s: %s' % (value.filename, value.strerror))
                 return None
         else:
           return self.auto_load_driver()
