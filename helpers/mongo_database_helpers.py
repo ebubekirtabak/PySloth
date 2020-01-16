@@ -95,6 +95,9 @@ class MongoDatabaseHelpers:
     def get_find(self, collection, query):
         return self.db[collection].find(query)
 
+    def get_find_one(self, collection, query):
+        return self.db[collection].find_one(query)
+
     def get_find_all(self, collection):
         return self.db[collection].find()
 
