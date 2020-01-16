@@ -16,6 +16,7 @@ from selenium import webdriver
 from helpers.selenium_html_helpers import SeleniumHtmlHelpers
 from models.setting_model import SettingModel
 from models.user_model import UserModel
+from selenium.common.exceptions import TimeoutException
 from services.web_driver_loader_service import WebDriverLoderService
 from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
@@ -97,7 +98,9 @@ class Scope:
 
     def call_page_with_javascript(self, url, search_item):
         # javascript is enable
+        Logger().set_log("Start Page: " + url, True)
         self.driver = WebDriverLoderService(self.settings.driver).init_web_driver()
+        self.driver.set_page_load_timeout(300)
         if hasattr(self.scope, 'before_actions'):
             selenium_html_helper = SeleniumHtmlHelpers(self)
             selenium_html_helper.parse_html_with_js(self.driver, self.scope.before_actions)
@@ -105,6 +108,11 @@ class Scope:
             self.driver.get(url)
         except Exception as e:
             Logger().set_error_log("DriverLoadException: " + str(e), True)
+            return
+        except TimeoutException as e:
+            Logger().set_error_log("Page load Timeout Occured. Quiting !!!", True)
+            self.driver.delete_all_cookies()
+            self.driver.quit()
             return
 
 
