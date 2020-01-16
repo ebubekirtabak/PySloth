@@ -138,6 +138,13 @@ class SeleniumHtmlHelpers:
         elif type == 'run_custom_script':
             script_service = ScriptRunnerService(script_actions['custom_script'])
             script_service.run()
+        elif type == "condition":
+            new_action = ConditionHelpers(doc, script_actions).parse_condition()
+            if isinstance(new_action, list):
+                for action_item in new_action:
+                    self.action_router(doc, action_item)
+            elif new_action is not None:
+                self.action_router(doc, new_action)
         elif type == "driver_event":
             self.driver_action_router(doc, script_actions)
         elif type == "database":
