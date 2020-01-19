@@ -16,6 +16,7 @@ from selenium import webdriver
 from helpers.selenium_html_helpers import SeleniumHtmlHelpers
 from models.setting_model import SettingModel
 from models.user_model import UserModel
+from selenium.common.exceptions import TimeoutException
 from services.web_driver_loader_service import WebDriverLoderService
 from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
@@ -34,8 +35,12 @@ class Scope:
 
     def __init__(self, scope, database=None):
         self.scope = scope
-        self.scope.settings['session_id'] = str(uuid.uuid1())
-        globals.configs['session_id'] = self.scope.settings['session_id']
+        if ('session_id' in globals.configs) is False:
+            self.scope.settings['session_id'] = str(uuid.uuid1())
+            globals.configs['session_id'] = self.scope.settings['session_id']
+        else:
+            self.scope.settings['session_id'] = globals.configs['session_id']
+        print("Session Id: " + globals.configs['session_id'])
         self.database = database
         self.settings = self.scope.settings
         self.thread_controller = ThreadController(self.settings, self)
@@ -43,6 +48,7 @@ class Scope:
         self.http_services = HttpServices(self.settings, self.thread_controller)
         self.form_helpers = None
         self.user_model = UserModel()
+        self.driver = None
 
     def start(self):
         if 'database' in self.scope.settings:
@@ -92,38 +98,53 @@ class Scope:
 
     def call_page_with_javascript(self, url, search_item):
         # javascript is enable
-        driver = WebDriverLoderService(self.settings.driver).init_web_driver()
+        Logger().set_log("Start Page: " + url, True)
+        self.driver = WebDriverLoderService(self.settings.driver).init_web_driver()
+        self.driver.set_page_load_timeout(300)
         if hasattr(self.scope, 'before_actions'):
             selenium_html_helper = SeleniumHtmlHelpers(self)
-            selenium_html_helper.parse_html_with_js(driver, self.scope.before_actions)
+            selenium_html_helper.parse_html_with_js(self.driver, self.scope.before_actions)
+        try:
+            self.driver.get(url)
+        except Exception as e:
+            Logger().set_error_log("DriverLoadException: " + str(e), True)
+            return
+        except TimeoutException as e:
+            Logger().set_error_log("Page load Timeout Occured. Quiting !!!", True)
+            self.driver.delete_all_cookies()
+            self.driver.quit()
+            return
 
-        driver.get(url)
-        event_maker = EventMaker(driver)
+
+        event_maker = EventMaker(self.driver)
 
         if hasattr(self.scope, 'login') and self.user_model.is_login is not True:
-            self.form_helpers = FormHelpers(driver)
+            self.form_helpers = FormHelpers(self.driver)
             for event in self.scope.login['events']:
-                event_maker.push_event(driver, event=event)
+                event_maker.push_event(self.driver, event=event)
             forms = self.scope.login['forms']
 
             for form in forms:
                 self.form_helpers.submit_form(form)
 
         if hasattr(self.scope, 'script_actions'):
-            selenium_html_helper = SeleniumHtmlHelpers(self)
-            selenium_html_helper.parse_html_with_js(driver, self.scope.script_actions)
+            try:
+                selenium_html_helper = SeleniumHtmlHelpers(self)
+                selenium_html_helper.parse_html_with_js(self.driver, self.scope.script_actions)
+            except Exception as e:
+                Logger().set_error_log("SeleniumHtmlHelperError: " + str(e))
 
         if hasattr(self.scope, 'search_item'):
             if 'events' in search_item:
                 for event in search_item['events']:
-                    event_maker.push_event(driver, event=event)
+                    event_maker.push_event(self.driver, event=event)
 
-            self.parse_page(driver, search_item)
+            self.parse_page(self.driver, search_item)
 
-        response = driver.page_source
+        response = self.driver.page_source
         doc = fromstring(response)
         doc.make_links_absolute(url)
-        driver.quit()
+        self.driver.quit()
 
     def parse_page(self, doc, search_item):
 

@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+
 import logger
 
 
@@ -21,6 +22,7 @@ class MongoDatabaseHelpers:
                 self.db = client[database['name']]
                 return self.db
         except Exception as e:
+            print("MongoDB Helpers: connect database: " + str(e))
             logger.Logger().set_error_log("MongoDB Helpers: connect database: " + str(e))
             return 400
 
@@ -38,10 +40,26 @@ class MongoDatabaseHelpers:
                 result = selected_collection.insert_one(data)
                 if result.inserted_id is not None:
                     logger.Logger().set_log("insert data")
+                    logger.Logger().set_log('--------- DATA ----------')
+                    logger.Logger().set_log(data)
+                    logger.Logger().set_log('--------- DATA ----------')
                 else:
                     logger.Logger().set_error_log("mongo insert data error")
             except Exception as e:
                 logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e))
+
+    def upsert(self, collection, key, data):
+        if self.db != 400:
+            try:
+                selected_collection = self.db[collection]
+                result = selected_collection.update(key, data, upsert=True)
+                if result.inserted_id is not None:
+                    logger.Logger().set_log('--------- DATA ----------')
+                    logger.Logger().set_log(data)
+                else:
+                    logger.Logger().set_error_log("mongo upsert data error")
+            except Exception as e:
+                logger.Logger().set_error_log("MongoDB Helpers: upsert Error: " + str(e))
                 return 400
 
     def insert_many(self, collection, data):
@@ -51,6 +69,9 @@ class MongoDatabaseHelpers:
                 result = selected_collection.insert_many(data)
                 if len(result.inserted_ids) > 0:
                     logger.Logger().set_log("insert data")
+                    logger.Logger().set_log('--------- DATA ----------')
+                    logger.Logger().set_log(data)
+                    logger.Logger().set_log('--------- DATA ----------')
                 else:
                     logger.Logger().set_error_log("mongo insert data error", True)
             except Exception as e:
@@ -73,6 +94,9 @@ class MongoDatabaseHelpers:
 
     def get_find(self, collection, query):
         return self.db[collection].find(query)
+
+    def get_find_one(self, collection, query):
+        return self.db[collection].find_one(query)
 
     def get_find_all(self, collection):
         return self.db[collection].find()

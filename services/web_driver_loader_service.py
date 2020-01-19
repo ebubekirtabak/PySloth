@@ -1,5 +1,8 @@
 import os
+import subprocess
+import sys
 
+import chromedriver_autoinstaller
 from selenium import webdriver
 from selenium.webdriver import DesiredCapabilities
 
@@ -15,19 +18,29 @@ class WebDriverLoderService:
     def init_web_driver(self):
         if 'driver_type' in self.driver_options:
             type = self.driver_options['driver_type']
+            try:
+                if type == 'chrome':
+                    return self.init_chrome_driver()
+                elif type == 'opera':
+                    return self.init_opera_driver()
+                elif type == 'firefox':
+                    return self.init_firefox_driver()
+            except Exception as e:
+                Logger().set_error_log("WebDriver LoadException: " + str(e), True)
+                value, traceback = sys.exc_info()
+                Logger().set_error_log('Exception Details %s: %s' % (value.filename, value.strerror))
+                return None
         else:
-            type = 'chrome'
+          return self.auto_load_driver()
 
-        try:
-            if type == 'chrome':
-                return self.init_chrome_driver()
-            elif type == 'opera':
-                return self.init_opera_driver()
-            elif type == 'firefox':
-                return self.init_firefox_driver()
-        except Exception as e:
-            Logger().set_error_log("WebDriver LoadException: " + str(e), True)
-            return None
+    def auto_load_driver(self):
+        chromedriver_autoinstaller.install()
+        print("Whick chrome driver")
+        driver_path = subprocess.check_output(["which", "chromedriver"])
+        if driver_path:
+            print("Driver load has been successful" + driver_path)
+            self.driver_options["path"] = driver_path
+            return self.init_chrome_driver()
 
     def init_chrome_driver(self):
         driver = self.driver_options

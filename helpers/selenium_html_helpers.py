@@ -1,3 +1,4 @@
+import threading
 import time
 import json
 
@@ -16,10 +17,12 @@ from helpers.form_helpers import FormHelpers
 from helpers.mongo_database_helpers import MongoDatabaseHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
-from logger import Logger
+import logger
 from models.thread_model import ThreadModel
 from modules.file_module import FileModule
 from services.script_runner_service import ScriptRunnerService
+
+from logger import Logger
 
 
 class SeleniumHtmlHelpers:
@@ -29,9 +32,35 @@ class SeleniumHtmlHelpers:
         self.keep_elements = {}
         self.element_helpers = ElementHelpers()
         self.logger = Logger()
+        '''if self.scope.settings.time_out:
+            try:
+                kill_thread = threading.Thread(target=self.force_kill)
+                kill_thread.start()
+            except Exception as e:
+                print("Error:" + str(e))'''
+
+    def force_kill(self):
+        time.sleep(self.scope.settings.time_out)
+        print("****** Force Killer *******")
+        try:
+            self.scope.thread_controller.stop_thread_controller()
+        except Exception as e:
+            print("Error:" + str(e))
+
+        try:
+            self.scope.driver.stop_client()
+            self.scope.driver.close()
+            self.scope.driver.quit()
+        except Exception as e:
+            print("Driver Stop Error:" + str(e))
+
+        quit(0)
+        exit()
 
     def parse_html_with_js(self, doc, script_actions):
-        AutoPageHelpers(doc).check_page_elements()
+        if self.scope.settings.is_page_helper:
+            AutoPageHelpers(doc).check_page_elements()
+
         for action in script_actions:
             if action['type'] == "condition":
                 new_action = ConditionHelpers(doc, action).parse_condition()
@@ -109,13 +138,23 @@ class SeleniumHtmlHelpers:
         elif type == 'run_custom_script':
             script_service = ScriptRunnerService(script_actions['custom_script'])
             script_service.run()
+        elif type == "condition":
+            new_action = ConditionHelpers(doc, script_actions).parse_condition()
+            if isinstance(new_action, list):
+                for action_item in new_action:
+                    self.action_router(doc, action_item)
+            elif new_action is not None:
+                self.action_router(doc, new_action)
         elif type == "driver_event":
             self.driver_action_router(doc, script_actions)
+        elif type == "database":
+            self.database_action_router(doc, script_actions)
         elif type == "rerun_actions":
             self.parse_html_with_js(doc, self.scope_model.script_actions)
         elif type == 'quit':
             self.scope.thread_controller.stop_thread_controller()
             quit(0)
+            self.force_kill()
 
         if "after_actions" in script_actions:
             self.run_after_action(doc, script_actions["after_actions"])
@@ -172,7 +211,7 @@ class SeleniumHtmlHelpers:
                     if hasattr(scope_model, 'script_actions'):
                         self.parse_html_with_js(doc, scope_model.script_actions)
                 else:
-                    logger.Logger().set_log('FileNotFoundError: ' + action['file'] + '', True)
+                    logger.Logger().set_log('_run_after_action FileNotFoundError: ' + action['file'] + '', True)
             else:
                 self.action_router(doc, action)
 
@@ -227,15 +266,16 @@ class SeleniumHtmlHelpers:
             parse_list.append({})
             for action_object in action['object_list']:
                 value = self.get_object_value(action_object, element)
-                self.logger.set_log("Object_list loop: " + value)
                 if 'custom_scripts' in action_object:
                     custom_scripts = action_object['custom_scripts']
                     if isinstance(value, list):
+                        new_values = []
                         for val in value:
-                            custom_scripts['script'] = custom_scripts['script'] + ' ' + val
                             val = ScriptRunnerService(custom_scripts).get_script_result(val)
+                            new_values.append(val)
+
+                        value = new_values
                     else:
-                        custom_scripts['script'] = custom_scripts['script'] + ' ' + value
                         value = ScriptRunnerService(custom_scripts).get_script_result(value)
 
                 parse_list[index][action_object['variable_name']] = value
@@ -273,13 +313,15 @@ class SeleniumHtmlHelpers:
 
             if 'custom_scripts' in script_actions:
                 if isinstance(value, list):
+                    new_values = []
                     for val in value:
                         custom_scripts = script_actions['custom_scripts']
-                        custom_scripts['script'] = custom_scripts['script'] + ' ' + val
                         val = ScriptRunnerService(custom_scripts).get_script_result(val)
+                        new_values.append(val)
+
+                    value = new_values
                 else:
                     custom_scripts = script_actions['custom_scripts']
-                    custom_scripts['script'] = custom_scripts['script'] + ' ' + value
                     value = ScriptRunnerService(custom_scripts).get_script_result(value)
 
             VariableHelpers().set_variable(script_actions['variable_name'], value)

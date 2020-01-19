@@ -21,7 +21,7 @@ def main():
             scope_model = namedtuple("ScopeModel", scope_data.keys())(*scope_data.values())
             Scope(scope_model).start()
         else:
-            print('FileNotFoundError: ' + sys.argv[2] + sys.argv[3] + '')
+            print('_main FileNotFoundError: ' + sys.argv[2] + sys.argv[3] + '')
 
 
 

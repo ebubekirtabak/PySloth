@@ -11,7 +11,8 @@ logs_dir = script_dir + '/logs/'
 class Logger:
 
     def __init__(self):
-        if hasattr(globals.configs, 'session_id'):
+        if ('session_id' in globals.configs) is False:
+            print("session_id is null")
             globals.configs['session_id'] = str(uuid.uuid1())
 
     @staticmethod
