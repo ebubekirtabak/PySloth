@@ -15,6 +15,7 @@ class TestScriptRunnerService(unittest.TestCase):
         'https://www.linkedin.com/company/evolute-inc-?trk=public_profile_topcard_current_company\n',
         'https://www.linkedin.com/company/evolute-inc-?trk=public_profile_topcard_current_company\n'
     ]
+
     def test_get_scope(self):
         globals.configs['session_id'] = "TestScriptRunnerService"
         options = {
