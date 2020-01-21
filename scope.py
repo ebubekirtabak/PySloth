@@ -129,6 +129,8 @@ class Scope:
 
         if hasattr(self.scope, 'script_actions'):
             try:
+                WebDriverWait(self.driver, 30).until(
+                    lambda driver: driver.execute_script('return document.readyState') == 'complete')
                 selenium_html_helper = SeleniumHtmlHelpers(self)
                 selenium_html_helper.parse_html_with_js(self.driver, self.scope.script_actions)
             except Exception as e:
