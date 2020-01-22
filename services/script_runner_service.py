@@ -48,7 +48,6 @@ class ScriptRunnerService:
                     result = process_output.decode("utf-8")
                     self.logger.set_log("script result: " + result)
 
-
             return result
         except Exception as e:
             self.logger.set_log("custom_script Exception: " + str(e), True)
