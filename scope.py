@@ -146,10 +146,16 @@ class Scope:
 
             self.parse_page(self.driver, search_item)
 
-        response = self.driver.page_source
-        doc = fromstring(response)
-        doc.make_links_absolute(url)
-        self.driver.quit()
+        try:
+            if 'page_source' in self.driver:
+                response = self.driver.page_source
+                doc = fromstring(response)
+                doc.make_links_absolute(url)
+        except Exception as e:
+            Logger().set_error_log("SeleniumPageSourceException: " + str(e), True)
+        finally:
+            self.driver.close()
+            self.driver.quit()
 
     def parse_page(self, doc, search_item):
 
