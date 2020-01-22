@@ -135,6 +135,9 @@ class Scope:
                 selenium_html_helper.parse_html_with_js(self.driver, self.scope.script_actions)
             except Exception as e:
                 Logger().set_error_log("SeleniumHtmlHelperError: " + str(e))
+                type, value, traceback = sys.exc_info()
+                if hasattr(value, 'filename'):
+                    Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
         if hasattr(self.scope, 'search_item'):
             if 'events' in search_item:
