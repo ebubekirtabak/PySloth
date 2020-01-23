@@ -259,29 +259,35 @@ class SeleniumHtmlHelpers:
             return True
 
     def parse_html_list(self, doc, action):
-        selected_elements = doc.find_elements_by_xpath(action['selector'])
-        parse_list = []
-        index = 0
-        for element in selected_elements:
-            parse_list.append({})
-            for action_object in action['object_list']:
-                value = self.get_object_value(action_object, element)
-                if 'custom_scripts' in action_object:
-                    custom_scripts = action_object['custom_scripts']
-                    if isinstance(value, list):
-                        new_values = []
-                        for val in value:
-                            val = ScriptRunnerService(custom_scripts).get_script_result(val)
-                            new_values.append(val)
+        try:
+            selected_elements = doc.find_elements_by_xpath(action['selector'])
+            parse_list = []
+            index = 0
+            for element in selected_elements:
+                parse_list.append({})
+                for action_object in action['object_list']:
+                    value = self.get_object_value(action_object, element)
+                    if 'custom_scripts' in action_object:
+                        custom_scripts = action_object['custom_scripts']
+                        if isinstance(value, list):
+                            new_values = []
+                            for val in value:
+                                val = ScriptRunnerService(custom_scripts).get_script_result(val)
+                                new_values.append(val)
 
-                        value = new_values
-                    else:
-                        value = ScriptRunnerService(custom_scripts).get_script_result(value)
+                            value = new_values
+                        else:
+                            value = ScriptRunnerService(custom_scripts).get_script_result(value)
 
-                parse_list[index][action_object['variable_name']] = value
-            index = index + 1
+                    parse_list[index][action_object['variable_name']] = value
+                index = index + 1
 
-        return parse_list
+            return parse_list
+        except Exception as e:
+            Logger().set_log('ParseHtmlListException: ' + str(e), True)
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
     def get_object_value(self, action_object, element):
         if action_object['type'] == 'parse_html_list':
