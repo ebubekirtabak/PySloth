@@ -32,28 +32,29 @@ class SeleniumHtmlHelpers:
         self.keep_elements = {}
         self.element_helpers = ElementHelpers()
         self.logger = Logger()
-        '''if self.scope.settings.time_out:
         self.driver = None
+        if self.scope.settings.time_out:
             try:
-                kill_thread = threading.Thread(target=self.force_kill)
+                kill_thread = threading.Thread(target=self.force_kill_start)
                 kill_thread.start()
             except Exception as e:
-                print("Error:" + str(e))'''
+                self.logger.set_log("Error: " + str(e))
+
+    def force_kill_start(self):
+        time.sleep(self.scope.settings.time_out)
+        self.force_kill()
 
     def force_kill(self):
-        time.sleep(self.scope.settings.time_out)
-        print("****** Force Killer *******")
+        self.logger.set_log("Run Force Killer", True)
         try:
             self.scope.thread_controller.stop_thread_controller()
         except Exception as e:
-            print("Error:" + str(e))
+            self.logger.set_log("ThreadKillError: " + str(e))
 
         try:
-            self.scope.driver.stop_client()
-            self.scope.driver.close()
-            self.scope.driver.quit()
+            self.driver.close()
         except Exception as e:
-            print("Driver Stop Error:" + str(e))
+            self.logger.set_log("Driver Stop Error: " + str(e), True)
 
         quit(0)
         exit()
