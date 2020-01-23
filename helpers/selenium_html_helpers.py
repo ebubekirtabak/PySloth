@@ -64,14 +64,7 @@ class SeleniumHtmlHelpers:
             AutoPageHelpers(doc).check_page_elements()
 
         for action in script_actions:
-            if action['type'] == "condition":
-                new_action = ConditionHelpers(doc, action).parse_condition()
-                if isinstance(new_action, list):
-                    for action_item in new_action:
-                        self.action_router(doc, action_item)
-                elif new_action is not None:
-                    self.action_router(doc, new_action)
-            elif action['type'] == "database":
+            if action['type'] == "database":
                 self.database_action_router(doc, action)
             elif action['type'] == "rerun_actions":
                 self.parse_html_with_js(doc, self.scope_model.script_actions)
