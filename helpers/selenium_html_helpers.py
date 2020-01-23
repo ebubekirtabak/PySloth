@@ -123,8 +123,8 @@ class SeleniumHtmlHelpers:
             values = self.parse_html_list(doc, script_actions)
             VariableHelpers().set_variable(script_actions['variable_name'], values)
         elif type == 'switch_to_frame':
-            frame = doc.find_element_by_xpath(script_actions['selector'])
-            doc.switch_to.frame(frame)
+            wait(doc, 10).until(
+                EC.frame_to_be_available_and_switch_to_it(doc.find_element_by_xpath(script_actions['selector'])))
         elif type == 'switch_to_parent_frame':
             doc.switch_to.default_content()
         elif type == 'run_recaptcha_helper':
