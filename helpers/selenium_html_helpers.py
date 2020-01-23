@@ -143,9 +143,9 @@ class SeleniumHtmlHelpers:
         elif type == "rerun_actions":
             self.parse_html_with_js(doc, self.scope_model.script_actions)
         elif type == 'quit':
-            self.scope.thread_controller.stop_thread_controller()
-            quit(0)
             self.force_kill()
+            quit(0)
+            exit()
 
         if "after_actions" in script_actions:
             self.run_after_action(doc, script_actions["after_actions"])
