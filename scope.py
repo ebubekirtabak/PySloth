@@ -17,6 +17,7 @@ from helpers.selenium_html_helpers import SeleniumHtmlHelpers
 from models.setting_model import SettingModel
 from models.user_model import UserModel
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.wait import WebDriverWait
 from services.web_driver_loader_service import WebDriverLoderService
 from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
@@ -154,8 +155,9 @@ class Scope:
         except Exception as e:
             Logger().set_error_log("SeleniumPageSourceException: " + str(e), True)
         finally:
-            self.driver.close()
-            self.driver.quit()
+            if self.driver is not None:
+                self.driver.close()
+                self.driver.quit()
 
     def parse_page(self, doc, search_item):
 
