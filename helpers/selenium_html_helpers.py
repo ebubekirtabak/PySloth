@@ -163,6 +163,8 @@ class SeleniumHtmlHelpers:
             doc.back()
         elif action == "refresh_page":
             doc.refresh()
+            WebDriverWait(doc, 30).until(
+                lambda driver: driver.execute_script('return document.readyState') == 'complete')
 
     def database_action_router(self, doc, database_action):
         action = database_action['action']
