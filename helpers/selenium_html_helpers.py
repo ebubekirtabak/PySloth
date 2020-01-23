@@ -33,6 +33,7 @@ class SeleniumHtmlHelpers:
         self.element_helpers = ElementHelpers()
         self.logger = Logger()
         '''if self.scope.settings.time_out:
+        self.driver = None
             try:
                 kill_thread = threading.Thread(target=self.force_kill)
                 kill_thread.start()
@@ -58,6 +59,7 @@ class SeleniumHtmlHelpers:
         exit()
 
     def parse_html_with_js(self, doc, script_actions):
+        self.driver = doc
         if self.scope.settings.is_page_helper:
             AutoPageHelpers(doc).check_page_elements()
 
