@@ -28,9 +28,12 @@ class ConditionHelpers:
         try:
             if self.doc.find_element_by_xpath(selector) is not None:
                 return condition['if']
+            elif 'else' in condition:
+                return condition['else']
             else:
                 return None
-        except NoSuchElementException:
+        except NoSuchElementException as e:
+            self.logger.set_error_log('(if_selector) NoSuchElementException: ' + str(e))
             if 'else' in condition:
                 return condition['else']
             else:
