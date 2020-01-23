@@ -327,8 +327,14 @@ class SeleniumHtmlHelpers:
             VariableHelpers().set_variable(script_actions['variable_name'], value)
         except Exception as e:
             self.logger.set_error_log("GetVariable: Error: " + str(e), True)
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
         except NoSuchElementException as e:
             self.logger.set_error_log("NoSuchElementException: " + str(e), True)
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
     @staticmethod
     def get_attribute_from_element(element, attribute):
