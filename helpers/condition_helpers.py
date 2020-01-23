@@ -48,7 +48,8 @@ class ConditionHelpers:
                 return condition['else']
             else:
                 return None
-        except NoSuchElementException:
+        except NoSuchElementException as e:
+            self.logger.set_error_log('(if_not_selector) NoSuchElementException: ' + str(e))
             return condition['if']
 
     def if_exists_variable(self, condition):
