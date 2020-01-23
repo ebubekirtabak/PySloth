@@ -38,7 +38,7 @@ class VariableHelpers:
         try:
             return scope_variables[variable_name]
         except Exception as e:
-            print('Error: ' + str(e))
+            Logger().set_log('get_variable Error: ' + str(e))
             return None
 
     @staticmethod
