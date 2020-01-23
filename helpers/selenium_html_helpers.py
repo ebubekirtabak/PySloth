@@ -74,7 +74,7 @@ class SeleniumHtmlHelpers:
             elif action['type'] == "database":
                 self.database_action_router(doc, action)
             elif action['type'] == "rerun_actions":
-                self.parse_html_with_js(doc, script_actions)
+                self.parse_html_with_js(doc, self.scope_model.script_actions)
             elif action['type'] != "**":
                 self.action_router(doc, action)
             else:
