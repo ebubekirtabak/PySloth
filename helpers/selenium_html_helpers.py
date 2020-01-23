@@ -55,7 +55,8 @@ class SeleniumHtmlHelpers:
             self.logger.set_log("ThreadKillError: " + str(e))
 
         try:
-            self.driver.close()
+            if self.driver is not None:
+                self.driver.close()
         except Exception as e:
             self.logger.set_log("Driver Stop Error: " + str(e), True)
 
