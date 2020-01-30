@@ -1,3 +1,5 @@
+import os
+import signal
 import sys
 import threading
 import time
@@ -60,8 +62,8 @@ class SeleniumHtmlHelpers:
         except Exception as e:
             self.logger.set_log("Driver Stop Error: " + str(e), True)
 
-        quit(0)
-        exit()
+        pid = os.getpid()
+        os.kill(pid, signal.SIGTERM)
 
     def parse_html_with_js(self, doc, script_actions):
         self.driver = doc
