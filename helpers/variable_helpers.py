@@ -1,4 +1,5 @@
 import random
+import time
 from datetime import datetime
 
 from logger import Logger
@@ -54,6 +55,8 @@ class VariableHelpers:
             return VariableHelpers.generate_uniq_number()
         elif selector == "@get_scope_variables":
             return VariableHelpers.get_scope_variables()
+        elif selector == "@get_unix_time":
+            return VariableHelpers.get_unix_time()
 
     @staticmethod
     def generate_uniq_number():
@@ -64,6 +67,10 @@ class VariableHelpers:
     def get_scope_variables():
         global scope_variables
         return scope_variables
+
+    @staticmethod
+    def get_unix_time():
+        return time.time()
 
     @staticmethod
     def is_exists_variable(variable_name):
