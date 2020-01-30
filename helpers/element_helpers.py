@@ -31,12 +31,14 @@ class ElementHelpers:
             if len(elements) == 1:
                 value = ElementHelpers().get_attribute_from_element(elements[0], action_object['attribute_name'])
                 return value
-            else:
+            elif len(elements) > 1:
                 values = []
                 for child_element in elements:
                     value = ElementHelpers().get_attribute_from_element(child_element, action_object['attribute_name'])
                     values.append(value)
                 return values
+            else:
+                return ''
 
         except Exception as e:
             self.logger.set_error_log(
