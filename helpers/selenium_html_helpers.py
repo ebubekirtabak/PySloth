@@ -307,7 +307,7 @@ class SeleniumHtmlHelpers:
                 elements = doc.find_elements_by_xpath(script_actions['selector'])
                 if len(elements) == 1:
                     value = self.element_helpers.get_attribute_from_element(elements[0], script_actions['attribute_name'])
-                else:
+                elif len(elements) > 1:
                     value = []
                     for element in elements:
                         element_value = self.element_helpers.get_attribute_from_element(
