@@ -4,6 +4,7 @@ from datetime import datetime
 
 from logger import Logger
 
+
 class VariableHelpers:
 
     def __init__(self):
