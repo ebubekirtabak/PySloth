@@ -121,6 +121,30 @@ PySloth can download file from web site.
 ]
 ````
 
+#### Passing Parameters From VariableHelpers
+
+When you use "${variable_name}" Pysloth will use own VariableHelpers. In this way you can replace Pysloth's data from in your custom script.
+
+````json
+"script_actions": [
+    { ... },
+    {
+      "type": "run_custom_script",
+      "delay": 0,
+      "sleep": 0,
+      "custom_script": {
+      "variable_name": "current_experience",
+      "params": [
+        "${variable_name}"
+      ]
+      "type": "python",
+      "script": "custom_scripts/proxy_tester.py"
+      }
+    },
+    { ... }
+]
+````
+
 #### Redirect to url function. (New)
 ````json
 "script_actions": [
