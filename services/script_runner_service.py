@@ -27,12 +27,12 @@ class ScriptRunnerService:
                         param_value = VariableHelpers().get_variable(params_name.group(1))
                         command.append(json.dumps(param_value))
                     else:
-                    command.append(param)
+                        command.append(param)
 
-                self.logger.set_log("run script: " + str(command))
-                process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
-                result = process_output.decode("utf-8")
-                self.logger.set_log("script result: " + result)
+            self.logger.set_log("run script: " + str(command))
+            process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
+            result = process_output.decode("utf-8")
+            self.logger.set_log("script result: " + result)
             if 'variable_name' in self.script_options:
                 VariableHelpers().set_variable(self.script_options['variable_name'], json.loads(result))
 
