@@ -114,7 +114,7 @@ PySloth can download file from web site.
       "sleep": 0,
       "custom_script": {
         "type": "python",
-        "custom_script": "custom_scripts/proxy_tester.py"
+        "script": "custom_scripts/proxy_tester.py"
       }
     },
     { ... }
