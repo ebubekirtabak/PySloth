@@ -11,6 +11,7 @@ logs_dir = script_dir + '/logs/'
 class Logger:
 
     def __init__(self):
+        self.check_log_dir()
         if ('session_id' in globals.configs) is False:
             print("session_id is null")
             globals.configs['session_id'] = str(uuid.uuid1())
@@ -44,3 +45,8 @@ class Logger:
         with open(abs_file_path, 'a') as the_file:
             the_file.write(str(time.strftime('%c')) + " : " + str(data))
             the_file.write('\n')
+
+    @staticmethod
+    def check_log_dir():
+        if os.path.isdir(logs_dir) is not True:
+            os.mkdir(logs_dir)
