@@ -53,7 +53,7 @@ class MongoDatabaseHelpers:
             try:
                 selected_collection = self.db[collection]
                 result = selected_collection.update(key, data, upsert=True)
-                if result.inserted_id is not None:
+                if result.matched_count > 0:
                     logger.Logger().set_log('--------- DATA ----------')
                     logger.Logger().set_log(data)
                 else:
@@ -83,7 +83,8 @@ class MongoDatabaseHelpers:
             try:
                 selected_collection = self.db[collection]
                 selected_collection.update(
-                    query, {"$set": data})
+                    query, {"$set": data}
+                )
                 logger.Logger().set_log("update collection data")
             except Exception as e:
                 logger.Logger().set_error_log("MongoDB Helpers: update Error: " + str(e), True)
