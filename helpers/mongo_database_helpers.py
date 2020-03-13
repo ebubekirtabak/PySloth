@@ -44,9 +44,10 @@ class MongoDatabaseHelpers:
                     logger.Logger().set_log(data)
                     logger.Logger().set_log('--------- DATA ----------')
                 else:
-                    logger.Logger().set_error_log("mongo insert data error")
+                    logger.Logger().set_error_log("mongo insert data error", True)
             except Exception as e:
-                logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e))
+                logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e), True)
+                return 400
 
     def upsert(self, collection, key, data):
         if self.db != 400:
@@ -90,6 +91,9 @@ class MongoDatabaseHelpers:
                 return 400
 
     def delete(self, collection, query):
+        self.db[collection].delete_one(query)
+
+    def delete_one(self, collection, query):
         self.db[collection].delete_one(query)
 
     def get_find(self, collection, query):
