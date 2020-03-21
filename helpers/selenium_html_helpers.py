@@ -192,6 +192,11 @@ class SeleniumHtmlHelpers:
                 collection_name,
                 value
             )
+        elif action == 'upsert_array_to_database':
+            MongoDatabaseHelpers(database).upsert_many(
+                collection_name,
+                value
+            )
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
