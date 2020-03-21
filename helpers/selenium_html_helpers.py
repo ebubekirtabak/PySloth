@@ -137,6 +137,12 @@ class SeleniumHtmlHelpers:
         elif type == 'run_custom_script':
             script_service = ScriptRunnerService(script_actions['custom_script'])
             script_service.run()
+        elif type == 'wait_for_element':
+            wait(doc, 10).until(
+                EC.presence_of_element_located(doc.find_element_by_xpath(script_actions['selector'])))
+        elif type == 'wait_for_clickable':
+            wait(doc, 10).until(
+                EC.element_to_be_clickable(doc.find_element_by_xpath(script_actions['selector'])))
         elif type == "condition":
             new_action = ConditionHelpers(doc, script_actions).parse_condition()
             if isinstance(new_action, list):
