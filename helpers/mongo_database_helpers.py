@@ -108,6 +108,9 @@ class MongoDatabaseHelpers:
     def find_and_delete(self, collection, query):
         return self.db[collection].find_one_and_delete(query)
 
+    def find_and_modify(self, collection, query, sort, update):
+        return self.db[collection].find_and_modify(query, sort=sort, update=update)
+
     def get_length(self, collection):
         return self.db[collection].count()
 
