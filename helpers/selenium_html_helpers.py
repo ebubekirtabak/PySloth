@@ -110,15 +110,7 @@ class SeleniumHtmlHelpers:
         elif type == '$_GET_VARIABLE':
             self.get_variable(doc, script_actions)
         elif type == '$_SET_VARIABLE':
-            element = doc.find_element_by_xpath(script_actions['selector'])
-            target = script_actions['target_attr']
-            value = VariableHelpers().get_variable(script_actions['variable_name'])
-            if target == 'send_keys':
-                for key in value:
-                    element.send_keys(key)
-                    time.sleep(0.2)
-            else:
-                doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
+            self.set_variable(doc, script_actions)
         elif type == 'parse_html_list':
             values = self.parse_html_list(doc, script_actions)
             VariableHelpers().set_variable(script_actions['variable_name'], values)
@@ -307,6 +299,21 @@ class SeleniumHtmlHelpers:
         else:
             value = self.element_helpers.get_element_value(action_object, element)
             return value
+
+    def set_variable(self, doc, script_actions):
+        element = doc.find_element_by_xpath(script_actions['selector'])
+        target = script_actions['target_attr']
+        if 'variable_name' in script_actions:
+            value = VariableHelpers().get_variable(script_actions['variable_name'])
+        else:
+            value = VariableHelpers().get_variable(script_actions['value'])
+
+        if target == 'send_keys':
+            for key in value:
+                element.send_keys(key)
+                time.sleep(0.2)
+        else:
+            doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
 
     def get_variable(self, doc, script_actions):
         try:
