@@ -29,6 +29,8 @@ from services.script_runner_service import ScriptRunnerService
 
 from logger import Logger
 
+from PySloth.helpers.key_press_helpers import KeyPressHelpers
+
 
 class SeleniumHtmlHelpers:
     def __init__(self, scope):
@@ -214,7 +216,7 @@ class SeleniumHtmlHelpers:
                     if hasattr(scope_model, 'script_actions'):
                         self.parse_html_with_js(doc, scope_model.script_actions)
                 else:
-                    logger.Logger().set_log('_run_after_action FileNotFoundError: ' + action['file'] + '', True)
+                    Logger().set_log('_run_after_action FileNotFoundError: ' + action['file'] + '', True)
             else:
                 self.action_router(doc, action)
 
@@ -312,6 +314,8 @@ class SeleniumHtmlHelpers:
             for key in value:
                 element.send_keys(key)
                 time.sleep(0.2)
+        elif target == 'key_press':
+            KeyPressHelpers(doc).press_key(element, script_actions)
         else:
             doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
 
