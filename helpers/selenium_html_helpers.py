@@ -6,6 +6,8 @@ import time
 import json
 
 from collections import namedtuple
+
+import psutil as psutil
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -65,7 +67,20 @@ class SeleniumHtmlHelpers:
             self.logger.set_log("Driver Stop Error: " + str(e), True)
 
         pid = os.getpid()
+        self.kill_children_processes(pid)
+
         os.kill(pid, signal.SIGTERM)
+
+    def kill_children_processes(self, pid):
+        try:
+            parent = psutil.Process(pid)
+        except psutil.NoSuchProcess as e:
+            self.logger.set_log("NoSuchChildrenProcess: " + str(e))
+            return
+
+        children = parent.children(recursive=True)
+        for child in children:
+            child.kill()
 
     def parse_html_with_js(self, doc, script_actions):
         self.driver = doc
