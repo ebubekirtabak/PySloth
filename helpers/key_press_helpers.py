@@ -17,7 +17,7 @@ class KeyPressHelpers:
             "ADD": Keys.ADD,
             "ALT": Keys.ALT,
             "ARROW_DOWN": Keys.ARROW_DOWN,
-            "ENTER": Keys.Enter,
+            "ENTER": Keys.ENTER,
         }
 
     def press_key(self, element, actions):
