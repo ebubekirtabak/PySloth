@@ -1,7 +1,7 @@
 
 from selenium.webdriver.common.keys import Keys
 
-from PySloth.logger import Logger
+from logger import Logger
 
 
 class KeyPressHelpers:

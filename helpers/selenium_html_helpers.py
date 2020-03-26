@@ -31,7 +31,7 @@ from services.script_runner_service import ScriptRunnerService
 
 from logger import Logger
 
-from PySloth.helpers.key_press_helpers import KeyPressHelpers
+from helpers.key_press_helpers import KeyPressHelpers
 
 
 class SeleniumHtmlHelpers:
