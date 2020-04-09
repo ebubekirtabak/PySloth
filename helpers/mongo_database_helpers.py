@@ -58,9 +58,9 @@ class MongoDatabaseHelpers:
                     logger.Logger().set_log('--------- DATA ----------')
                     logger.Logger().set_log(data)
                 else:
-                    logger.Logger().set_error_log("mongo upsert data error")
+                    logger.Logger().set_error_log("mongo upsert data error", True)
             except Exception as e:
-                logger.Logger().set_error_log("MongoDB Helpers: upsert Error: " + str(e))
+                logger.Logger().set_error_log("MongoDB Helpers: upsert Error: " + str(e), True)
                 return 400
 
     def upsert_many(self, collection, data):

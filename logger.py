@@ -30,7 +30,7 @@ class Logger:
     @staticmethod
     def set_error_log(data, is_print_to_console=False):
         if is_print_to_console:
-            print("Error:" + data)
+            print("set_error_log() Error:" + data)
 
         session_id = globals.configs['session_id']
         abs_file_path = os.path.join(logs_dir, 'log_' + session_id + '.txt')
