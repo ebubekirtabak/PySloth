@@ -79,7 +79,6 @@ class MongoDatabaseHelpers:
                 logger.Logger().set_error_log("MongoDB Helpers: upsert Error: " + str(e))
                 return 400
 
-
     def insert_many(self, collection, data):
         if self.db != 400:
             try:

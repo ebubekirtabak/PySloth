@@ -33,6 +33,8 @@ from logger import Logger
 
 from helpers.key_press_helpers import KeyPressHelpers
 
+from PySloth.transactions.mongo_transactions import MongoTransactions
+
 
 class SeleniumHtmlHelpers:
     def __init__(self, scope):
@@ -89,7 +91,7 @@ class SeleniumHtmlHelpers:
 
         for action in script_actions:
             if action['type'] == "database":
-                self.database_action_router(doc, action)
+                MongoTransactions(self.scope.settings.database).database_action_router(doc, action)
             elif action['type'] == "rerun_actions":
                 self.parse_html_with_js(doc, self.scope_model.script_actions)
             elif action['type'] != "**":
@@ -180,32 +182,6 @@ class SeleniumHtmlHelpers:
             doc.refresh()
             WebDriverWait(doc, 30).until(
                 lambda driver: driver.execute_script('return document.readyState') == 'complete')
-
-    def database_action_router(self, doc, database_action):
-        action = database_action['action']
-        database = self.scope.settings.database
-        value = VariableHelpers().get_value_with_function(database_action['selector'])
-        collection_name = database_action['collection_name']
-        if ':' in database_action['collection_name']:
-            selector_items = database_action['collection_name'].split(':')
-            collection_name = selector_items[0]
-            value = value[selector_items[1]]
-
-        if action == "push_to_database":
-            MongoDatabaseHelpers(database).insert(
-                collection_name,
-                value
-            )
-        elif action == 'push_array_to_database':
-            MongoDatabaseHelpers(database).insert_many(
-                collection_name,
-                value
-            )
-        elif action == 'upsert_array_to_database':
-            MongoDatabaseHelpers(database).upsert_many(
-                collection_name,
-                value
-            )
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
