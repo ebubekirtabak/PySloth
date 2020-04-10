@@ -146,11 +146,14 @@ class SeleniumHtmlHelpers:
         elif type == 'run_custom_script':
             script_service = ScriptRunnerService(script_actions['custom_script'])
             script_service.run()
+        elif type == 'wait_for_element_to_load':
+            wait(doc, script_actions['timeout']).until(
+                EC.visibility_of_any_elements_located(doc.find_element_by_xpath(script_actions['selector'])))
         elif type == 'wait_for_element':
-            wait(doc, 10).until(
+            wait(doc, script_actions['timeout']).until(
                 EC.presence_of_element_located(doc.find_element_by_xpath(script_actions['selector'])))
         elif type == 'wait_for_clickable':
-            wait(doc, 10).until(
+            wait(doc, script_actions['timeout']).until(
                 EC.element_to_be_clickable(doc.find_element_by_xpath(script_actions['selector'])))
         elif type == "condition":
             new_action = ConditionHelpers(doc, script_actions).parse_condition()
@@ -322,7 +325,7 @@ class SeleniumHtmlHelpers:
         target = script_actions['target_attr']
         if 'variable_name' in script_actions:
             value = VariableHelpers().get_variable(script_actions['variable_name'])
-        else:
+        elif 'value' in script_actions:
             value = VariableHelpers().get_variable(script_actions['value'])
 
         if target == 'send_keys':
