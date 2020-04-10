@@ -53,11 +53,12 @@ class MongoDatabaseHelpers:
         if self.db != 400:
             try:
                 selected_collection = self.db[collection]
-                result = selected_collection.update(key, data, upsert=True)
-                if result.matched_count > 0:
+                result = selected_collection.update(key, {"$set": data}, upsert=True)
+                if hasattr(result, "matched_count") or hasattr(result, "inserted_id"):
                     logger.Logger().set_log('--------- DATA ----------')
                     logger.Logger().set_log(data)
                 else:
+                    logger.Logger().set_log(str(result), True)
                     logger.Logger().set_error_log("mongo upsert data error", True)
             except Exception as e:
                 logger.Logger().set_error_log("MongoDB Helpers: upsert Error: " + str(e), True)

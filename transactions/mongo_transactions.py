@@ -1,21 +1,28 @@
+import sys
+
 from PySloth.helpers.mongo_database_helpers import MongoDatabaseHelpers
-from PySloth.helpers.variable_helpers import VariableHelpers
+from PySloth.logger import Logger
 
 
 class MongoTransactions:
 
-    def __init__(self, database):
+    def __init__(self, database, value):
         self.database = database
         self.collection_name = ""
-        self.value = None
+        self.value = value
 
     def database_action_router(self, doc, database_action):
         action = database_action['action']
         database = self.database
-        self.value = VariableHelpers().get_value_with_function(database_action['selector'])
-        self.collection_name = database_action['collection_name']
-        if ':' in self.collection_name:
-            self.value, self.collection_name = self.get_collection_and_value()
+        try:
+            self.collection_name = database_action['collection_name']
+            if ':' in self.collection_name:
+                self.value, self.collection_name = self.get_collection_and_value()
+        except Exception as e:
+            Logger().set_error_log("database_action_router() -> " + str(e))
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror), True)
 
         if action == "push_to_database":
             MongoDatabaseHelpers(database).insert(
@@ -41,13 +48,12 @@ class MongoTransactions:
         value = self.value[selector_items[1]]
         return value, collection_name
 
-    def upsert_to_database(self, database_action, value):
-        query = self.prepare_upsert_query(database_action["query_keys"], value)
-        print("Upsert is working " + query)
+    def upsert_to_database(self, database_action):
+        query = self.prepare_upsert_query(database_action["query_keys"])
         MongoDatabaseHelpers(self.database).upsert(
             self.collection_name,
             query,
-            value
+            self.value
         )
 
     def prepare_upsert_query(self, query_keys):
@@ -59,4 +65,3 @@ class MongoTransactions:
                 print("The value " + key + " was not found in the value.")
 
         return query
-

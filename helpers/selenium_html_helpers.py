@@ -91,7 +91,8 @@ class SeleniumHtmlHelpers:
 
         for action in script_actions:
             if action['type'] == "database":
-                MongoTransactions(self.scope.settings.database).database_action_router(doc, action)
+                value = VariableHelpers().get_value_with_function(action['selector'])
+                MongoTransactions(self.scope.settings.database, value).database_action_router(doc, action)
             elif action['type'] == "rerun_actions":
                 self.parse_html_with_js(doc, self.scope_model.script_actions)
             elif action['type'] != "**":

@@ -148,7 +148,7 @@ class Scope:
             self.parse_page(self.driver, search_item)
 
         try:
-            if hasattr(self.driver, 'page_source') is True:
+            if hasattr(self.driver, 'page_source'):
                 response = self.driver.page_source
                 doc = fromstring(response)
                 doc.make_links_absolute(url)
