@@ -33,7 +33,7 @@ from logger import Logger
 
 from helpers.key_press_helpers import KeyPressHelpers
 
-from PySloth.transactions.mongo_transactions import MongoTransactions
+from transactions.mongo_transactions import MongoTransactions
 
 
 class SeleniumHtmlHelpers:

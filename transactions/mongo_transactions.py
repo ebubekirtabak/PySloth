@@ -1,7 +1,7 @@
 import sys
 
-from PySloth.helpers.mongo_database_helpers import MongoDatabaseHelpers
-from PySloth.logger import Logger
+from helpers.mongo_database_helpers import MongoDatabaseHelpers
+from logger import Logger
 
 
 class MongoTransactions:
