@@ -91,7 +91,7 @@ class SeleniumHtmlHelpers:
 
         for action in script_actions:
             if action['type'] == "database":
-                value = VariableHelpers().get_value_with_function(action['selector'])
+                value = VariableHelpers().get_value_with_function(doc, action['selector'])
                 MongoTransactions(self.scope.settings.database, value).database_action_router(doc, action)
             elif action['type'] == "rerun_actions":
                 self.parse_html_with_js(doc, self.scope_model.script_actions)
@@ -167,7 +167,9 @@ class SeleniumHtmlHelpers:
         elif type == "driver_event":
             self.driver_action_router(doc, script_actions)
         elif type == "database":
-            self.database_action_router(doc, script_actions)
+            value = VariableHelpers().get_value_with_function(doc, script_actions['selector'])
+            MongoTransactions(self.scope.settings.database, value)\
+                .database_action_router(doc, script_actions)
         elif type == "rerun_actions":
             self.parse_html_with_js(doc, self.scope_model.script_actions)
         elif type == 'quit':
@@ -321,7 +323,7 @@ class SeleniumHtmlHelpers:
                 value = script_actions['value']
             elif script_actions['selector'].startswith('@'):
                 # function
-                value = VariableHelpers().get_value_with_function(script_actions['selector'])
+                value = VariableHelpers().get_value_with_function(doc, script_actions['selector'])
             else:
                 elements = doc.find_elements_by_xpath(script_actions['selector'])
                 if len(elements) == 1:
