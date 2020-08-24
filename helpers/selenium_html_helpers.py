@@ -35,6 +35,8 @@ from helpers.key_press_helpers import KeyPressHelpers
 
 from transactions.mongo_transactions import MongoTransactions
 
+from PySloth.helpers.parse_html_helpers import ParseHtmlHelpers
+
 
 class SeleniumHtmlHelpers:
     def __init__(self, scope):
@@ -132,7 +134,7 @@ class SeleniumHtmlHelpers:
         elif type == '$_SET_VARIABLE':
             self.set_variable(doc, script_actions)
         elif type == 'parse_html_list':
-            values = self.parse_html_list(doc, script_actions)
+            values = ParseHtmlHelpers(doc, self.element_helpers).parse_html_list(doc, script_actions)
             VariableHelpers().set_variable(script_actions['variable_name'], values)
         elif type == 'switch_to_frame':
             wait(doc, 10).until(
@@ -259,45 +261,6 @@ class SeleniumHtmlHelpers:
                 return True
         else:
             return True
-
-    def parse_html_list(self, doc, action):
-        try:
-            selected_elements = doc.find_elements_by_xpath(action['selector'])
-            parse_list = []
-            index = 0
-            for element in selected_elements:
-                parse_list.append({})
-                for action_object in action['object_list']:
-                    value = self.get_object_value(action_object, element)
-                    if 'custom_scripts' in action_object:
-                        custom_scripts = action_object['custom_scripts']
-                        if isinstance(value, list):
-                            new_values = []
-                            for val in value:
-                                val = ScriptRunnerService(custom_scripts).get_script_result(val)
-                                new_values.append(val)
-
-                            value = new_values
-                        else:
-                            value = ScriptRunnerService(custom_scripts).get_script_result(value)
-
-                    parse_list[index][action_object['variable_name']] = value
-                index = index + 1
-
-            return parse_list
-        except Exception as e:
-            Logger().set_log('ParseHtmlListException: ' + str(e), True)
-            type, value, traceback = sys.exc_info()
-            if hasattr(value, 'filename'):
-                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
-
-    def get_object_value(self, action_object, element):
-        if action_object['type'] == 'parse_html_list':
-            value = self.parse_html_list(element, action_object)
-            return value
-        else:
-            value = self.element_helpers.get_element_value(action_object, element)
-            return value
 
     def set_variable(self, doc, script_actions):
         element = doc.find_element_by_xpath(script_actions['selector'])

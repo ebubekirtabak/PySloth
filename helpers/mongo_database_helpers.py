@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-import logger
+from PySloth import logger
 
 
 class MongoDatabaseHelpers:

@@ -1,7 +1,7 @@
 import time
 import os
 import sys
-import logger
+from PySloth import logger
 import json
 
 
