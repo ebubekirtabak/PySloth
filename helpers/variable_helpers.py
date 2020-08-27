@@ -58,6 +58,8 @@ class VariableHelpers:
             return VariableHelpers.get_scope_variables()
         elif selector == "@get_unix_time":
             return VariableHelpers.get_unix_time()
+        elif selector == "@get_utc_time":
+            return VariableHelpers.get_utc_time()
         elif selector == "@get_page_source":
             return doc.page_source
 
@@ -74,6 +76,10 @@ class VariableHelpers:
     @staticmethod
     def get_unix_time():
         return time.time()
+
+    @staticmethod
+    def get_utc_time():
+        return datetime.utcnow()
 
     @staticmethod
     def is_exists_variable(variable_name):
