@@ -51,7 +51,7 @@ class VariableHelpers:
         del scope_variables[variable_name]
 
     @staticmethod
-    def get_value_with_function(selector):
+    def get_value_with_function(doc, selector):
         if selector == "@generate_uniq_number":
             return VariableHelpers.generate_uniq_number()
         elif selector == "@get_scope_variables":

@@ -61,7 +61,7 @@ class MongoThreadController:
             if hasattr(value, 'filename'):
                 Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror), True)
 
-            self.logger.set_error_log(str(sys.exc_info()[0]), True)
+            self.logger.set_error_log("thread_controller() -> " + str(sys.exc_info()[0]), True)
             time.sleep(10)
             self.thread_controller()
 

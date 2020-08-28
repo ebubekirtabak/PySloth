@@ -6,6 +6,8 @@ import time
 import json
 
 from collections import namedtuple
+
+import psutil as psutil
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -28,6 +30,12 @@ from modules.file_module import FileModule
 from services.script_runner_service import ScriptRunnerService
 
 from logger import Logger
+
+from helpers.key_press_helpers import KeyPressHelpers
+
+from transactions.mongo_transactions import MongoTransactions
+
+from PySloth.helpers.parse_html_helpers import ParseHtmlHelpers
 
 
 class SeleniumHtmlHelpers:
@@ -63,7 +71,20 @@ class SeleniumHtmlHelpers:
             self.logger.set_log("Driver Stop Error: " + str(e), True)
 
         pid = os.getpid()
+        self.kill_children_processes(pid)
+
         os.kill(pid, signal.SIGTERM)
+
+    def kill_children_processes(self, pid):
+        try:
+            parent = psutil.Process(pid)
+        except psutil.NoSuchProcess as e:
+            self.logger.set_log("NoSuchChildrenProcess: " + str(e))
+            return
+
+        children = parent.children(recursive=True)
+        for child in children:
+            child.kill()
 
     def parse_html_with_js(self, doc, script_actions):
         self.driver = doc
@@ -72,7 +93,8 @@ class SeleniumHtmlHelpers:
 
         for action in script_actions:
             if action['type'] == "database":
-                self.database_action_router(doc, action)
+                value = VariableHelpers().get_value_with_function(doc, action['selector'])
+                MongoTransactions(self.scope.settings.database, value).database_action_router(doc, action)
             elif action['type'] == "rerun_actions":
                 self.parse_html_with_js(doc, self.scope_model.script_actions)
             elif action['type'] != "**":
@@ -110,17 +132,9 @@ class SeleniumHtmlHelpers:
         elif type == '$_GET_VARIABLE':
             self.get_variable(doc, script_actions)
         elif type == '$_SET_VARIABLE':
-            element = doc.find_element_by_xpath(script_actions['selector'])
-            target = script_actions['target_attr']
-            value = VariableHelpers().get_variable(script_actions['variable_name'])
-            if target == 'send_keys':
-                for key in value:
-                    element.send_keys(key)
-                    time.sleep(0.2)
-            else:
-                doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
+            self.set_variable(doc, script_actions)
         elif type == 'parse_html_list':
-            values = self.parse_html_list(doc, script_actions)
+            values = ParseHtmlHelpers(doc, self.element_helpers).parse_html_list(doc, script_actions)
             VariableHelpers().set_variable(script_actions['variable_name'], values)
         elif type == 'switch_to_frame':
             wait(doc, 10).until(
@@ -137,6 +151,15 @@ class SeleniumHtmlHelpers:
         elif type == 'run_custom_script':
             script_service = ScriptRunnerService(script_actions['custom_script'])
             script_service.run()
+        elif type == 'wait_for_element_to_load':
+            wait(doc, script_actions['timeout']).until(
+                EC.visibility_of_any_elements_located(doc.find_element_by_xpath(script_actions['selector'])))
+        elif type == 'wait_for_element':
+            wait(doc, script_actions['timeout']).until(
+                EC.presence_of_element_located(doc.find_element_by_xpath(script_actions['selector'])))
+        elif type == 'wait_for_clickable':
+            wait(doc, script_actions['timeout']).until(
+                EC.element_to_be_clickable(doc.find_element_by_xpath(script_actions['selector'])))
         elif type == "condition":
             new_action = ConditionHelpers(doc, script_actions).parse_condition()
             if isinstance(new_action, list):
@@ -146,7 +169,9 @@ class SeleniumHtmlHelpers:
         elif type == "driver_event":
             self.driver_action_router(doc, script_actions)
         elif type == "database":
-            self.database_action_router(doc, script_actions)
+            value = VariableHelpers().get_value_with_function(doc, script_actions['selector'])
+            MongoTransactions(self.scope.settings.database, value)\
+                .database_action_router(doc, script_actions)
         elif type == "rerun_actions":
             self.parse_html_with_js(doc, self.scope_model.script_actions)
         elif type == 'quit':
@@ -165,27 +190,6 @@ class SeleniumHtmlHelpers:
             doc.refresh()
             WebDriverWait(doc, 30).until(
                 lambda driver: driver.execute_script('return document.readyState') == 'complete')
-
-    def database_action_router(self, doc, database_action):
-        action = database_action['action']
-        database = self.scope.settings.database
-        value = VariableHelpers().get_value_with_function(database_action['selector'])
-        collection_name = database_action['collection_name']
-        if ':' in database_action['collection_name']:
-            selector_items = database_action['collection_name'].split(':')
-            collection_name = selector_items[0]
-            value = value[selector_items[1]]
-
-        if action == "push_to_database":
-            MongoDatabaseHelpers(database).insert(
-                collection_name,
-                value
-            )
-        elif action == 'push_array_to_database':
-            MongoDatabaseHelpers(database).insert_many(
-                collection_name,
-                value
-            )
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
@@ -211,7 +215,7 @@ class SeleniumHtmlHelpers:
                     if hasattr(scope_model, 'script_actions'):
                         self.parse_html_with_js(doc, scope_model.script_actions)
                 else:
-                    logger.Logger().set_log('_run_after_action FileNotFoundError: ' + action['file'] + '', True)
+                    Logger().set_log('_run_after_action FileNotFoundError: ' + action['file'] + '', True)
             else:
                 self.action_router(doc, action)
 
@@ -258,44 +262,22 @@ class SeleniumHtmlHelpers:
         else:
             return True
 
-    def parse_html_list(self, doc, action):
-        try:
-            selected_elements = doc.find_elements_by_xpath(action['selector'])
-            parse_list = []
-            index = 0
-            for element in selected_elements:
-                parse_list.append({})
-                for action_object in action['object_list']:
-                    value = self.get_object_value(action_object, element)
-                    if 'custom_scripts' in action_object:
-                        custom_scripts = action_object['custom_scripts']
-                        if isinstance(value, list):
-                            new_values = []
-                            for val in value:
-                                val = ScriptRunnerService(custom_scripts).get_script_result(val)
-                                new_values.append(val)
+    def set_variable(self, doc, script_actions):
+        element = doc.find_element_by_xpath(script_actions['selector'])
+        target = script_actions['target_attr']
+        if 'variable_name' in script_actions:
+            value = VariableHelpers().get_variable(script_actions['variable_name'])
+        elif 'value' in script_actions:
+            value = VariableHelpers().get_variable(script_actions['value'])
 
-                            value = new_values
-                        else:
-                            value = ScriptRunnerService(custom_scripts).get_script_result(value)
-
-                    parse_list[index][action_object['variable_name']] = value
-                index = index + 1
-
-            return parse_list
-        except Exception as e:
-            Logger().set_log('ParseHtmlListException: ' + str(e), True)
-            type, value, traceback = sys.exc_info()
-            if hasattr(value, 'filename'):
-                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
-
-    def get_object_value(self, action_object, element):
-        if action_object['type'] == 'parse_html_list':
-            value = self.parse_html_list(element, action_object)
-            return value
+        if target == 'send_keys':
+            for key in value:
+                element.send_keys(key)
+                time.sleep(0.2)
+        elif target == 'key_press':
+            KeyPressHelpers(doc).press_key(element, script_actions)
         else:
-            value = self.element_helpers.get_element_value(action_object, element)
-            return value
+            doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
 
     def get_variable(self, doc, script_actions):
         try:
@@ -304,7 +286,7 @@ class SeleniumHtmlHelpers:
                 value = script_actions['value']
             elif script_actions['selector'].startswith('@'):
                 # function
-                value = VariableHelpers().get_value_with_function(script_actions['selector'])
+                value = VariableHelpers().get_value_with_function(doc, script_actions['selector'])
             else:
                 elements = doc.find_elements_by_xpath(script_actions['selector'])
                 if len(elements) == 1:

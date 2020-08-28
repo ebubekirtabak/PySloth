@@ -49,6 +49,9 @@ class EventMaker:
                         func = switcher.get(action['type'], lambda: "nothing")
                         func(element, action)
 
+                        if 'sleep' in action:
+                            time.sleep(action['sleep'])
+
                     if 'sleep' in event:
                         time.sleep(event['sleep'])
 
