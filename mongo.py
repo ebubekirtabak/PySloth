@@ -14,7 +14,7 @@ def connect_database(database):
             db = client[database['name']]
             return db
     except Exception as e:
-        print("Error:" + str(e))
+        print("connect_database() Error:" + str(e))
         return 400
 
 

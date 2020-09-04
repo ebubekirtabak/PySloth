@@ -27,8 +27,10 @@ class WebDriverLoderService:
                     return self.init_firefox_driver()
             except Exception as e:
                 Logger().set_error_log("WebDriver LoadException: " + str(e), True)
-                value, traceback = sys.exc_info()
-                Logger().set_error_log('Exception Details %s: %s' % (value.filename, value.strerror))
+                type, value, traceback = sys.exc_info()
+                if hasattr(value, 'filename'):
+                    print('Error %s: %s' % (value.filename, value.strerror))
+                    Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
                 return None
         else:
           return self.auto_load_driver()

@@ -1,5 +1,9 @@
+import json
+import re
 import subprocess
+import sys
 
+from helpers.variable_helpers import VariableHelpers
 from logger import Logger
 
 
@@ -14,17 +18,29 @@ class ScriptRunnerService:
             type = self.script_options['type']
 
             command = [type, self.script_options['script']]
+
             if 'params' in self.script_options:
                 params = self.script_options['params']
                 for param in params:
-                    command.append(param)
+                    if param.startswith("${"):
+                        params_name = re.search("{(.*?)}", param)
+                        param_value = VariableHelpers().get_variable(params_name.group(1))
+                        command.append(json.dumps(param_value))
+                    else:
+                        command.append(param)
 
-                self.logger.set_log("run script: " + str(command))
-                process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
-                result = process_output.decode("utf-8")
-                self.logger.set_log("script result: " + result)
+            self.logger.set_log("run script: " + str(command))
+            process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
+            result = process_output.decode("utf-8")
+            self.logger.set_log("script result: " + result)
+            if 'variable_name' in self.script_options:
+                VariableHelpers().set_variable(self.script_options['variable_name'], json.loads(result))
+
         except Exception as e:
             self.logger.set_log("custom_script Exception: " + str(e), True)
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
     def get_script_result(self, params):
         try:
@@ -47,7 +63,6 @@ class ScriptRunnerService:
                     process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
                     result = process_output.decode("utf-8")
                     self.logger.set_log("script result: " + result)
-
 
             return result
         except Exception as e:

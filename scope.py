@@ -17,6 +17,7 @@ from helpers.selenium_html_helpers import SeleniumHtmlHelpers
 from models.setting_model import SettingModel
 from models.user_model import UserModel
 from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.wait import WebDriverWait
 from services.web_driver_loader_service import WebDriverLoderService
 from services.http_service import HttpServices
 from controllers.thread_controller import ThreadController
@@ -129,10 +130,15 @@ class Scope:
 
         if hasattr(self.scope, 'script_actions'):
             try:
+                WebDriverWait(self.driver, 30).until(
+                    lambda driver: driver.execute_script('return document.readyState') == 'complete')
                 selenium_html_helper = SeleniumHtmlHelpers(self)
                 selenium_html_helper.parse_html_with_js(self.driver, self.scope.script_actions)
             except Exception as e:
                 Logger().set_error_log("SeleniumHtmlHelperError: " + str(e))
+                type, value, traceback = sys.exc_info()
+                if hasattr(value, 'filename'):
+                    Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
 
         if hasattr(self.scope, 'search_item'):
             if 'events' in search_item:
@@ -141,10 +147,17 @@ class Scope:
 
             self.parse_page(self.driver, search_item)
 
-        response = self.driver.page_source
-        doc = fromstring(response)
-        doc.make_links_absolute(url)
-        self.driver.quit()
+        try:
+            if hasattr(self.driver, 'page_source'):
+                response = self.driver.page_source
+                doc = fromstring(response)
+                doc.make_links_absolute(url)
+        except Exception as e:
+            Logger().set_error_log("SeleniumPageSourceException: " + str(e), True)
+        finally:
+            if self.driver is not None:
+                self.driver.close()
+                self.driver.quit()
 
     def parse_page(self, doc, search_item):
 

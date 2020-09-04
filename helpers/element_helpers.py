@@ -1,4 +1,5 @@
 import inspect
+import sys
 
 from selenium.common.exceptions import NoSuchElementException
 
@@ -30,18 +31,26 @@ class ElementHelpers:
             if len(elements) == 1:
                 value = ElementHelpers().get_attribute_from_element(elements[0], action_object['attribute_name'])
                 return value
-            else:
+            elif len(elements) > 1:
                 values = []
                 for child_element in elements:
                     value = ElementHelpers().get_attribute_from_element(child_element, action_object['attribute_name'])
                     values.append(value)
                 return values
+            else:
+                return ''
 
         except Exception as e:
             self.logger.set_error_log(
                 str(inspect.currentframe().f_back.f_lineno) + "GetVariable: Error: " + str(e), True)
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
             return ''
         except NoSuchElementException as e:
             self.logger.set_error_log(
                 str(inspect.currentframe().f_back.f_lineno) + "NoSuchElementException: " + str(e), True)
+            type, value, traceback = sys.exc_info()
+            if hasattr(value, 'filename'):
+                Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
             return ''

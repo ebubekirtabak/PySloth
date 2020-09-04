@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-import logger
+from PySloth import logger
 
 
 class MongoDatabaseHelpers:
@@ -44,20 +44,38 @@ class MongoDatabaseHelpers:
                     logger.Logger().set_log(data)
                     logger.Logger().set_log('--------- DATA ----------')
                 else:
-                    logger.Logger().set_error_log("mongo insert data error")
+                    logger.Logger().set_error_log("mongo insert data error", True)
             except Exception as e:
-                logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e))
+                logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e), True)
+                return 400
 
     def upsert(self, collection, key, data):
         if self.db != 400:
             try:
                 selected_collection = self.db[collection]
-                result = selected_collection.update(key, data, upsert=True)
-                if result.inserted_id is not None:
+                result = selected_collection.update(key, {"$set": data}, upsert=True)
+                if hasattr(result, "matched_count") or hasattr(result, "inserted_id"):
                     logger.Logger().set_log('--------- DATA ----------')
                     logger.Logger().set_log(data)
                 else:
-                    logger.Logger().set_error_log("mongo upsert data error")
+                    logger.Logger().set_log(str(result), True)
+                    logger.Logger().set_error_log("mongo upsert data error", True)
+            except Exception as e:
+                logger.Logger().set_error_log("MongoDB Helpers: upsert Error: " + str(e), True)
+                return 400
+
+    def upsert_many(self, collection, data):
+        if self.db != 400:
+            try:
+                selected_collection = self.db[collection]
+                for item in data:
+                    result = selected_collection.update_one(item, {"$set": item}, upsert=True)
+                    if result.matched_count > 0:
+                        logger.Logger().set_log('--------- DATA ----------')
+                        logger.Logger().set_log(data)
+                    else:
+                        logger.Logger().set_error_log("mongo upsert data error")
+
             except Exception as e:
                 logger.Logger().set_error_log("MongoDB Helpers: upsert Error: " + str(e))
                 return 400
@@ -83,13 +101,17 @@ class MongoDatabaseHelpers:
             try:
                 selected_collection = self.db[collection]
                 selected_collection.update(
-                    query, {"$set": data})
+                    query, {"$set": data}
+                )
                 logger.Logger().set_log("update collection data")
             except Exception as e:
                 logger.Logger().set_error_log("MongoDB Helpers: update Error: " + str(e), True)
                 return 400
 
     def delete(self, collection, query):
+        self.db[collection].delete_one(query)
+
+    def delete_one(self, collection, query):
         self.db[collection].delete_one(query)
 
     def get_find(self, collection, query):
@@ -103,6 +125,9 @@ class MongoDatabaseHelpers:
 
     def find_and_delete(self, collection, query):
         return self.db[collection].find_one_and_delete(query)
+
+    def find_and_modify(self, collection, query, sort, update):
+        return self.db[collection].find_and_modify(query, sort=sort, update=update)
 
     def get_length(self, collection):
         return self.db[collection].count()

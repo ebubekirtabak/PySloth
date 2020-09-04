@@ -1,7 +1,9 @@
 import random
+import time
 from datetime import datetime
 
 from logger import Logger
+
 
 class VariableHelpers:
 
@@ -15,22 +17,25 @@ class VariableHelpers:
 
     @staticmethod
     def set_variable(variable_name, variable_value):
-        global scope_variables
-        if isinstance(variable_value, list):
-            Logger().set_log("Variable name: " + variable_name + " : value: " + str(variable_value))
-        elif isinstance(variable_value, str):
-            Logger().set_log("Variable name: " + variable_name + " : value: " + variable_value)
+        try:
+            global scope_variables
+            if isinstance(variable_value, list):
+                Logger().set_log("Variable name: " + variable_name + " : value: " + str(variable_value))
+            elif isinstance(variable_value, str):
+                Logger().set_log("Variable name: " + variable_name + " : value: " + variable_value)
 
-        if scope_variables is None:
-            VariableHelpers.load_scope_variables()
-        if variable_name in scope_variables:
-            if type(scope_variables[variable_name]).__name__ == 'list':
-                scope_variables[variable_name].append(variable_value)
-            elif type(scope_variables[variable_name]).__name__ == 'dict':
-                value = scope_variables[variable_name]
-                scope_variables[variable_name] = [value, variable_value]
-        else:
-            scope_variables[variable_name] = variable_value
+            if scope_variables is None:
+                VariableHelpers.load_scope_variables()
+            if variable_name in scope_variables:
+                if type(scope_variables[variable_name]).__name__ == 'list':
+                    scope_variables[variable_name].append(variable_value)
+                elif type(scope_variables[variable_name]).__name__ == 'dict':
+                    value = scope_variables[variable_name]
+                    scope_variables[variable_name] = [value, variable_value]
+            else:
+                scope_variables[variable_name] = variable_value
+        except Exception as e:
+            Logger().set_log('set_variable Error: ' + str(e))
 
     @staticmethod
     def get_variable(variable_name):
@@ -38,7 +43,7 @@ class VariableHelpers:
         try:
             return scope_variables[variable_name]
         except Exception as e:
-            print('Error: ' + str(e))
+            Logger().set_log('get_variable Error: ' + str(e))
             return None
 
     @staticmethod
@@ -46,11 +51,17 @@ class VariableHelpers:
         del scope_variables[variable_name]
 
     @staticmethod
-    def get_value_with_function(selector):
+    def get_value_with_function(doc, selector):
         if selector == "@generate_uniq_number":
             return VariableHelpers.generate_uniq_number()
         elif selector == "@get_scope_variables":
             return VariableHelpers.get_scope_variables()
+        elif selector == "@get_unix_time":
+            return VariableHelpers.get_unix_time()
+        elif selector == "@get_utc_time":
+            return VariableHelpers.get_utc_time()
+        elif selector == "@get_page_source":
+            return doc.page_source
 
     @staticmethod
     def generate_uniq_number():
@@ -61,6 +72,14 @@ class VariableHelpers:
     def get_scope_variables():
         global scope_variables
         return scope_variables
+
+    @staticmethod
+    def get_unix_time():
+        return time.time()
+
+    @staticmethod
+    def get_utc_time():
+        return datetime.utcnow()
 
     @staticmethod
     def is_exists_variable(variable_name):
