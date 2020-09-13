@@ -1,11 +1,13 @@
 class SettingModel:
     def __init__(self, driver, database, multi_process, history, role, file_settings,
-                 is_go_again_history, clarifia_api_key, is_page_helper, time_out):
+                 is_go_again_history, clarifia_api_key, is_page_helper, time_out, enable_javascript, headers):
         self.driver = driver
         self.database = database
+        self.enable_javascript = enable_javascript
         self.multi_process = multi_process
         self.history = history
         self.role = role
+        self.headers = headers
         self.file_settings = file_settings
         self.is_go_again_history = is_go_again_history
         self.is_page_helper = is_page_helper
