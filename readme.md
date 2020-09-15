@@ -80,6 +80,33 @@ PySloth can process dynamic conditions.
 }
 ````
 
+#### Database Actions (MongoDB)
+
+You can use MongoDB in PySloth.
+Example Databse Action:
+```
+ {
+   "type": "database",
+   "action": "upsert_to_database",
+   "query_keys": [
+     "company_name"
+   ],
+   "collection_name": "company_informations",
+   "variable_type": "$_GET_VARIABLE",
+   "variable_names": [
+     { "key":  "name", "value": "search_text" },
+     { "key":  "company_name", "value": "wiki.company_name" },
+     { "key":  "company_logo", "value": "wiki.company_logo" },
+     { "key":  "description_text", "value": "wiki.description_text" },
+     { "key":  "company_description", "value": "wiki.company_description" },
+     { "key":  "related_search", "value": "wiki.related_search" },
+     { "key":  "profile_urls", "value": "wiki.profile_urls" },
+     { "key":  "values", "value": "wiki.values" },
+     { "key":  "url", "value": "wiki.url" },
+     { "key":  "website_url", "value": "wiki.website_url" }
+   ]
+ }
+```
 #### Login   
 
 PySloth can login any website.

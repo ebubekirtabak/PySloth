@@ -59,7 +59,6 @@ class MongoDatabaseHelpers:
                     logger.Logger().set_log(data)
                 else:
                     logger.Logger().set_log(str(result), True)
-                    logger.Logger().set_error_log("mongo upsert data error", True)
             except Exception as e:
                 logger.Logger().set_error_log("MongoDB Helpers: upsert Error: " + str(e), True)
                 return 400
