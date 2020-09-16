@@ -35,7 +35,7 @@ from helpers.key_press_helpers import KeyPressHelpers
 
 from transactions.mongo_transactions import MongoTransactions
 
-from PySloth.helpers.parse_html_helpers import ParseHtmlHelpers
+from helpers.parse_html_helpers import ParseHtmlHelpers
 
 
 class SeleniumHtmlHelpers:
