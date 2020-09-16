@@ -46,7 +46,7 @@ class SeleniumHtmlHelpers:
         self.element_helpers = ElementHelpers()
         self.logger = Logger()
         self.driver = None
-        if self.scope.settings.time_out:
+        if self.scope.settings.time_out > 0:
             try:
                 kill_thread = threading.Thread(target=self.force_kill_start)
                 kill_thread.start()
