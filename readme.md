@@ -107,6 +107,25 @@ Example Databse Action:
    ]
  }
 ```
+
+#### import configurations
+```json
+{
+    "script_actions": [
+        {...},
+        {
+          "type": "import_script_actions",
+          "file": "../configs_1.json"
+        },
+        {...}
+        {
+          "type": "import_script_actions",
+          "file": "../configs_2.json"
+        }
+    ]
+}
+```
+
 #### Login   
 
 PySloth can login any website.
