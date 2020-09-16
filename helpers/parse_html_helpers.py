@@ -1,7 +1,7 @@
 import sys
-from PySloth.event_maker import EventMaker
-from PySloth.logger import Logger
-from PySloth.services.script_runner_service import ScriptRunnerService
+from event_maker import EventMaker
+from logger import Logger
+from services.script_runner_service import ScriptRunnerService
 
 
 class ParseHtmlHelpers:

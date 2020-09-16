@@ -35,7 +35,7 @@ from helpers.key_press_helpers import KeyPressHelpers
 
 from transactions.mongo_transactions import MongoTransactions
 
-from PySloth.helpers.parse_html_helpers import ParseHtmlHelpers
+from helpers.parse_html_helpers import ParseHtmlHelpers
 
 
 class SeleniumHtmlHelpers:
@@ -46,7 +46,7 @@ class SeleniumHtmlHelpers:
         self.element_helpers = ElementHelpers()
         self.logger = Logger()
         self.driver = None
-        if self.scope.settings.time_out:
+        if self.scope.settings.time_out > 0:
             try:
                 kill_thread = threading.Thread(target=self.force_kill_start)
                 kill_thread.start()
@@ -93,7 +93,7 @@ class SeleniumHtmlHelpers:
 
         for action in script_actions:
             if action['type'] == "database":
-                value = VariableHelpers().get_value_with_function(doc, action['selector'])
+                value = self.get_database_action_value(doc, action)
                 MongoTransactions(self.scope.settings.database, value).database_action_router(doc, action)
             elif action['type'] == "rerun_actions":
                 self.parse_html_with_js(doc, self.scope_model.script_actions)
@@ -169,7 +169,7 @@ class SeleniumHtmlHelpers:
         elif type == "driver_event":
             self.driver_action_router(doc, script_actions)
         elif type == "database":
-            value = VariableHelpers().get_value_with_function(doc, script_actions['selector'])
+            value = self.get_database_action_value(doc, script_actions)
             MongoTransactions(self.scope.settings.database, value)\
                 .database_action_router(doc, script_actions)
         elif type == "rerun_actions":
@@ -278,6 +278,20 @@ class SeleniumHtmlHelpers:
             KeyPressHelpers(doc).press_key(element, script_actions)
         else:
             doc.execute_script("arguments[0]." + target + " = '" + value + "';", element)
+
+    @staticmethod
+    def get_database_action_value(doc, script_actions):
+        if 'selector' in script_actions:
+            return VariableHelpers().get_value_with_function(doc, script_actions['selector'])
+        if 'variable_names' in script_actions:
+            value = {}
+            for key in script_actions["variable_names"]:
+                value[key["key"]] = VariableHelpers().get_variable(key["value"])
+
+            return value
+
+        else:
+            return VariableHelpers().get_variable(script_actions['variable_name'])
 
     def get_variable(self, doc, script_actions):
         try:
