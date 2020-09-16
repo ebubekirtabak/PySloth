@@ -2,7 +2,7 @@ import sys
 import time
 import os
 import uuid
-from PySloth import globals
+import globals
 
 script_dir = os.path.dirname(__file__)
 logs_dir = script_dir + '/logs/'
