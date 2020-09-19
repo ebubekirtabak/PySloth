@@ -164,7 +164,7 @@ class Scope:
                 self.driver.quit()
 
     def crawl_page(self, doc):
-        html_helper = HtmlHelpers(self, self.scope)
+        html_helper = HtmlHelpers(self.scope)
         html_helper.parse_html_page(doc, self.scope.script_actions)
 
     def parse_page(self, doc, search_item):
