@@ -80,6 +80,24 @@ PySloth can process dynamic conditions.
 }
 ````
 
+
+#### Http Request
+
+````json
+    {
+      "type": "http_request",
+      "request": {
+        "url_2": "https://reqbin.com/echo/post/json",
+        "headers": {
+          "User-Agent": "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)",
+          "Content-Type": "application/json"
+        },
+        "body": {
+            "target": "crawler_request"
+        }
+      }
+    }
+````
 #### Database Actions (MongoDB)
 
 You can use MongoDB in PySloth.
