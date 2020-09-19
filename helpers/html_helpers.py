@@ -20,8 +20,8 @@ class HtmlHelpers:
     def parse_html_page(self, doc, script_actions):
         for action in script_actions:
             if action['type'] == "database":
-                value = VariableHelpers().get_value_with_function(action['selector'])
-                MongoTransactions(self.scope.settings.database, value).database_action_router(doc, action)
+                value = VariableHelpers().get_value_with_function(doc, action['selector'])
+                MongoTransactions(self.scope.settings["database"], value).database_action_router(doc, action)
             elif action['type'] != "**":
                 self.action_router(doc, action)
             else:
