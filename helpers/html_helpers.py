@@ -1,4 +1,5 @@
 from helpers.condition_helpers import ConditionHelpers
+from helpers.http_helpers import HttpHelpers
 from helpers.lxml_element_helpers import LXMLElementHelpers
 from helpers.parse_html_helpers import ParseHtmlHelpers
 from helpers.parse_lxml_helpers import ParseLxmlHelpers
@@ -39,6 +40,8 @@ class HtmlHelpers:
         elif type == 'run_custom_script':
             script_service = ScriptRunnerService(script_actions['custom_script'])
             script_service.run()
+        elif type == 'http_request':
+            HttpHelpers().send_request(script_actions["request"])
         elif type == "condition":
             new_action = ConditionHelpers(doc, script_actions).parse_condition()
             if isinstance(new_action, list):

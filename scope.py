@@ -32,7 +32,6 @@ from lxml.html import fromstring
 script_dir = os.path.dirname(__file__)
 
 
-
 class Scope:
 
     def __init__(self, scope, database=None):
