@@ -23,10 +23,22 @@ class ConditionHelpers:
             elif type == 'if_not_exists_variable':
                 return self.if_not_exists_variable(condition)
 
+    def find_element_by_xpath(self, selector):
+        try:
+            return self.doc.find_element_by_xpath(selector) is not None
+        except Exception as e:
+            try:
+                return self.doc.find(selector) is not None
+            except Exception as e:
+                print(str(e))
+                return False
+
+
+
     def if_selector(self, condition):
         selector = condition['if_selector']
         try:
-            if self.doc.find_element_by_xpath(selector) is not None:
+            if self.find_element_by_xpath(selector):
                 return condition['if']
             elif 'else' in condition:
                 return condition['else']
@@ -42,7 +54,7 @@ class ConditionHelpers:
     def if_not_selector(self, condition):
         selector = condition['if_not_selector']
         try:
-            if self.doc.find_element_by_xpath(selector) is None:
+            if  self.find_element_by_xpath(selector) is False:
                 return condition['if']
             elif 'else' in condition:
                 return condition['else']

@@ -9,8 +9,6 @@ from collections import namedtuple
 
 import psutil as psutil
 from selenium.common.exceptions import NoSuchElementException
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
@@ -21,10 +19,9 @@ from helpers.condition_helpers import ConditionHelpers
 from helpers.cookie_helpers import CookieHelpers
 from helpers.element_helpers import ElementHelpers
 from helpers.form_helpers import FormHelpers
-from helpers.mongo_database_helpers import MongoDatabaseHelpers
+from helpers.http_helpers import HttpHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
-import logger
 from models.thread_model import ThreadModel
 from modules.file_module import FileModule
 from services.script_runner_service import ScriptRunnerService
@@ -151,6 +148,8 @@ class SeleniumHtmlHelpers:
         elif type == 'run_custom_script':
             script_service = ScriptRunnerService(script_actions['custom_script'])
             script_service.run()
+        elif type == 'http_request':
+            HttpHelpers().send_request(script_actions["request"])
         elif type == 'wait_for_element_to_load':
             wait(doc, script_actions['timeout']).until(
                 EC.visibility_of_any_elements_located(doc.find_element_by_xpath(script_actions['selector'])))
