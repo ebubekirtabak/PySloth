@@ -9,3 +9,4 @@ selenium==3.141.0
 urllib3==1.25.2
 chromedriver-autoinstaller==0.2.0
 dnspython==1.16.0
+requests~=2.19.1
