@@ -1,3 +1,4 @@
+from helpers.condition_helpers import ConditionHelpers
 from helpers.lxml_element_helpers import LXMLElementHelpers
 from helpers.parse_html_helpers import ParseHtmlHelpers
 from helpers.parse_lxml_helpers import ParseLxmlHelpers
@@ -19,7 +20,7 @@ class HtmlHelpers:
     def parse_html_page(self, doc, script_actions):
         for action in script_actions:
             if action['type'] == "database":
-                value = VariableHelpers().get_value_with_function(doc, action['selector'])
+                value = VariableHelpers().get_value_with_function(action['selector'])
                 MongoTransactions(self.scope.settings.database, value).database_action_router(doc, action)
             elif action['type'] != "**":
                 self.action_router(doc, action)
@@ -38,6 +39,12 @@ class HtmlHelpers:
         elif type == 'run_custom_script':
             script_service = ScriptRunnerService(script_actions['custom_script'])
             script_service.run()
+        elif type == "condition":
+            new_action = ConditionHelpers(doc, script_actions).parse_condition()
+            if isinstance(new_action, list):
+                self.parse_html_page(doc, new_action)
+            elif new_action is not None:
+                self.parse_html_page(doc, [new_action])
         elif type == "rerun_actions":
             self.parse_html_page(doc, self.scope_model.script_actions)
         elif type == 'quit':
