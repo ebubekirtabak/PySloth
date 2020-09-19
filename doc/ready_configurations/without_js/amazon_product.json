@@ -37,7 +37,7 @@
     "headers": {
       "dnt": "1",
       "upgrade-insecure-requests": "1",
-      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36",
+      "user-agent": "Mozilla/5.0 (Linux; Android 6.0.1; Aquaris E5 Build/MMB29M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/68.0.3440.70 Mobile Safari/537.36",
       "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
       "sec-fetch-site": "same-origin",
       "sec-fetch-mode": "navigate",
@@ -76,10 +76,45 @@
   ],
   "script_actions": [
     {
+      "type": "condition",
+      "conditions": [
+        {
+          "type": "if_selector",
+          "if_selector": ".//*[@id='acBadge_feature_div']",
+          "if": [
+            {
+              "type": "$_GET_VARIABLE",
+              "variable_name": "is_amazons_choice",
+              "value": true
+            }
+          ],
+          "else": [
+            {
+              "type": "$_GET_VARIABLE",
+              "variable_name": "is_amazons_choice",
+              "value": false
+            }
+          ]
+        }
+      ]
+    },
+    {
       "type": "$_GET_VARIABLE",
       "variable_name": "price",
       "attribute_name": "text",
       "selector": "//*[@id=\"priceblock_ourprice\"]"
+    },
+    {
+      "type": "$_GET_VARIABLE",
+      "variable_name": "page_title",
+      "attribute_name": "text",
+      "selector": "/html/head/title"
+    },
+    {
+      "type": "$_GET_VARIABLE",
+      "variable_name": "keyword",
+      "attribute_name": "text",
+      "selector": "/html/head/meta[@name='keywords']"
     },
     {
       "type": "$_GET_VARIABLE",
@@ -107,6 +142,44 @@
       ]
     },
     {
+      "type": "parse_html_list",
+      "variable_name": "editions",
+      "selector": "//*[@id='variation_edition']/ul/li/span[@class='a-list-item']/div[@class='tooltip']",
+      "object_list": [
+        {
+          "selector": ".//span/span/span/button/div/div[@class='twisterTextDiv']/span[@class='a-size-base']",
+          "attribute_name": "text",
+          "type": "$_GET_VARIABLE",
+          "variable_name": "text"
+        },
+        {
+          "selector": ".//span/span/span/button/div/div[@class='twisterSlotDiv']/span",
+          "attribute_name": "text",
+          "type": "$_GET_VARIABLE",
+          "variable_name": "price"
+        }
+      ]
+    },
+    {
+      "type": "parse_html_list",
+      "variable_name": "sellers",
+      "selector": "//div[@class='a-box mbc-offer-row pa_mbc_on_amazon_offer']/div[@class='a-box-inner a-padding-small']/span[@class='a-declarative']/div",
+      "object_list": [
+        {
+          "selector": ".//div[2]/span[2]",
+          "attribute_name": "text",
+          "type": "$_GET_VARIABLE",
+          "variable_name": "seller_name"
+        },
+        {
+          "selector": ".//div[1]/span[1]",
+          "attribute_name": "text",
+          "type": "$_GET_VARIABLE",
+          "variable_name": "price"
+        }
+      ]
+    },
+    {
       "type": "event",
       "delay": 4,
       "sleep": 1,
@@ -115,6 +188,13 @@
           "type": "nothing"
         }
       ]
+    },
+    {
+      "type": "database",
+      "action": "push_to_database",
+      "collection_name": "products",
+      "variable_type": "$_GET_VARIABLE",
+      "selector": "@get_scope_variables"
     }
   ]
 }
