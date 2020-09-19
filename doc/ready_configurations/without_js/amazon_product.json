@@ -1,0 +1,120 @@
+{
+  "settings": {
+    "search_time_sleep": 5,
+    "download_time_sleep": 5,
+    "thread_time_out": 300,
+    "thread_limit": 15,
+    "thread_controller": "mongo",
+    "session_id": "linkedin",
+    "role": "main",
+    "is_go_again_history": false,
+    "is_page_helper": false,
+    "time_out": 0,
+    "multi_process": {
+      "time_out": 300,
+      "limit": 10,
+      "base": "mongo"
+    },
+    "driver": {
+      "driver_type": "chrome",
+      "driver_path": "/usr/local/bin/chromedriver-85",
+      "driver_arguments": [
+      ]
+    },
+    "database": {
+      "type": "MongoDB",
+      "name": "BotDatabase",
+      "history_collection_name": "history_collection",
+      "log_collection_name": "log_collection",
+      "thread_collection_name": "thread_collection",
+      "collection_name": "main_collection",
+      "linkedin_members": "linkedin_members",
+      "cookie_collection": "cookie_collection",
+      "uri": "mongodb://localhost:27017/",
+      "user_name": "admin"
+    },
+    "enable_javascript": false,
+    "headers": {
+      "dnt": "1",
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.61 Safari/537.36",
+      "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+      "sec-fetch-site": "same-origin",
+      "sec-fetch-mode": "navigate",
+      "sec-fetch-user": "?1",
+      "sec-fetch-dest": "document",
+      "referer": "https://www.amazon.com/",
+      "accept-language": "en-GB,en-US;q=0.9,en;q=0.8"
+    },
+    "file_settings": {
+      "max_file_length": 150
+    }
+  },
+  "reporting": {
+    "download_counter": 0,
+    "page_count": 0
+  },
+  "page": {
+    "url_2": "https://www.crawler-test.com",
+    "url": "https://www.amazon.com/PlayStation-4-Pro-1TB-Console/dp/B01LOP8EZC?pd_rd_w=kCmv3&pf_rd_p=8eb011f8-a9f1-4c31-a254-7a5f8477042c&pf_rd_r=7NA1BK6FXMARSDJKHH46&pd_rd_r=a189228d-f50a-4ddd-bfb6-4506bb037404&pd_rd_wg=wCRII",
+    "user_agent": "Mozilla/5.0 (Windows NT 6.2; WOW64; Trident/7.0; rv:11.0) like Gecko",
+    "accept_language": "en-US,en;q=0.5",
+    "data": null
+  },
+  "scope_name": "amazon_product",
+  "history": {
+    "to": "database",
+    "collection_name": "history_collection",
+    "control": {
+      "from": "database",
+      "progress": "skip"
+    }
+  },
+  "isPagination": true,
+  "isLogger": true,
+  "before_actions": [
+  ],
+  "script_actions": [
+    {
+      "type": "$_GET_VARIABLE",
+      "variable_name": "price",
+      "attribute_name": "text",
+      "selector": "//*[@id=\"priceblock_ourprice\"]"
+    },
+    {
+      "type": "$_GET_VARIABLE",
+      "variable_name": "product_title",
+      "attribute_name": "text",
+      "selector": "//*[@id=\"productTitle\"]"
+    },
+    {
+      "type": "parse_html_list",
+      "variable_name": "accessory",
+      "selector": "//*[@id=\"simpleBundleV2_feature_div\"]/div/div[1]/div/div/span",
+      "object_list": [
+        {
+          "selector": ".//div/label/span/span[2]",
+          "attribute_name": "text",
+          "type": "$_GET_VARIABLE",
+          "variable_name": "price"
+        },
+        {
+          "selector": ".//div/label/span/span[1]/a",
+          "attribute_name": "text",
+          "type": "$_GET_VARIABLE",
+          "variable_name": "name"
+        }
+      ]
+    },
+    {
+      "type": "event",
+      "delay": 4,
+      "sleep": 1,
+      "actions": [
+        {
+          "type": "nothing"
+        }
+      ]
+    }
+  ]
+}
