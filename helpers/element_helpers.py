@@ -36,7 +36,7 @@ class ElementHelpers:
     @staticmethod
     def encode_image(image_url, action_object):
         convert_type = action_object["as"]
-        if convert_type == "as":
+        if convert_type == "base64":
             return ImageHelpers().encode_base64_from_url(image_url)
 
     @staticmethod
