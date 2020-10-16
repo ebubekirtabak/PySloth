@@ -4,6 +4,7 @@ import sys
 from selenium.common.exceptions import NoSuchElementException
 
 from logger import Logger
+from helpers.image_helpers import ImageHelpers
 
 
 class ElementHelpers:
@@ -11,15 +12,32 @@ class ElementHelpers:
     def __init__(self):
         self.logger = Logger()
 
-    def get_attribute_from_element(self, element, attr):
+    def get_attribute_from_element(self, element, action_object):
+        attr = action_object['attribute_name']
         if attr.startswith('style:'):
             return self.get_style_from_element(element, attr.split(':')[1])
         elif attr == 'text':
             return element.text
         elif attr == 'size':
             return element.size
+        elif attr == 'src':
+            return self.get_src_from_element(element, action_object)
         else:
             return element.get_attribute(attr)
+
+    def get_src_from_element(self, element, action_object):
+        attr = action_object['attribute_name']
+        src = element.get_attribute(attr)
+        if "as" in action_object:
+            return self.encode_image(src, action_object)
+        else:
+            return src
+
+    @staticmethod
+    def encode_image(image_url, action_object):
+        convert_type = action_object["as"]
+        if convert_type == "as":
+            return ImageHelpers().encode_base64_from_url(image_url)
 
     @staticmethod
     def get_style_from_element(element, attr):
@@ -29,12 +47,12 @@ class ElementHelpers:
         try:
             elements = element.find_elements_by_xpath(action_object['selector'])
             if len(elements) == 1:
-                value = ElementHelpers().get_attribute_from_element(elements[0], action_object['attribute_name'])
+                value = ElementHelpers().get_attribute_from_element(elements[0], action_object)
                 return value
             elif len(elements) > 1:
                 values = []
                 for child_element in elements:
-                    value = ElementHelpers().get_attribute_from_element(child_element, action_object['attribute_name'])
+                    value = ElementHelpers().get_attribute_from_element(child_element, action_object)
                     values.append(value)
                 return values
             else:

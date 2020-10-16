@@ -57,5 +57,5 @@ class ParseLxmlHelpers:
         elif action_object['type'] == "event*":
             return self.parse_element_action(action_object, element)
         else:
-            value = self.element_helpers.get_attribute_from_element(element, action_object["attribute_name"])
+            value = self.element_helpers.get_attribute_from_element(element, action_object)
             return value
