@@ -35,8 +35,6 @@ class ConditionHelpers:
                 print(str(e))
                 return False
 
-
-
     def if_selector(self, condition):
         selector = condition['if_selector']
         try:
