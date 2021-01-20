@@ -90,6 +90,7 @@ class WebDriverLoderService:
             driver_path = driver['driver_path']
             os.environ["webdriver.firefox.driver"] = driver_path
             browser = webdriver.Firefox(
+                log_path="/tmp/geckodriver.log",
                 executable_path=driver_path,
                 firefox_options=options,
                 desired_capabilities=capabilities
