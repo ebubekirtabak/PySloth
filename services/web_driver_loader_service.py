@@ -51,6 +51,10 @@ class WebDriverLoderService:
             for argument in driver['driver_arguments']:
                 chrome_options.add_argument(argument)
 
+        if 'driver_extensions' in driver:
+            for extension in driver['driver_extensions']:
+                chrome_options.add_extension(extension)
+
         capabilities = dict(DesiredCapabilities.CHROME)
         if 'proxy' in driver:
             capabilities['proxy'] = driver['proxy']
