@@ -78,6 +78,8 @@ class VariableHelpers:
             return VariableHelpers.get_utc_time()
         elif selector == "@get_page_source":
             return doc.page_source
+        elif selector == "@screenshot_as_base64":
+            return doc.get_screenshot_as_base64()
 
     @staticmethod
     def generate_uniq_number():
