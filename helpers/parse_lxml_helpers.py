@@ -3,24 +3,22 @@ from event_maker import EventMaker
 from logger import Logger
 from services.script_runner_service import ScriptRunnerService
 
-from helpers.condition_helpers import ConditionHelpers
 
-
-class ParseHtmlHelpers:
+class ParseLxmlHelpers:
 
     def __init__(self, driver, element_helpers):
         self.driver = driver
         self.element_helpers = element_helpers
 
-    def parse_html_list(self, parent, action):
+    def parse_lxml_list(self, parent, action):
         try:
-            selected_elements = parent.find_elements_by_xpath(action['selector'])
+            selected_elements = parent.xpath(action['selector'])
             parse_list = []
             index = 0
             for element in selected_elements:
                 parse_list.append({})
                 for action_object in action['object_list']:
-                    value = self.get_object_value(action_object, element)
+                    value = self.get_object_value(action_object, element.find(action_object["selector"]))
 
                     if value is not None:
                         if 'custom_scripts' in action_object:
@@ -58,13 +56,6 @@ class ParseHtmlHelpers:
             return value
         elif action_object['type'] == "event*":
             return self.parse_element_action(action_object, element)
-        elif action_object['type'] == "condition":
-            new_action = ConditionHelpers(element, action_object).parse_condition()
-            if new_action is not None:
-                value = self.element_helpers.get_element_value(new_action, element)
-                return value
-            else:
-                return ''
         else:
-            value = self.element_helpers.get_element_value(action_object, element)
+            value = self.element_helpers.get_attribute_from_element(element, action_object)
             return value

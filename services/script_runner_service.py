@@ -33,14 +33,26 @@ class ScriptRunnerService:
             process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
             result = process_output.decode("utf-8")
             self.logger.set_log("script result: " + result)
+            result = self.get_value_by_type(result)
+
             if 'variable_name' in self.script_options:
-                VariableHelpers().set_variable(self.script_options['variable_name'], json.loads(result))
+                VariableHelpers().set_variable(self.script_options['variable_name'], result)
 
         except Exception as e:
             self.logger.set_log("custom_script Exception: " + str(e), True)
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
                 Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
+
+    def get_value_by_type(self, result):
+        if 'variable_type' not in self.script_options or type == "json":
+            result = json.loads(result)
+        elif self.script_options['variable_type'] == "text":
+            result = result.replace("\n", '')
+        elif self.script_options['variable_type'] == "int":
+            result = int(result.replace("\n", ''))
+
+        return result
 
     def get_script_result(self, params):
         try:

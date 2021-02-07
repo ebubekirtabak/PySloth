@@ -13,6 +13,7 @@ import mongo
 
 from selenium import webdriver
 
+from helpers.html_helpers import HtmlHelpers
 from helpers.selenium_html_helpers import SeleniumHtmlHelpers
 from models.setting_model import SettingModel
 from models.user_model import UserModel
@@ -29,7 +30,6 @@ from helpers.url_helpers import UrlHelpers
 from lxml.html import fromstring
 
 script_dir = os.path.dirname(__file__)
-
 
 
 class Scope:
@@ -60,8 +60,11 @@ class Scope:
 
         print('starting')
         if self.settings.role == 'main' and 'url' in self.scope.page:
-            if hasattr(self.scope, 'script_actions'):
+            if self.settings.enable_javascript and hasattr(self.scope, 'script_actions'):
                 self.call_page_with_javascript(self.scope.page['url'], None)
+            elif hasattr(self.scope, 'script_actions'):
+                html_content = UrlHelpers().get_page_html_content(url=self.scope.page['url'], data=self.scope.page['data'], headers=self.settings.headers)
+                self.crawl_page(html_content)
             else:
                 self.root_search_item = self.scope.search_item
                 self.call_page(self.scope.page['url'], self.scope.search_item)
@@ -109,13 +112,13 @@ class Scope:
             self.driver.get(url)
         except Exception as e:
             Logger().set_error_log("DriverLoadException: " + str(e), True)
+            self.driver.quit()
             return
         except TimeoutException as e:
             Logger().set_error_log("Page load Timeout Occured. Quiting !!!", True)
             self.driver.delete_all_cookies()
             self.driver.quit()
             return
-
 
         event_maker = EventMaker(self.driver)
 
@@ -136,9 +139,11 @@ class Scope:
                 selenium_html_helper.parse_html_with_js(self.driver, self.scope.script_actions)
             except Exception as e:
                 Logger().set_error_log("SeleniumHtmlHelperError: " + str(e))
+                self.driver.quit()
                 type, value, traceback = sys.exc_info()
                 if hasattr(value, 'filename'):
                     Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
+                return
 
         if hasattr(self.scope, 'search_item'):
             if 'events' in search_item:
@@ -158,6 +163,10 @@ class Scope:
             if self.driver is not None:
                 self.driver.close()
                 self.driver.quit()
+
+    def crawl_page(self, doc):
+        html_helper = HtmlHelpers(self.scope)
+        html_helper.parse_html_page(doc, self.scope.script_actions)
 
     def parse_page(self, doc, search_item):
 

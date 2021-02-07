@@ -44,7 +44,23 @@ class VariableHelpers:
             return scope_variables[variable_name]
         except Exception as e:
             Logger().set_log('get_variable Error: ' + str(e))
-            return None
+            return VariableHelpers.find_object_by_name(variable_name)
+
+    def find_object_by_name(variable_name):
+        obj = None
+        global scope_variables
+        for key in scope_variables.keys():
+            search_key = variable_name + '.'
+            index = key.find(search_key)
+            if index > -1:
+                if obj is None:
+                    obj = {}
+
+                name = key[(len(search_key) + index):]
+                obj[name] = scope_variables[key]
+
+        return obj
+
 
     @staticmethod
     def delete_variable(variable_name):
@@ -62,6 +78,8 @@ class VariableHelpers:
             return VariableHelpers.get_utc_time()
         elif selector == "@get_page_source":
             return doc.page_source
+        elif selector == "@screenshot_as_base64":
+            return doc.get_screenshot_as_base64()
 
     @staticmethod
     def generate_uniq_number():
