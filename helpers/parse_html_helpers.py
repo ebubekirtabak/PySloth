@@ -3,6 +3,8 @@ from event_maker import EventMaker
 from logger import Logger
 from services.script_runner_service import ScriptRunnerService
 
+from helpers.condition_helpers import ConditionHelpers
+
 
 class ParseHtmlHelpers:
 
@@ -56,6 +58,13 @@ class ParseHtmlHelpers:
             return value
         elif action_object['type'] == "event*":
             return self.parse_element_action(action_object, element)
+        elif action_object['type'] == "condition":
+            new_action = ConditionHelpers(element, action_object).parse_condition()
+            if new_action is not None:
+                value = self.element_helpers.get_element_value(new_action, element)
+                return value
+            else:
+                return ''
         else:
             value = self.element_helpers.get_element_value(action_object, element)
             return value

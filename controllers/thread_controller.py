@@ -17,6 +17,7 @@ class ThreadController:
     def __init__(self, settings, main_scope):
         self.main_scope = main_scope
         self.settings = settings
+        self.is_cancelled = False
         self.session_time = str(time.time())
         self.multi_process = self.settings["multi_process"]
         self.multi_process = namedtuple("MultiProcessModel", self.multi_process.keys())(*self.multi_process.values())

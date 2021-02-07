@@ -26,14 +26,14 @@ class ConditionHelpers:
     def find_element_by_xpath(self, selector):
         try:
             return self.doc.find_element_by_xpath(selector) is not None
+        except NoSuchElementException as ne:
+            return False
         except Exception as e:
             try:
                 return self.doc.find(selector) is not None
             except Exception as e:
                 print(str(e))
                 return False
-
-
 
     def if_selector(self, condition):
         selector = condition['if_selector']

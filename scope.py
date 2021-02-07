@@ -44,9 +44,11 @@ class Scope:
         print("Session Id: " + globals.configs['session_id'])
         self.database = database
         self.settings = self.scope.settings
-        self.thread_controller = ThreadController(self.settings, self)
-        self.thread_controller.clear_thread_list()
-        self.http_services = HttpServices(self.settings, self.thread_controller)
+        if 'multi_process' in self.scope.settings:
+            self.thread_controller = ThreadController(self.settings, self)
+            self.thread_controller.clear_thread_list()
+            self.http_services = HttpServices(self.settings, self.thread_controller)
+
         self.form_helpers = None
         self.user_model = UserModel()
         self.driver = None
@@ -112,13 +114,13 @@ class Scope:
             self.driver.get(url)
         except Exception as e:
             Logger().set_error_log("DriverLoadException: " + str(e), True)
+            self.driver.quit()
             return
         except TimeoutException as e:
             Logger().set_error_log("Page load Timeout Occured. Quiting !!!", True)
             self.driver.delete_all_cookies()
             self.driver.quit()
             return
-
 
         event_maker = EventMaker(self.driver)
 
@@ -139,9 +141,11 @@ class Scope:
                 selenium_html_helper.parse_html_with_js(self.driver, self.scope.script_actions)
             except Exception as e:
                 Logger().set_error_log("SeleniumHtmlHelperError: " + str(e))
+                self.driver.quit()
                 type, value, traceback = sys.exc_info()
                 if hasattr(value, 'filename'):
                     Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))
+                return
 
         if hasattr(self.scope, 'search_item'):
             if 'events' in search_item:

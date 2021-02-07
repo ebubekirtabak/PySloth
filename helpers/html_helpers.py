@@ -65,12 +65,12 @@ class HtmlHelpers:
             else:
                 elements = doc.xpath(script_actions['selector'])
                 if len(elements) == 1:
-                    value = self.element_helpers.get_attribute_from_element(elements[0], script_actions['attribute_name'])
+                    value = self.element_helpers.get_attribute_from_element(elements[0], script_actions)
                 elif len(elements) > 1:
                     value = []
                     for element in elements:
                         element_value = self.element_helpers.get_attribute_from_element(
-                            element, script_actions['attribute_name']
+                            element, script_actions
                         )
                         value.append(element_value)
 

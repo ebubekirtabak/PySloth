@@ -37,10 +37,10 @@ class WebDriverLoderService:
 
     def auto_load_driver(self):
         chromedriver_autoinstaller.install()
-        print("Whick chrome driver")
+        print("Which chrome driver")
         driver_path = subprocess.check_output(["which", "chromedriver"])
         if driver_path:
-            print("Driver load has been successful" + driver_path)
+            print("Driver load has been successful: " + driver_path)
             self.driver_options["path"] = driver_path
             return self.init_chrome_driver()
 
@@ -50,6 +50,10 @@ class WebDriverLoderService:
         if 'driver_arguments' in driver:
             for argument in driver['driver_arguments']:
                 chrome_options.add_argument(argument)
+
+        if 'driver_extensions' in driver:
+            for extension in driver['driver_extensions']:
+                chrome_options.add_extension(extension)
 
         capabilities = dict(DesiredCapabilities.CHROME)
         if 'proxy' in driver:
@@ -86,6 +90,7 @@ class WebDriverLoderService:
             driver_path = driver['driver_path']
             os.environ["webdriver.firefox.driver"] = driver_path
             browser = webdriver.Firefox(
+                log_path="/tmp/geckodriver.log",
                 executable_path=driver_path,
                 firefox_options=options,
                 desired_capabilities=capabilities

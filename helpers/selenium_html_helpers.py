@@ -1,4 +1,5 @@
 import os
+import re
 import signal
 import sys
 import threading
@@ -106,7 +107,12 @@ class SeleniumHtmlHelpers:
         if type == "event*":
             self.event_loop(doc, script_actions)
         elif type == 'navigate_to':
-            doc.get(script_actions['to'])
+            if script_actions['to'].startswith("${"):
+                params_name = re.search("{(.*?)}", script_actions['to'])
+                param_value = VariableHelpers().get_variable(params_name.group(1))
+                doc.get(param_value)
+            else:
+                doc.get(script_actions['to'])
         elif type == "download_loop":
             self.download_loop(doc, script_actions)
         elif type == "event":
@@ -133,6 +139,8 @@ class SeleniumHtmlHelpers:
         elif type == 'parse_html_list':
             values = ParseHtmlHelpers(doc, self.element_helpers).parse_html_list(doc, script_actions)
             VariableHelpers().set_variable(script_actions['variable_name'], values)
+        elif type == "import_script_actions":
+            self.import_script_actions(doc, script_actions)
         elif type == 'switch_to_frame':
             wait(doc, 10).until(
                 EC.frame_to_be_available_and_switch_to_it(doc.find_element_by_xpath(script_actions['selector'])))
@@ -207,16 +215,19 @@ class SeleniumHtmlHelpers:
         for action in actions:
             type = action['type']
             if type == "import_script_actions":
-                file = FileModule().read_file(file_name=action['file'])
-                if file['success'] is True:
-                    scope_data = json.loads(file['data'])
-                    scope_model = namedtuple("ScopeModel", scope_data.keys())(*scope_data.values())
-                    if hasattr(scope_model, 'script_actions'):
-                        self.parse_html_with_js(doc, scope_model.script_actions)
-                else:
-                    Logger().set_log('_run_after_action FileNotFoundError: ' + action['file'] + '', True)
+                self.import_script_actions(doc, action)
             else:
                 self.action_router(doc, action)
+
+    def import_script_actions(self, doc, action):
+        file = FileModule().read_file(file_name=action['file'])
+        if file['success'] is True:
+            scope_data = json.loads(file['data'])
+            scope_model = namedtuple("ScopeModel", scope_data.keys())(*scope_data.values())
+            if hasattr(scope_model, 'script_actions'):
+                self.parse_html_with_js(doc, scope_model.script_actions)
+        else:
+            Logger().set_log('_run_after_action FileNotFoundError: ' + action['file'] + '', True)
 
     def download_loop(self, doc, action):
         if 'selector' in action:
@@ -303,12 +314,12 @@ class SeleniumHtmlHelpers:
             else:
                 elements = doc.find_elements_by_xpath(script_actions['selector'])
                 if len(elements) == 1:
-                    value = self.element_helpers.get_attribute_from_element(elements[0], script_actions['attribute_name'])
+                    value = self.element_helpers.get_attribute_from_element(elements[0], script_actions)
                 elif len(elements) > 1:
                     value = []
                     for element in elements:
                         element_value = self.element_helpers.get_attribute_from_element(
-                            element, script_actions['attribute_name']
+                            element, script_actions
                         )
                         value.append(element_value)
 

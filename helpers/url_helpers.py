@@ -1,17 +1,21 @@
+# -*- coding: utf-8 -*-
+
 import urllib
 import urllib.request
+import urllib.parse
 from logger import Logger
 from lxml.html import fromstring
 
 
 class UrlHelpers:
+
     def __init__(self):
         pass
 
     def get_page_html_content(self, url, data=None, headers={}):
         try:
             req = urllib.request.Request(
-                url,
+                url=url,
                 data=data,
                 headers=headers
             )
@@ -24,3 +28,4 @@ class UrlHelpers:
             Logger().set_error_log(str(e))
         except Exception as e:
             Logger().set_error_log(str(e))
+

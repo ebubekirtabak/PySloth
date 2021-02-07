@@ -3,7 +3,8 @@ class LXMLElementHelpers:
     def __init__(self):
         pass
 
-    def get_attribute_from_element(self, element, attr):
+    def get_attribute_from_element(self, element, action_object):
+        attr = action_object["attribute_name"]
         if attr.startswith('style:'):
             return self.get_style_from_element(element, attr.split(':')[1])
         elif attr == 'text':
