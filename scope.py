@@ -44,9 +44,11 @@ class Scope:
         print("Session Id: " + globals.configs['session_id'])
         self.database = database
         self.settings = self.scope.settings
-        self.thread_controller = ThreadController(self.settings, self)
-        self.thread_controller.clear_thread_list()
-        self.http_services = HttpServices(self.settings, self.thread_controller)
+        if 'multi_process' in self.scope.settings:
+            self.thread_controller = ThreadController(self.settings, self)
+            self.thread_controller.clear_thread_list()
+            self.http_services = HttpServices(self.settings, self.thread_controller)
+
         self.form_helpers = None
         self.user_model = UserModel()
         self.driver = None
