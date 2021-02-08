@@ -1,7 +1,7 @@
 import random
 import time
 from datetime import datetime
-
+import lxml.html
 from logger import Logger
 
 
@@ -77,9 +77,16 @@ class VariableHelpers:
         elif selector == "@get_utc_time":
             return VariableHelpers.get_utc_time()
         elif selector == "@get_page_source":
-            return doc.page_source
+            return VariableHelpers.get_page_source(doc)
         elif selector == "@screenshot_as_base64":
             return doc.get_screenshot_as_base64()
+
+    @staticmethod
+    def get_page_source(doc):
+        if hasattr(doc, "page_source"):
+            return doc.page_source
+        else:
+            return lxml.html.tostring(doc, encoding='utf8').decode()
 
     @staticmethod
     def generate_uniq_number():
