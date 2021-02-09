@@ -26,7 +26,7 @@ class ImageHelpers:
         }
 
         image_content = HttpHelpers().get_request_content(request_data)
-        if image_content.content is None:
+        if hasattr(image_content, "content") is False or image_content.status_code != 200:
             return image_url
 
         buffered = BytesIO(image_content.content)
