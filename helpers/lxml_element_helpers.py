@@ -1,3 +1,6 @@
+from helpers.image_helpers import ImageHelpers
+
+
 class LXMLElementHelpers:
 
     def __init__(self):
@@ -24,7 +27,7 @@ class LXMLElementHelpers:
 
     def get_src_from_element(self, element, action_object):
         attr = action_object['attribute_name']
-        src = element.get_attribute(attr)
+        src = element.attrib[attr]
         if "as" in action_object:
             return self.encode_image(src, action_object)
         else:
