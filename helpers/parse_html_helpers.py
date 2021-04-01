@@ -35,7 +35,8 @@ class ParseHtmlHelpers:
                             else:
                                 value = ScriptRunnerService(custom_scripts).get_script_result(value)
 
-                        parse_list[index][action_object['variable_name']] = value
+                        if 'variable_name' in action_object:
+                            parse_list[index][action_object['variable_name']] = value
 
                 index = index + 1
 
