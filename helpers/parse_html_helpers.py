@@ -62,8 +62,7 @@ class ParseHtmlHelpers:
         elif action_object['type'] == "condition":
             new_action = ConditionHelpers(element, action_object).parse_condition()
             if new_action is not None:
-                value = self.element_helpers.get_element_value(new_action, element)
-                return value
+                return self.get_object_value(new_action, element)
             else:
                 return ''
         else:
