@@ -40,6 +40,7 @@ class EventMaker:
                             "click": self.set_click,
                             "scroll": self.set_scroll,
                             "style": self.set_style,
+                            "scroll_to_element": self.set_scroll_to_element,
                             "excute_script": self.set_excute_script,
                             "$_GET_VARIABLE": self.get_variable,
                             "$_SET_VARIABLE": self.set_variable,
@@ -134,8 +135,7 @@ class EventMaker:
         action.click()
         action.perform()
 
-    def set_scroll_to_element(self, element):
-        # self.driver.execute_script("arguments[0].scrollIntoView()", element)
+    def set_scroll_to_element(self, element, action=None):
         desired_y = (element.size['height'] / 2) + element.location['y']
         window_h = self.driver.execute_script('return window.innerHeight')
         window_y = self.driver.execute_script('return window.pageYOffset')
