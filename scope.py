@@ -113,11 +113,11 @@ class Scope:
         try:
             self.driver.get(url)
         except Exception as e:
-            Logger().set_error_log("DriverLoadException: " + str(e), True)
+            Logger().set_log("DriverLoadException: " + str(e), True)
             self.driver.quit()
             return
         except TimeoutException as e:
-            Logger().set_error_log("Page load Timeout Occured. Quiting !!!", True)
+            Logger().set_log("Page load Timeout Occured. Quiting !!!", True)
             self.driver.delete_all_cookies()
             self.driver.quit()
             return
