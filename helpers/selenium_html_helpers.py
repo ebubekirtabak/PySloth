@@ -64,9 +64,10 @@ class SeleniumHtmlHelpers:
 
         try:
             if self.driver is not None:
+                self.driver.stop_client()
                 self.driver.close()
         except Exception as e:
-            self.logger.set_log("Driver Stop Error: " + str(e), True)
+            self.logger.set_log("Driver Stop Exception: " + str(e), True)
 
         pid = os.getpid()
         self.kill_children_processes(pid)
