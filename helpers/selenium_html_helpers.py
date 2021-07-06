@@ -135,6 +135,10 @@ class SeleniumHtmlHelpers:
             VariableHelpers().load_scope_variables()
         elif type == '$_GET_VARIABLE':
             self.get_variable(doc, script_actions)
+        elif type == '$_DELETE_VARIABLE':
+            self.delete_variable(script_actions)
+        elif type == '$_RENAME_VARIABLE':
+            self.rename_variable(script_actions)
         elif type == '$_SET_VARIABLE':
             self.set_variable(doc, script_actions)
         elif type == 'parse_html_list':
@@ -303,6 +307,14 @@ class SeleniumHtmlHelpers:
 
         else:
             return VariableHelpers().get_variable(script_actions['variable_name'])
+
+    @staticmethod
+    def delete_variable(script_actions):
+        VariableHelpers().delete_variable(script_actions['variable_name'])
+
+    @staticmethod
+    def rename_variable(script_actions):
+        VariableHelpers().rename_variable(script_actions['variable_name'], script_actions['variable_new_name'])
 
     def get_variable(self, doc, script_actions):
         try:

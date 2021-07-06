@@ -34,6 +34,10 @@ class HtmlHelpers:
             VariableHelpers().load_scope_variables()
         elif type == '$_GET_VARIABLE':
             self.get_variable(doc, script_actions)
+        elif type == '$_DELETE_VARIABLE':
+            self.delete_variable(script_actions)
+        elif type == '$_RENAME_VARIABLE':
+            self.rename_variable(script_actions)
         elif type == 'parse_html_list':
             values = ParseLxmlHelpers(doc, self.element_helpers).parse_lxml_list(doc, script_actions)
             VariableHelpers().set_variable(script_actions['variable_name'], values)
@@ -53,6 +57,14 @@ class HtmlHelpers:
         elif type == 'quit':
             quit(0)
             exit()
+
+    @staticmethod
+    def delete_variable(script_actions):
+        VariableHelpers().delete_variable(script_actions['variable_name'])
+
+    @staticmethod
+    def rename_variable(script_actions):
+        VariableHelpers().rename_variable(script_actions['variable_name'], script_actions['variable_new_name'])
 
     def get_variable(self, doc, script_actions):
         try:

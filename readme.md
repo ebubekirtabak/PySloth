@@ -45,6 +45,24 @@ In this example, you can see how you subscribe to another website by getting a t
   
 ![Variable Helpers](https://github.com/ebubekirtabak/scrappy/blob/master/media/gif/variable_helpers.gif "Variable Helpers")
 
+**Delete Variable** 
+```json  
+    {
+      "type": "$_DELETE_VARIABLE",
+      "variable_name": "your_variable_name"
+    },
+```  
+
+**Rename Variable**
+
+```json
+     {
+      "type": "$_RENAME_VARIABLE",
+      "variable_name": "your_variable_name",
+      "variable_new_name": "new_name"
+    }
+ ```
+
 #### Conditional Scraping
 
 PySloth can process dynamic conditions.

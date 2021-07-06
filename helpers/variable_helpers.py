@@ -67,6 +67,11 @@ class VariableHelpers:
         del scope_variables[variable_name]
 
     @staticmethod
+    def rename_variable(variable_name, new_name):
+        scope_variables[new_name] = scope_variables[variable_name]
+        del scope_variables[variable_name]
+
+    @staticmethod
     def get_value_with_function(doc, selector):
         if selector == "@generate_uniq_number":
             return VariableHelpers.generate_uniq_number()
