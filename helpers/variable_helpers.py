@@ -61,7 +61,6 @@ class VariableHelpers:
 
         return obj
 
-
     @staticmethod
     def delete_variable(variable_name):
         del scope_variables[variable_name]
