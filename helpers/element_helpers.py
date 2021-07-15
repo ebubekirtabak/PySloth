@@ -60,7 +60,7 @@ class ElementHelpers:
 
         except Exception as e:
             self.logger.set_error_log(
-                str(inspect.currentframe().f_back.f_lineno) + "GetVariable: Error: " + str(e), True)
+                str(inspect.currentframe().f_back.f_lineno) + " GetVariable: Error: " + str(e), True)
             type, value, traceback = sys.exc_info()
             if hasattr(value, 'filename'):
                 Logger().set_error_log('Error %s: %s' % (value.filename, value.strerror))

@@ -32,6 +32,8 @@ class VariableHelpers:
                 elif type(scope_variables[variable_name]).__name__ == 'dict':
                     value = scope_variables[variable_name]
                     scope_variables[variable_name] = [value, variable_value]
+                else:
+                    scope_variables[variable_name] = variable_value
             else:
                 scope_variables[variable_name] = variable_value
         except Exception as e:
