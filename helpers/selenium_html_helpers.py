@@ -141,6 +141,8 @@ class SeleniumHtmlHelpers:
             self.rename_variable(script_actions)
         elif type == '$_SET_VARIABLE':
             self.set_variable(doc, script_actions)
+        elif type == '$_OPEN_IN_NEW_TAB':
+            self.open_in_new_tab(doc, script_actions)
         elif type == 'parse_html_list':
             values = ParseHtmlHelpers(doc, self.element_helpers).parse_html_list(doc, script_actions)
             VariableHelpers().set_variable(script_actions['variable_name'], values)
@@ -202,6 +204,10 @@ class SeleniumHtmlHelpers:
             doc.refresh()
             WebDriverWait(doc, 30).until(
                 lambda driver: driver.execute_script('return document.readyState') == 'complete')
+
+    def open_in_new_tab(self, doc, action):
+        self.driver.execute_script("window.open('"+ action["url"] +"','_blank')")
+        self.driver.switch_to.window(self.driver.window_handles[-1])
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
