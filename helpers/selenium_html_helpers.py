@@ -10,6 +10,8 @@ from collections import namedtuple
 
 import psutil as psutil
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
@@ -19,6 +21,7 @@ from helpers.auto_page_helpers import AutoPageHelpers
 from helpers.condition_helpers import ConditionHelpers
 from helpers.cookie_helpers import CookieHelpers
 from helpers.element_helpers import ElementHelpers
+from helpers.for_loop_helper import ForLoopHelper
 from helpers.form_helpers import FormHelpers
 from helpers.http_helpers import HttpHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
@@ -143,6 +146,10 @@ class SeleniumHtmlHelpers:
             self.set_variable(doc, script_actions)
         elif type == '$_OPEN_IN_NEW_TAB':
             self.open_in_new_tab(doc, script_actions)
+        elif type == "$_FOR_LOOP":
+            action_groups = ForLoopHelper(doc, script_actions).parse_for()
+            for actions in action_groups:
+                self.parse_html_with_js(doc, actions)
         elif type == 'parse_html_list':
             values = ParseHtmlHelpers(doc, self.element_helpers).parse_html_list(doc, script_actions)
             VariableHelpers().set_variable(script_actions['variable_name'], values)
