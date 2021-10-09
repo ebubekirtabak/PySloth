@@ -269,8 +269,10 @@ class SeleniumHtmlHelpers:
                 "folder_name": download['download_folder'],
                 "headers": download['headers'],
                 "thread_name": thread_model.name,
-                "file_referance": download['file_referance'],
             }
+
+            if "file_referance" in download:
+                thread_model.args["file_referance"] = download['file_referance']
             thread_model.status = "wait"
             thread_model.type = "download_thread"
             thread_model.start_time = 0
