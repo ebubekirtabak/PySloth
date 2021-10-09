@@ -25,6 +25,7 @@ from helpers.for_loop_helper import ForLoopHelper
 from helpers.form_helpers import FormHelpers
 from helpers.http_helpers import HttpHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
+from helpers.tab_action_helpers import TabActionHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
 from modules.file_module import FileModule
@@ -146,6 +147,8 @@ class SeleniumHtmlHelpers:
             self.set_variable(doc, script_actions)
         elif type == '$_OPEN_IN_NEW_TAB':
             self.open_in_new_tab(doc, script_actions)
+        elif type == '$_TAB_ACTION':
+            TabActionHelpers(doc).run_tab_action(script_actions)
         elif type == "$_FOR_LOOP":
             action_groups = ForLoopHelper(doc, script_actions).parse_for()
             for actions in action_groups:
