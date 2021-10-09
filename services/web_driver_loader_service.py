@@ -39,7 +39,8 @@ class WebDriverLoderService:
         chromedriver_autoinstaller.install()
         print("Which chrome driver")
         driver_path = subprocess.check_output(["which", "chromedriver"])
-        if driver_path:
+        if driver_path is not None:
+            driver_path = driver_path.decode("utf-8")
             print("Driver load has been successful: " + driver_path)
             self.driver_options["path"] = driver_path
             return self.init_chrome_driver()
