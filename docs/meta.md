@@ -1,5 +1,5 @@
 ---
-Title: Welcome
+Title: Documentation
 ---
 
 Welcome to the PySloth wiki!
