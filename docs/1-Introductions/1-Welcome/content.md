@@ -13,15 +13,14 @@ Can limited multi thread process.
   
 
 #- First Steps
-- type `json`
-- Describe your scraper configuration and actions.
-
-The value returned will represent te internal Task object used by the API,
-which will contain two extra fields besides `title`:
 
 [Installing](#documentation-installing)
 
 Installing requirements for **PySloth**
+
+[PySloth Tutorial](#documentation-scope)
+
+Create your firs **PySloth** scraper.
 
 [Scope](#documentation-scope)
 

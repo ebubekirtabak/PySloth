@@ -3,7 +3,7 @@
 <head>
   <link href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAsCAAAAADZMx6kAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEjSURBVDjL3ZVBbcQwEEUXyEcwCIwgCDYIjCAIzKAIQiAMjCAmkDAIAV/2tNLrIc22u8kmXqmV2s7BGtlPlu3/Z3xSeZz+Kgvr7DlrL7D1nPgStp+TVMISz1IdKWEvAHAt2vcWv4HtO1fMAu2BFj1ciY2pbuHtwA8RRlvEq/ZZG6fFFC2D7fvM+dvCuD7y2pMw9F6qwBewQG8KZDv0ulwz0Ulpcd6KHRf/SpLLeFmm22YDOXxON2RTlYnnzdpsIbc3bSO95O8N8qWO/QjkMF/IMkFyXdpmpaoDLl01K5fdfn+weAWGYB+n2O8lnilDbmTTo39WrCPLJ/CqYGjOTlL9rEeBpMAgNdPTd7gTcB59TCOQStijPvkT7EOBpu9i/+k/VBDvUOLeyIV7YagAAAAASUVORK5CYII=" rel="icon" type="image/x-icon" />
   
-    <meta name="owl-fts-index" content="b3dsAAEAAAGoH4sIAAAAAAAC/1xSbZabMAw0sNtu0m1v0kMJo4Cy/qokkub2fbZ5dtJ/jDQaRvKMS7S7x6CgFMPvOzobPZrXKgVRcI7C+l9DbExops+R8c9OjLkjozFmMIOZEseVwXuYHQ65eBoYE6Ng0EoazfDtJAhst0KI8xVt710I3SINLkw35AbLz6XMiTKF9anDlLqMboywFGJ66BZDdje8n+8b2a2x/O6UqloWzvWTGc07MMOjsfCvMjSUYD0cXIhFDy+Yau0GbsfugtR19PbjQhW+mdFMV4khg/cMFOSrEe/0VV1pjK58BPBtcNRH6qKOpG+9Cy7PgOsBQKRUfr6+fG5ONoYLrTuXSp6dMvPX8FKv4+fxCjeoh86zY89Ikfo42xgU6KAvoDCDdKuMunN4ckhBkQO4/tqY1WdsPmbc4Eax7iHkdwdac2Wj98i2AkFVCqu0Ey3EaNU9iur3zyPihQu2bNQunzhalPp6luHujqvlXTDoESFxUbc6M2TjZfGSeLEMqUb0I2fHkSfFpWkAhbbfjEILytND6xb3+o9/AQAA///112hPlgMAAA==" />
+    <meta name="owl-fts-index" content="b3dsAAEAAAHvH4sIAAAAAAAC/3yT0XrbMAiFJbtdu7Tdm+ShsExsUlnyACXL2++TcJ1lF70DG9A5v1A35lAWTApKOR0pKeexhJrI8Yox5AXddzWURCFGStO3ZRLy+v+g9u0oqEppEtf/OKw3nXPyzjufhzMG7VznvOtdFxhB0TvnvCBwmC0MTKt2NayFOjPCuP3JK0oLR6YLcv9VVKeJMqVp7zsRxlFa+NGFnE40FW4aa9eu4UF9Hf106BlXRsGkUkv8GS5gour/7g6npv3rW8hJgZKdFfKyIIfNFS0l3i0ak3r8UxPQu+cBZ7hQZjNFjEHjrQ1i1MIJx5ZQUuQEsSUjVjUD/uvDj6AwgOADEi2amWqbc/75cCIWNS2Kq4G8QCxooEmjRdeZ6l10zuMfZWhRY1/hHlznnoEZbjvqFabtWpYSlVr03jH+LsRY4YqVetevnCeGZYEhGpWffqfdZv3yD3dlUN/8iCdKtH3pnX/6UJBP032rwjYMmrO5rV5bkGBpuhvyIhvQImjMVxA7YwFKDdqJ4t7QX+nT/ESS+06exbaoldSel/ftWbVasPexDxlQaMSv/UjavDrnA8M1bjokMKy20a+VcDWz3iRmneucl4pv27wGcls64885oJjdK+mci26aF1K0t/M3AAD//3IOScoUBAAA" />
     <script type="module">
       import init,{setup,search}from"./owl_wasm.js";const debounce=(n,t,u)=>{var e;return function(){var i=this,o=arguments,a=u&&!e;clearTimeout(e),e=setTimeout(function(){e=null,u||n.apply(i,o)},t),a&&n.apply(i,o)}};(()=>{async function run(){await init();const ftsData=document.querySelector('meta[name="owl-fts-index"]').getAttribute("content"),instance=setup(ftsData);console.log("Initialisation done");const searchButton=document.querySelector("div.search"),body=document.querySelector("body"),searchInput=document.querySelector("#search-input"),searchResultList=document.querySelector("#result-list"),searchContainer=document.querySelector("#search-container");let searchResults=[],searchActive=!1,activeIndex=-1;const showSearch=()=>{body.classList.add("showing-search"),searchInput.focus(),searchActive=!0},hideSearch=()=>{body.classList.remove("showing-search"),searchActive=!1,activeIndex=-1,searchResults=[],searchResultList.innerHTML="",searchInput.value="",searchInput.blur()},changeActiveIndex=newIndex=>{activeIndex=newIndex;let idx=0;for(let el of searchResultList.children)idx===activeIndex?el.classList.add("active"):el.classList.remove("active"),idx++},findCorrelations=(terms,result)=>{const containerText=document.querySelector(`#content-${result.anchor} .content`).textContent.toLowerCase().replace(/\n/g," ").replace(/\s+/g," ").trim(),allIndexes=terms.map(t=>{const idx=containerText.indexOf(t);return idx===-1?!1:{start:Math.max(0,idx-100),end:idx+100}}).filter(Boolean);if(allIndexes.length===0)return null;const filteredIndexes=[];for(let idx of allIndexes){if(filteredIndexes.length>=2)break;if(filteredIndexes.length===0){filteredIndexes.push(idx);continue}filteredIndexes.some(i=>i.start<=idx.start&&i.end>=idx.end)||filteredIndexes.push(idx)}let resultingText=filteredIndexes.map(i=>{let txt=containerText.substring(i.start,i.end);return i.start!==0&&(txt="&hellip;"+txt.substring(txt.indexOf(" "))),txt+"&hellip;"}).join(" ");return terms.forEach(t=>{resultingText=resultingText.replace(t,x=>`<span class="search-result-match">${x}</span>`)}),resultingText},doSearch=debounce(terms=>{if(terms=terms.trim().toLowerCase(),terms.length===0)return;const then=Date.now();searchResults=search(instance,terms);const now=Date.now();if(console.log(`[owl-fts] Search took ${now-then}ms`),searchResultList.innerHTML="",activeIndex=-1,searchResults.length==0){searchResultList.innerHTML=`<li class="empty">No results for ${terms}</li>`;return}let idx=0;const allTerms=terms.split(" ").map(i=>i.trim()).filter(Boolean),html=searchResults.map(r=>{const correlations=findCorrelations(allTerms,r);if(correlations===null)return null;const anchor=document.querySelector(`#anchor-${r.anchor}`);return`<li class="result" data-to="content-${r.anchor}" data-idx="${idx++}"><div class="search-title">${anchor.textContent}</div><div class="text-matches">${correlations}</div></li>`}).filter(Boolean).join("");searchResultList.innerHTML=html;for(let el of searchResultList.querySelectorAll(".result"))el.addEventListener("mouseenter",e=>{changeActiveIndex(parseInt(e.target.getAttribute("data-idx"),10))}),el.addEventListener("click",e=>{let obj=e.target;for(;obj&&!obj.classList.contains("result");)obj=obj.parentNode;document.querySelector(`#${obj.getAttribute("data-to")}`).scrollIntoView({behavior:"smooth",block:"start"}),document.location.hash=obj.getAttribute("data-to"),hideSearch()})},300);searchContainer.addEventListener("click",e=>{e.target===searchContainer&&hideSearch()}),window.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key=="f"||e.key=="/"&&!searchActive){e.preventDefault(),showSearch();return}if(e.key=="Escape"&&searchActive){e.preventDefault(),hideSearch();return}e.key=="ArrowUp"&&searchActive&&(e.preventDefault(),e.stopPropagation(),activeIndex>0&&changeActiveIndex(activeIndex-1)),e.key=="ArrowDown"&&searchActive&&(e.preventDefault(),e.stopPropagation(),activeIndex+1<searchResults.length&&changeActiveIndex(activeIndex+1))}),searchInput.addEventListener("keyup",e=>{if((e.key=="ArrowDown"||e.key=="ArrowUp")&&searchResults.length!=0){e.preventDefault(),e.stopPropagation();return}if(e.key=="Enter"){e.preventDefault(),e.stopPropagation(),activeIndex!=-1&&searchResultList.querySelector(".active").click();return}doSearch(searchInput.value)}),searchButton.onclick=e=>{e.preventDefault(),e.stopPropagation(),showSearch()}}document.addEventListener("DOMContentLoaded",()=>{run()})})();
 
@@ -68,13 +68,13 @@
   </div>
   <!-- Desktop menu -->
   <div class="desktop-menu-content toc">
-    <details id="anchor-documentation"><summary>Documentation</summary><div class="sidebar-group-wrapper"><a href="#documentation-welcome" id="anchor-documentation-welcome">Welcome</a><a href="#documentation-installing" id="anchor-documentation-installing">Installing</a><a href="#documentation-scope" id="anchor-documentation-scope">Scope</a></div></details>
+    <details id="anchor-documentation"><summary>Documentation</summary><div class="sidebar-group-wrapper"><details id="anchor-documentation-introductions"><summary>Introductions</summary><div class="sidebar-group-wrapper"><a href="#documentation-introductions-welcome" id="anchor-documentation-introductions-welcome">Welcome</a><a href="#documentation-introductions-installing" id="anchor-documentation-introductions-installing">Installing</a><a href="#documentation-introductions-scope" id="anchor-documentation-introductions-scope">Scope</a></div></details><details id="anchor-documentation-scope"><summary>Scope</summary><div class="sidebar-group-wrapper"><a href="#documentation-scope-settings" id="anchor-documentation-scope-settings">Settings</a></div></details></div></details>
   </div>
   <!-- Mobile menu -->
   <div class="mobile-menu-content">
     <div class="content">
       <div class="toc">
-        <details id="anchor-documentation"><summary>Documentation</summary><div class="sidebar-group-wrapper"><a href="#documentation-welcome" id="anchor-documentation-welcome">Welcome</a><a href="#documentation-installing" id="anchor-documentation-installing">Installing</a><a href="#documentation-scope" id="anchor-documentation-scope">Scope</a></div></details>
+        <details id="anchor-documentation"><summary>Documentation</summary><div class="sidebar-group-wrapper"><details id="anchor-documentation-introductions"><summary>Introductions</summary><div class="sidebar-group-wrapper"><a href="#documentation-introductions-welcome" id="anchor-documentation-introductions-welcome">Welcome</a><a href="#documentation-introductions-installing" id="anchor-documentation-introductions-installing">Installing</a><a href="#documentation-introductions-scope" id="anchor-documentation-introductions-scope">Scope</a></div></details><details id="anchor-documentation-scope"><summary>Scope</summary><div class="sidebar-group-wrapper"><a href="#documentation-scope-settings" id="anchor-documentation-scope-settings">Settings</a></div></details></div></details>
       </div>
     </div>
   </div>
@@ -103,13 +103,32 @@
 
     </div>
   
+  <section class="group" id="content-documentation-introductions">
+  <h1>Introductions</h1>
   
-<section class="section" id="content-documentation-welcome">
+    <div class="group-self-content">
+      
+<section class="section">
 
   <div class="section-wrapper">
     <div class="content">
       
-        <h1><span class="anchor-ref" id="documentation-welcome"></span>Welcome</h1>
+      <p>Welcome to the PySloth wiki!</p>
+
+    </div>
+    
+  </div>
+</section>
+
+    </div>
+  
+  
+<section class="section" id="content-documentation-introductions-welcome">
+
+  <div class="section-wrapper">
+    <div class="content">
+      
+        <h1><span class="anchor-ref" id="documentation-introductions-welcome"></span>Welcome</h1>
       
       <p>Welcome to the PySloth wiki!</p>
 
@@ -119,14 +138,13 @@
 Can search web pages with use Javascript and without Javascript.
 Can limited multi thread process.</p>
 
-<h5>First Steps</h5><ul class="owl-list">
-<li class="title"><p>type <code>json</code></p></li><li class="content"><p>Describe your scraper configuration and actions.</p>
-</li></ul><p>The value returned will represent te internal Task object used by the API,
-which will contain two extra fields besides <code>title</code>:</p>
-
-<p><a href="#documentation-installing">Installing</a></p>
+<h5>First Steps</h5><ul class="owl-list"></ul><p><a href="#documentation-installing">Installing</a></p>
 
 <p>Installing requirements for <strong>PySloth</strong></p>
+
+<p><a href="#documentation-scope">PySloth Tutorial</a></p>
+
+<p>Create your firs <strong>PySloth</strong> scraper.</p>
 
 <p><a href="#documentation-scope">Scope</a></p>
 
@@ -165,12 +183,12 @@ which will contain two extra fields besides <code>title</code>:</p>
   </div>
 </section>
 
-<section class="section" id="content-documentation-installing">
+<section class="section" id="content-documentation-introductions-installing">
 
   <div class="section-wrapper">
     <div class="content">
       
-        <h1><span class="anchor-ref" id="documentation-installing"></span>Installing</h1>
+        <h1><span class="anchor-ref" id="documentation-introductions-installing"></span>Installing</h1>
       
       <h3>How To Install?</h3>
 
@@ -188,12 +206,12 @@ which will contain two extra fields besides <code>title</code>:</p>
   </div>
 </section>
 
-<section class="section" id="content-documentation-scope">
+<section class="section" id="content-documentation-introductions-scope">
 
   <div class="section-wrapper">
     <div class="content">
       
-        <h1><span class="anchor-ref" id="documentation-scope"></span>Scope</h1>
+        <h1><span class="anchor-ref" id="documentation-introductions-scope"></span>Scope</h1>
       
       <h3>What is Scope?</h3>
 
@@ -214,6 +232,58 @@ which will contain two extra fields besides <code>title</code>:</p>
     </div>
     
   </div>
+</section>
+
+</section>
+<section class="group" id="content-documentation-scope">
+  <h1>Scope</h1>
+  
+    <div class="group-self-content">
+      
+<section class="section">
+
+  <div class="section-wrapper">
+    <div class="content">
+      
+      <h3>What is Scope?</h3>
+
+<p>Scope is a file contains scraper configurations. Can pass file or json directly.</p>
+
+    </div>
+    
+  </div>
+</section>
+
+    </div>
+  
+  
+<section class="section" id="content-documentation-scope-settings">
+
+  <div class="section-wrapper">
+    <div class="content">
+      
+        <h1><span class="anchor-ref" id="documentation-scope-settings"></span>Settings</h1>
+      
+      <h3>What is Settings?</h3>
+
+<p>Settings is an object that represents main configuration for scraper.</p>
+
+<h5>Settings</h5><ul class="owl-list">
+<li class="title"><p>type <code>Object</code></p></li><li class="content"><p>Describe your main configuration.</p>
+</li></ul>
+<h5>Settings</h5><ul class="owl-list"></ul>
+<ul>
+<li>driver <code>json</code></li>
+<li>Web driver settings</li>
+<li>database <code>json</code></li>
+<li>Database definitions.</li>
+</ul>
+
+    </div>
+    
+  </div>
+</section>
+
 </section>
 
 </section>
