@@ -26,8 +26,11 @@ Used to crawl websites and extract structured data from their pages. It can be u
 ### How Does PySloth works ?
 
 ***PySloth*** only requires <a href="/scope/scope/" target="_blank">***Scope***</a> File. 
-<a href="/scope/scope/" target="_blank">***Scope***</a> is basically <a href="https://www.json.org/json-en.html" target="_blank">***Json***</a>  file, contains scraping configurations. 
-Configurations format is <a href="https://www.json.org/json-en.html" target="_blank">***Json***</a>,
+<a href="/scope/scope/" target="_blank">***Scope***</a> is basically <a href="https://www.json.org/json-en.html" target="_blank">***JSON***</a>  file, contains scraping configurations. 
+Configurations format is <a href="https://www.json.org/json-en.html" target="_blank">***JSON***</a>, It run in while time.
+It's mean, it can reconfigurable by generation JSON file. Let's deep dive in details.
+
+#### What is the benefits Scope Configurations ?
 
 ### First Steps
 
@@ -50,10 +53,3 @@ Describe your scraper configuration and actions.
 [Settings](#documentation-scope)
 
 Describe your scraper configuration and actions.
-# Scope
-- settings `json`
-- Scraper settings ; database, driver etc.
-- scope_name `string`
-- Scraper Name
-- script_actions `array`
-- List of scraper actions.
