@@ -1,7 +1,7 @@
 ---
-label: Actions
+label: Script Actions
 layout: actions
-order: 100
+order: 99
 date: 2022-04-11
 authors:
   - name: Ebubekir Tabak
@@ -11,4 +11,8 @@ authors:
 ---
 
 
-# Actions
+# Script Actions
+
+Script actions is action list of the scraping session.
+
+### Section overview
