@@ -17,7 +17,7 @@ authors:
   
 Scope is a file contains scraper configurations. Can pass file or json directly.
   
-
+  
 ### Scope File
 - type `json`
 - Describe your scraper configuration and actions.
@@ -25,6 +25,15 @@ Scope is a file contains scraper configurations. Can pass file or json directly.
 The value returned will represent te internal Task object used by the API,
 which will contain two extra fields besides `title`:
 
+### Section overview
+
+1. [Script Actions](/scope/script-actions/actions.md)
+2. [Settings](/scope/settings/settings.md)
+3. Step 3
+    1. Step 3.1
+    2. Step 3.2
+    3. Step 3.3
+    
 ### Scope
 - settings `json`
 - Scraper settings ; database, driver etc.
