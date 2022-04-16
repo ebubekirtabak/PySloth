@@ -30,6 +30,14 @@ Used to crawl websites and extract structured data from their pages. It can be u
 Configurations format is <a href="https://www.json.org/json-en.html" target="_blank">***JSON***</a>, It run in while time.
 It's mean, it can reconfigurable by generation JSON file. Let's deep dive in details.
 
+```mermaid
+%%{init: { 'theme': 'forest' } }%%
+graph TD
+    A[Scope] -->|Json| B(PySloth)
+    B --> C[Selenium]
+    C--> D[Web Driver]
+```
+
 #### What is the benefits Scope Configurations ?
 
 ### First Steps
