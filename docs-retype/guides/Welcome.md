@@ -40,6 +40,22 @@ graph TD
 
 #### What is the benefits Scope Configurations ?
 
+The main benefit of **Scope Configurations** is changeability by programmatically. So, that means your program can modify the configuration before the run scraper.
+That's a simple use case:
+
+Your program finds the some words from news and you need to scrape data from other websites with that words.
+
+```mermaid
+%%{init: { 'theme': 'forest' } }%%
+graph TD
+    A[Find the words] -->|Pass to Scraper Service| B(Write the word to the Scope configurations)
+    B --> C[PySloth]
+    C--> D[Scrape/Crawl data by programmatically]
+```
+
+That's a simple use case, but it limited by your imagination.
+
+
 ### First Steps
 
 [Installing](#documentation-installing)
