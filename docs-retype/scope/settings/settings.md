@@ -15,7 +15,7 @@ authors:
 # Settings
 ### What is Settings?  
   
-Settings is an object that represents main configuration for scraper.
+Settings is an object that represents main configuration to PySloth.
   
 
 #- Settings
@@ -69,3 +69,10 @@ Settings is an object that represents main configuration for scraper.
         }
     }
 ```
+
+Name   | Type | Description
+:---   | :---: | :---
+driver | [Driver](/scope/settings/driver.md) | Web driver configuration for Selenium.
+database | [Database](/scope/settings/database.md) | Database configuration.
+enable_javascript | boolean  | Whether to enable javascript rendering in scraper.
+Item 2 | Green | This is `Item 2`.
