@@ -17,6 +17,7 @@ logs/
 scopes/
 tmp_scopes/
 custom_scripts/
+docs-retype/node_modules/*
 myconf.json
 log.txt
 error_log.txt

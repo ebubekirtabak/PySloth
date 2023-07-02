@@ -15,7 +15,7 @@ authors:
 
 ### What is Scope?  
   
-Scope is a file contains scraper configurations. Can pass file or json directly.
+Scope is a file contains scraper configurations. Can pass as a file path or json directly.
   
   
 ### Scope File

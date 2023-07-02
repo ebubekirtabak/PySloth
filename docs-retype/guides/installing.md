@@ -2,7 +2,8 @@
 label: Installing
 layout: guides
 order: 99
-date: 2022-04-09 # November 25, 2020
+date: 2023-07-01
+tags: [guide, installing]
 authors:
   - name: Ebubekir Tabak
     email: ebubekir.tabak@yahoo.com
@@ -12,10 +13,13 @@ authors:
 
 # Installing
 
-### How To Install? 
-Install PySloth requirements.
+PySloth has no CLI support for now.
 
-### Python Requirements
+### How To Install? 
+
+In order to install **PySloth** should install **Python** requirements first. Then you can start using the **PySloth**.
+
+### Installing Python Requirements
 ```
 pip install -r requirements.txt
 ```
