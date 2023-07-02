@@ -1,7 +1,7 @@
 ---
 label: Scope
 layout: scope
-order: 99
+order: 100
 date: 2022-04-09 # November 25, 2020
 authors:
   - name: Ebubekir Tabak
@@ -15,29 +15,26 @@ authors:
 
 ### What is Scope?  
   
-Scope is a file contains scraper configurations. Can pass as a file path or json directly.
-  
-  
-### Scope File
-- type `json`
-- Describe your scraper configuration and actions.
+Scope is a `JSON` file that contains **scraper** configurations. It can be passed either as a `file path` or as `JSON` directly. Additionally, **Scope** can be split to manage large **scraper** configurations more effectively.
 
-The value returned will represent te internal Task object used by the API,
-which will contain two extra fields besides `title`:
+### What is the part of Scope ?
 
-### Section overview
+```json
+{
+   "settings": {...},
+   "page": {...},
+   "scope_name": "$SCOPE_NAME",
+   "before_actions": {...},
+   "script_actions": {...},
+}
+```
 
-1. [Script Actions](/scope/script-actions/actions.md)
-2. [Settings](/scope/settings/settings.md)
-3. Step 3
-    1. Step 3.1
-    2. Step 3.2
-    3. Step 3.3
-    
-### Scope
-- settings `json`
-- Scraper settings ; database, driver etc.
-- scope_name `string`
-- Scraper Name
-- script_actions `array`
-- List of scraper actions.
+## Table of Scope File contents
+
+Name   |                           Type                            | Description
+:---   |:---------------------------------------------------------:| :---
+settings |          [Settings](/scope/settings/settings.md)          | Web driver configuration for Selenium.
+page |                [Page](/scope/page/page.md)                | Page configuration.
+scope_name |                          string                           | Name of your scraper.
+before_actions | [Before Actions](/scope/script-actions/before-actions.md) |  Script action commands that runs before Script Actions
+script_actions | [Stript Actions](/scope/script-actions/actions.md) |  Main action for your scrapers.
