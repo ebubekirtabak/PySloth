@@ -1,7 +1,7 @@
 ---
 label: Database
 layout: settings
-order: 99
+order: 98
 date: 2022-04-11
 authors:
   - name: Ebubekir Tabak
