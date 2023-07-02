@@ -24,9 +24,35 @@ Please check for more information about [Selenium Driver](https://www.selenium.d
 
 ## Installing Web Driver
 
-Download the web driver what you want to work with.
+To begin, kindly download the desired web driver you wish to use.
 
-### Chrome
+### 1. Installing Google Chrome
+
+#### A. Installing by bash commands
+
+> **! have you install google-chrome in your operating system before you can skip this step.**
+
+#### Linux/Debian:
+
+```
+sudo apt-get -y update
+sudo apt-get -y install google-chrome-stable
+```
+
+#### OSX/Mac:
+
+Requires: macOS >= 10.10
+
+```
+brew install brew-cask
+brew cask install google-chrome
+```
+
+#### B. Installing by manually
+
+```
+https://support.google.com/chrome/answer/95346?co=GENIE.Platform%3DDesktop&hl=en-GB
+```
 
 [!ref target="blank" text="Chrome Driver"](https://chromedriver.chromium.org/home)
 
@@ -36,3 +62,34 @@ Download the web driver what you want to work with.
 ### Edge 
 
 [!ref target="blank" text="Edge Driver"](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/)
+
+
+## Configuring for WebDriver
+
+You should configure your local WebDrivers.
+
+### A. Chrome Driver
+
+###### 1. [Download Chrome Driver](https://chromedriver.chromium.org/downloads)
+
+[Install Chrome Driver](https://chromedriver.chromium.org/getting-started)
+
+###### 2. Move it to the chrome driver bin folder.
+
+`mv chromedriver /usr/local/bin`
+
+###### 3. Give permission to chrome driver
+
+`chmod +x /usr/local/bin/chromerdriver`
+
+### B. Firefox Driver
+
+###### A. [Download GeckoDriver](https://github.com/mozilla/geckodriver/releases)
+
+###### B. Move it to the geckodriver bin folder.
+
+`mv geckodriver /usr/local/bin`
+
+###### C. Give permission to gecko driver
+
+`chmod +x /usr/local/bin/geckodriver`

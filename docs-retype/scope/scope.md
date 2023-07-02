@@ -2,6 +2,7 @@
 label: Scope
 layout: scope
 order: 100
+icon: icon-code-square
 date: 2022-04-09 # November 25, 2020
 authors:
   - name: Ebubekir Tabak
