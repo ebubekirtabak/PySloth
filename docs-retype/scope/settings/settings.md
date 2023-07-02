@@ -2,7 +2,8 @@
 label: Settings
 layout: settings
 order: 100
-date: 2022-04-11
+date: 2023-07-02
+icon: gear
 authors:
   - name: Ebubekir Tabak
     email: ebubekir.tabak@yahoo.com
@@ -13,27 +14,20 @@ authors:
 
 
 # Settings
+
 ### What is Settings?  
   
 Settings is an object that represents main configuration to PySloth.
   
 
-#- Settings
-- type `Object`
-- Describe your main configuration.
+## Table of content Settings
 
-
-#- Settings
-- enable_javascript `boolean`
-- Whether to enable javascript rendering in scraper.
-- driver `json`
-- Web driver settings
-- thread_limit `number`
-- Multi thread limit.
-- thread_time_out `number`
-- Thread time out limit as seconds.
-- database `json`
-- Database definitions.
+Name   |                  Type                   | Description
+:---   |:---------------------------------------:| :---
+`driver` |   [Driver](/scope/settings/driver.md)   | Web driver configuration for Selenium.
+`database` | [Database](/scope/settings/database.md) | Database configuration.
+`enable_javascript` |                 boolean                 | Whether to enable javascript rendering in scraper.
+`is_go_again_history` |                 boolean                 | In the crawler check the url before visit, if is `false` do not recrawl the page.
 
 ```json
 {
@@ -69,10 +63,3 @@ Settings is an object that represents main configuration to PySloth.
         }
     }
 ```
-
-Name   | Type | Description
-:---   | :---: | :---
-driver | [Driver](/scope/settings/driver.md) | Web driver configuration for Selenium.
-database | [Database](/scope/settings/database.md) | Database configuration.
-enable_javascript | boolean  | Whether to enable javascript rendering in scraper.
-Item 2 | Green | This is `Item 2`.
