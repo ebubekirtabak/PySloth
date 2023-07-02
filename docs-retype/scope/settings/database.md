@@ -1,8 +1,8 @@
 ---
-label: Scope
-layout: scope
+label: Database
+layout: settings
 order: 99
-date: 2022-04-09 # November 25, 2020
+date: 2022-04-11
 authors:
   - name: Ebubekir Tabak
     email: ebubekir.tabak@yahoo.com
@@ -11,33 +11,4 @@ authors:
 ---
 
 
-# Scope
-
-### What is Scope?  
-  
-Scope is a file contains scraper configurations. Can pass file or json directly.
-  
-  
-### Scope File
-- type `json`
-- Describe your scraper configuration and actions.
-
-The value returned will represent te internal Task object used by the API,
-which will contain two extra fields besides `title`:
-
-### Section overview
-
-1. [Script Actions](/scope/script-actions/actions.md)
-2. [Settings](/scope/settings/settings.md)
-3. Step 3
-    1. Step 3.1
-    2. Step 3.2
-    3. Step 3.3
-    
-### Scope
-- settings `json`
-- Scraper settings ; database, driver etc.
-- scope_name `string`
-- Scraper Name
-- script_actions `array`
-- List of scraper actions.
+# Database
