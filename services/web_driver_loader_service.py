@@ -47,6 +47,8 @@ class WebDriverLoderService:
     def init_chrome_driver(self):
         driver = self.driver_options
         chrome_options = webdriver.ChromeOptions()
+        if os.getenv('PYSLOTH_CHROME_BIN'):
+            chrome_options.binary_location = os.getenv('PYSLOTH_CHROME_BIN')
         if 'driver_arguments' in driver:
             for argument in driver['driver_arguments']:
                 chrome_options.add_argument(argument)
