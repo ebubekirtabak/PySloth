@@ -40,6 +40,16 @@ class VariableHelpers:
             Logger().set_log('set_variable Error: ' + str(e))
 
     @staticmethod
+    def append_to_list(variable_name, variable_value):
+        global scope_variables
+        if scope_variables is None:
+            VariableHelpers.load_scope_variables()
+        if variable_name not in scope_variables or not isinstance(scope_variables[variable_name], list):
+            scope_variables[variable_name] = []
+        scope_variables[variable_name].append(variable_value)
+        Logger().set_log("Append to list: " + variable_name + " : value: " + str(variable_value))
+
+    @staticmethod
     def get_variable(variable_name):
         global scope_variables
         try:
