@@ -201,6 +201,45 @@ class SeleniumHtmlHelpers:
             doc.refresh()
             WebDriverWait(doc, 30).until(
                 lambda driver: driver.execute_script('return document.readyState') == 'complete')
+        elif action == "open_in_new_tab":
+            url = VariableHelpers().get_variable(driver_action['url_variable']) \
+                if 'url_variable' in driver_action else driver_action.get('url')
+            # An empty url opens about:blank, where the wait that follows can
+            # only time out - and that error would end the whole run. Skip
+            # instead and let the scope's own condition decide what to do.
+            if not url:
+                self.logger.set_log('open_in_new_tab: no url, skipping')
+                return
+            doc.execute_script("window.open(arguments[0], '_blank');", url)
+            self.switch_to_new_tab(doc, driver_action.get('timeout', 15))
+        elif action == "switch_to_new_tab":
+            # A click opened a new tab (e.g. a Temu order detail); wait for it
+            # and move to the most recently opened window.
+            self.switch_to_new_tab(doc, driver_action.get('timeout', 15))
+        elif action == "close_tab":
+            doc.close()
+            # Back to the last remaining tab, so nested tabs unwind LIFO
+            # (transactions tab -> order tab -> list tab).
+            if doc.window_handles:
+                doc.switch_to.window(doc.window_handles[-1])
+        elif action == "switch_to_last_tab":
+            # Re-anchor after a submit that closed or replaced the current tab:
+            # without it every later command dies with "no such window", which
+            # aborts the whole run rather than the current row.
+            if doc.window_handles:
+                doc.switch_to.window(doc.window_handles[-1])
+
+    def switch_to_new_tab(self, doc, timeout=15):
+        """Waits for a tab to appear and switches to the newest one. The click
+        that opens it returns before the browser has the window, so switching
+        straight away lands on the old tab."""
+        opened = len(doc.window_handles)
+        try:
+            wait(doc, timeout).until(lambda driver: len(driver.window_handles) > opened - 1)
+            wait(doc, timeout).until(lambda driver: len(driver.window_handles) >= opened)
+        except TimeoutException:
+            self.logger.set_log('switch_to_new_tab: no new tab appeared')
+        doc.switch_to.window(doc.window_handles[-1])
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
