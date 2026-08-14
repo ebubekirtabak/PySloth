@@ -3,6 +3,7 @@ import re
 import subprocess
 import sys
 
+from helpers.path_helpers import PathHelpers
 from helpers.variable_helpers import VariableHelpers
 from logger import Logger
 
@@ -17,7 +18,10 @@ class ScriptRunnerService:
         try:
             type = self.script_options['type']
 
-            command = [type, self.script_options['script']]
+            command = [
+                PathHelpers.interpreter(type),
+                PathHelpers.resolve(self.script_options['script'])
+            ]
 
             if 'params' in self.script_options:
                 params = self.script_options['params']
@@ -57,23 +61,27 @@ class ScriptRunnerService:
     def get_script_result(self, params):
         try:
             type = self.script_options['type']
+            interpreter = PathHelpers.interpreter(type)
+            script = PathHelpers.resolve(self.script_options['script'])
             process_output = ''
             if type == "python":
-                process_output = subprocess.check_output('python ' + self.script_options['script'] + ' ' + params, shell=True)
+                process_output = subprocess.check_output(interpreter + ' ' + script + ' ' + params, shell=True)
             elif type == "python3":
                 if isinstance(params, list):
                     result = []
                     for param in params:
-                        command = ['python3', self.script_options['script']]
+                        command = [interpreter, script]
                         command.append(param)
                         self.logger.set_log("run script: " + str(command))
                         process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
-                        result.append(process_output.decode("utf-8"))
+                        # The trailing newline is an artifact of print(), it
+                        # would end up inside the scraped variable.
+                        result.append(process_output.decode("utf-8").rstrip("\n"))
                 else:
-                    command = ['python3', self.script_options['script'], params]
+                    command = [interpreter, script, params]
                     self.logger.set_log("run script: " + str(command))
                     process_output = subprocess.check_output(command, shell=False, stderr=subprocess.PIPE)
-                    result = process_output.decode("utf-8")
+                    result = process_output.decode("utf-8").rstrip("\n")
                     self.logger.set_log("script result: " + result)
 
             return result
