@@ -9,7 +9,8 @@ import json
 from collections import namedtuple
 
 import psutil as psutil
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
@@ -165,14 +166,11 @@ class SeleniumHtmlHelpers:
         elif type == 'http_request':
             HttpHelpers().send_request(script_actions["request"])
         elif type == 'wait_for_element_to_load':
-            wait(doc, script_actions['timeout']).until(
-                EC.visibility_of_any_elements_located(doc.find_element_by_xpath(script_actions['selector'])))
+            self.wait_for(doc, script_actions, EC.visibility_of_any_elements_located)
         elif type == 'wait_for_element':
-            wait(doc, script_actions['timeout']).until(
-                EC.presence_of_element_located(doc.find_element_by_xpath(script_actions['selector'])))
+            self.wait_for(doc, script_actions, EC.presence_of_element_located)
         elif type == 'wait_for_clickable':
-            wait(doc, script_actions['timeout']).until(
-                EC.element_to_be_clickable(doc.find_element_by_xpath(script_actions['selector'])))
+            self.wait_for(doc, script_actions, EC.element_to_be_clickable)
         elif type == "condition":
             new_action = ConditionHelpers(doc, script_actions).parse_condition()
             if isinstance(new_action, list):
@@ -224,6 +222,22 @@ class SeleniumHtmlHelpers:
                 self.import_script_actions(doc, action)
             else:
                 self.action_router(doc, action)
+
+    def wait_for(self, doc, script_actions, condition):
+        """Waits for a selector. The expected conditions take a (By, selector)
+        locator: looking the element up first raises when it is not there yet,
+        which is exactly what the wait was supposed to absorb.
+
+        "optional": true keeps a run going when an element legitimately never
+        appears (an order with no invoice modal, say) instead of aborting."""
+        try:
+            wait(doc, script_actions['timeout']).until(
+                condition((By.XPATH, script_actions['selector'])))
+        except TimeoutException:
+            if not script_actions.get('optional'):
+                raise
+            self.logger.set_log(
+                'wait_for_element (optional) timed out: ' + script_actions['selector'])
 
     def import_script_actions(self, doc, action):
         file = FileModule().read_file(file_name=PathHelpers.resolve(action['file']))
