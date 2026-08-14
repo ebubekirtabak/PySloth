@@ -38,6 +38,7 @@ class EventMaker:
 
                         switcher = {
                             "click": self.set_click,
+                            "js_click": self.set_js_click,
                             "scroll": self.set_scroll,
                             "style": self.set_style,
                             "scroll_to_element": self.set_scroll_to_element,
@@ -103,6 +104,12 @@ class EventMaker:
                         self.set_attr(element, action)
                     elif type == 'excute_script':
                         self.set_excute_script(element, action)
+                    elif type == 'js_click':
+                        self.set_js_click(element, action)
+                    elif type == '$_GET_VARIABLE':
+                        self.get_variable_from_element(element, action)
+                    elif type == '$_APPEND_OBJECT':
+                        self.append_object_from_element(element, action)
                     elif type == 'download':
                         thread = kthread.KThread(target=self.selenium_helper.download_loop,
                                                  args=(element, action))
@@ -151,6 +158,42 @@ class EventMaker:
 
     def set_click(self, element, action):
         element.click()
+
+    def set_js_click(self, element, action):
+        # Bypasses "element click intercepted" (overlays/sticky bars) and still
+        # fires the element's click handler (e.g. Temu open-in-new-tab).
+        self.driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", element)
+        self.driver.execute_script("arguments[0].click();", element)
+
+    def get_variable_from_element(self, element, action):
+        target = element
+        if 'selector' in action:
+            target = element.find_element_by_xpath(action['selector'])
+        attribute = action['attribute_name']
+        if attribute == 'text':
+            value = target.text
+        else:
+            value = target.get_attribute(attribute)
+        VariableHelpers().set_variable(action['variable_name'], value)
+
+    def read_field_from_element(self, element, field):
+        # tolerant read: returns "" when the (optional) sub-element is missing
+        target = element
+        if 'selector' in field:
+            found = element.find_elements_by_xpath(field['selector'])
+            if not found:
+                return ""
+            target = found[0]
+        attribute = field.get('attribute_name', 'text')
+        if attribute == 'text':
+            return target.text
+        return target.get_attribute(attribute)
+
+    def append_object_from_element(self, element, action):
+        obj = {}
+        for field in action['fields']:
+            obj[field['key']] = self.read_field_from_element(element, field)
+        VariableHelpers().append_to_list(action['variable_name'], obj)
 
     def set_scroll(self):
         return ""
