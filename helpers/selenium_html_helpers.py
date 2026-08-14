@@ -190,7 +190,11 @@ class SeleniumHtmlHelpers:
             quit(0)
             exit()
 
-        if "after_actions" in script_actions:
+        # event* runs its own after_actions per row, inside event_loop. Running
+        # them again here fires the whole block once more on the list page, with
+        # the row's variables already cleared - which is how a run ended on a
+        # timeout instead of moving to the next page.
+        if "after_actions" in script_actions and type != "event*":
             self.run_after_action(doc, script_actions["after_actions"])
 
     def driver_action_router(self, doc, driver_action):
