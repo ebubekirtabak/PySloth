@@ -49,11 +49,22 @@ class MongoDatabaseHelpers:
                 logger.Logger().set_error_log("MongoDB Helpers: insert Error: " + str(e), True)
                 return 400
 
-    def upsert(self, collection, key, data):
+    def upsert(self, collection, key, data, set_on_insert=None):
         if self.db != 400:
             try:
                 selected_collection = self.db[collection]
-                result = selected_collection.update(key, {"$set": data}, upsert=True)
+                update = {}
+                if data:
+                    update["$set"] = data
+                # Values that must not overwrite an already stored document,
+                # they are only written when the document is created.
+                if set_on_insert:
+                    update["$setOnInsert"] = set_on_insert
+                if not update:
+                    logger.Logger().set_log("mongo upsert skipped, there is no data")
+                    return
+
+                result = selected_collection.update_one(key, update, upsert=True)
                 if hasattr(result, "matched_count") or hasattr(result, "inserted_id"):
                     logger.Logger().set_log('--------- DATA ----------')
                     logger.Logger().set_log(data)
