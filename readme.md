@@ -126,6 +126,44 @@ Example Databse Action:
  }
 ```
 
+##### preserve_fields
+
+`upsert_to_database` overwrites the stored document with every scraped value.
+Some pages stop showing a value after a while, they hide it (`"Ali Veli"` ->
+`"**********"`) or render it empty, and the upsert would replace the value that
+was scraped while the page was still showing it.
+
+List those columns under `preserve_fields`, then an empty (`""`, `"-"`, `null`,
+empty list) or masked (contains `*`) scraped value is written only when the
+document is created, an already stored value is kept:
+
+```
+ {
+   "type": "database",
+   "action": "upsert_to_database",
+   "query_keys": ["order_id"],
+   "collection_name": "orders",
+   "preserve_fields": ["buyer_name", "buyer_phone", "buyer_address"],
+   "variable_type": "$_GET_VARIABLE",
+   "selector": "@get_scope_variables"
+ }
+```
+
+#### Custom script paths
+
+A scope can reference a custom script or an imported action file by a path that
+is relative to the project the scope belongs to, rather than to PySloth itself:
+
+```
+ { "type": "run_custom_script",
+   "custom_script": { "type": "python3", "script": "custom_scripts/parse_date.py" } }
+```
+
+Set `PYSLOTH_PROJECT_ROOT` to that project and PySloth looks the path up there
+(and in its `configs/` folder) before giving up. `PYSLOTH_SCRIPT_PYTHON` runs
+python scripts with a chosen interpreter, so they can share the virtualenv the
+caller set up.
+
 #### import configurations
 ```json
 {

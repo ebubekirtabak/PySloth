@@ -21,6 +21,7 @@ from helpers.cookie_helpers import CookieHelpers
 from helpers.element_helpers import ElementHelpers
 from helpers.form_helpers import FormHelpers
 from helpers.http_helpers import HttpHelpers
+from helpers.path_helpers import PathHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
@@ -225,7 +226,7 @@ class SeleniumHtmlHelpers:
                 self.action_router(doc, action)
 
     def import_script_actions(self, doc, action):
-        file = FileModule().read_file(file_name=action['file'])
+        file = FileModule().read_file(file_name=PathHelpers.resolve(action['file']))
         if file['success'] is True:
             scope_data = json.loads(file['data'])
             scope_model = namedtuple("ScopeModel", scope_data.keys())(*scope_data.values())
