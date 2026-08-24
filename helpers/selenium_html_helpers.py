@@ -240,10 +240,10 @@ class SeleniumHtmlHelpers:
         straight away lands on the old tab."""
         opened = len(doc.window_handles)
         try:
-            wait(doc, timeout).until(lambda driver: len(driver.window_handles) > opened - 1)
-            wait(doc, timeout).until(lambda driver: len(driver.window_handles) >= opened)
+            wait(doc, timeout).until(lambda driver: len(driver.window_handles) > opened)
         except TimeoutException:
             self.logger.set_log('switch_to_new_tab: no new tab appeared')
+            return
         doc.switch_to.window(doc.window_handles[-1])
 
     def event_loop(self, doc, action):
