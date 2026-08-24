@@ -211,9 +211,10 @@ class SeleniumHtmlHelpers:
             # An empty url opens about:blank, where the wait that follows can
             # only time out - and that error would end the whole run. Skip
             # instead and let the scope's own condition decide what to do.
-            if not url:
+            if not isinstance(url, str) or not url.strip():
                 self.logger.set_log('open_in_new_tab: no url, skipping')
                 return
+            url = url.strip()
             doc.execute_script("window.open(arguments[0], '_blank');", url)
             self.switch_to_new_tab(doc, driver_action.get('timeout', 15))
         elif action == "switch_to_new_tab":
