@@ -9,7 +9,8 @@ import json
 from collections import namedtuple
 
 import psutil as psutil
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
@@ -165,14 +166,11 @@ class SeleniumHtmlHelpers:
         elif type == 'http_request':
             HttpHelpers().send_request(script_actions["request"])
         elif type == 'wait_for_element_to_load':
-            wait(doc, script_actions['timeout']).until(
-                EC.visibility_of_any_elements_located(doc.find_element_by_xpath(script_actions['selector'])))
+            self.wait_for(doc, script_actions, EC.visibility_of_any_elements_located)
         elif type == 'wait_for_element':
-            wait(doc, script_actions['timeout']).until(
-                EC.presence_of_element_located(doc.find_element_by_xpath(script_actions['selector'])))
+            self.wait_for(doc, script_actions, EC.presence_of_element_located)
         elif type == 'wait_for_clickable':
-            wait(doc, script_actions['timeout']).until(
-                EC.element_to_be_clickable(doc.find_element_by_xpath(script_actions['selector'])))
+            self.wait_for(doc, script_actions, EC.element_to_be_clickable)
         elif type == "condition":
             new_action = ConditionHelpers(doc, script_actions).parse_condition()
             if isinstance(new_action, list):
@@ -192,7 +190,11 @@ class SeleniumHtmlHelpers:
             quit(0)
             exit()
 
-        if "after_actions" in script_actions:
+        # event* runs its own after_actions per row, inside event_loop. Running
+        # them again here fires the whole block once more on the list page, with
+        # the row's variables already cleared - which is how a run ended on a
+        # timeout instead of moving to the next page.
+        if "after_actions" in script_actions and type != "event*":
             self.run_after_action(doc, script_actions["after_actions"])
 
     def driver_action_router(self, doc, driver_action):
@@ -203,6 +205,46 @@ class SeleniumHtmlHelpers:
             doc.refresh()
             WebDriverWait(doc, 30).until(
                 lambda driver: driver.execute_script('return document.readyState') == 'complete')
+        elif action == "open_in_new_tab":
+            url = VariableHelpers().get_variable(driver_action['url_variable']) \
+                if 'url_variable' in driver_action else driver_action.get('url')
+            # An empty url opens about:blank, where the wait that follows can
+            # only time out - and that error would end the whole run. Skip
+            # instead and let the scope's own condition decide what to do.
+            if not isinstance(url, str) or not url.strip():
+                self.logger.set_log('open_in_new_tab: no url, skipping')
+                return
+            url = url.strip()
+            doc.execute_script("window.open(arguments[0], '_blank');", url)
+            self.switch_to_new_tab(doc, driver_action.get('timeout', 15))
+        elif action == "switch_to_new_tab":
+            # A click opened a new tab (e.g. a Temu order detail); wait for it
+            # and move to the most recently opened window.
+            self.switch_to_new_tab(doc, driver_action.get('timeout', 15))
+        elif action == "close_tab":
+            doc.close()
+            # Back to the last remaining tab, so nested tabs unwind LIFO
+            # (transactions tab -> order tab -> list tab).
+            if doc.window_handles:
+                doc.switch_to.window(doc.window_handles[-1])
+        elif action == "switch_to_last_tab":
+            # Re-anchor after a submit that closed or replaced the current tab:
+            # without it every later command dies with "no such window", which
+            # aborts the whole run rather than the current row.
+            if doc.window_handles:
+                doc.switch_to.window(doc.window_handles[-1])
+
+    def switch_to_new_tab(self, doc, timeout=15):
+        """Waits for a tab to appear and switches to the newest one. The click
+        that opens it returns before the browser has the window, so switching
+        straight away lands on the old tab."""
+        opened = len(doc.window_handles)
+        try:
+            wait(doc, timeout).until(lambda driver: len(driver.window_handles) > opened)
+        except TimeoutException:
+            self.logger.set_log('switch_to_new_tab: no new tab appeared')
+            return
+        doc.switch_to.window(doc.window_handles[-1])
 
     def event_loop(self, doc, action):
         event_maker = EventMaker(doc, self)
@@ -224,6 +266,22 @@ class SeleniumHtmlHelpers:
                 self.import_script_actions(doc, action)
             else:
                 self.action_router(doc, action)
+
+    def wait_for(self, doc, script_actions, condition):
+        """Waits for a selector. The expected conditions take a (By, selector)
+        locator: looking the element up first raises when it is not there yet,
+        which is exactly what the wait was supposed to absorb.
+
+        "optional": true keeps a run going when an element legitimately never
+        appears (an order with no invoice modal, say) instead of aborting."""
+        try:
+            wait(doc, script_actions['timeout']).until(
+                condition((By.XPATH, script_actions['selector'])))
+        except TimeoutException:
+            if not script_actions.get('optional'):
+                raise
+            self.logger.set_log(
+                f"wait_for ({script_actions.get('type', 'wait_for')}, optional) timed out: {script_actions['selector']}" )
 
     def import_script_actions(self, doc, action):
         file = FileModule().read_file(file_name=PathHelpers.resolve(action['file']))
