@@ -281,7 +281,7 @@ class SeleniumHtmlHelpers:
             if not script_actions.get('optional'):
                 raise
             self.logger.set_log(
-                'wait_for_element (optional) timed out: ' + script_actions['selector'])
+                f"wait_for ({script_actions.get('type', 'wait_for')}, optional) timed out: {script_actions['selector']}" )
 
     def import_script_actions(self, doc, action):
         file = FileModule().read_file(file_name=PathHelpers.resolve(action['file']))
