@@ -11,6 +11,7 @@ from collections import namedtuple
 import psutil as psutil
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
@@ -22,7 +23,9 @@ from helpers.cookie_helpers import CookieHelpers
 from helpers.element_helpers import ElementHelpers
 from helpers.form_helpers import FormHelpers
 from helpers.http_helpers import HttpHelpers
+from helpers.download_helpers import DownloadHelpers
 from helpers.path_helpers import PathHelpers
+from helpers.template_helpers import TemplateHelpers
 from helpers.recaptcha_helpers import RecaptchaHelpers
 from helpers.variable_helpers import VariableHelpers
 from models.thread_model import ThreadModel
@@ -165,6 +168,12 @@ class SeleniumHtmlHelpers:
             script_service.run()
         elif type == 'http_request':
             HttpHelpers().send_request(script_actions["request"])
+        elif type == '$_FORMAT_VARIABLE':
+            self.format_variable(script_actions)
+        elif type == 'download_file':
+            DownloadHelpers(doc).download(script_actions)
+        elif type == 'type_keys':
+            self.type_keys(doc, script_actions)
         elif type == 'wait_for_element_to_load':
             self.wait_for(doc, script_actions, EC.visibility_of_any_elements_located)
         elif type == 'wait_for_element':
@@ -266,6 +275,57 @@ class SeleniumHtmlHelpers:
                 self.import_script_actions(doc, action)
             else:
                 self.action_router(doc, action)
+
+    def format_variable(self, script_actions):
+        """Builds a string from a template and stores it: URLs assembled from a
+        setting and a scraped value, without either living in the scope file."""
+        VariableHelpers().set_variable(
+            script_actions['variable_name'],
+            TemplateHelpers.render(script_actions.get('template', ''))
+        )
+
+    def type_keys(self, doc, script_actions):
+        """Types into whatever holds focus, one character at a time, as real key
+        events.
+
+        Deliberately selector-free: a field inside a shadow root cannot be
+        addressed by XPath, but JS can focus it, and keystrokes follow focus.
+        Some inputs also only trust real typing — a value assigned through the
+        native setter is rejected where the same text typed by hand validates —
+        which is the reason this exists at all.
+
+        keys_after names trailing keys ("SPACE", "BACK_SPACE", "ESCAPE"): adding
+        a character and deleting it again is what makes such a field revalidate.
+        """
+        value = script_actions.get('value')
+        if 'variable_name' in script_actions:
+            stored = VariableHelpers().get_variable(script_actions['variable_name'])
+            value = '' if stored is None else str(stored)
+        value = TemplateHelpers.render(value or '')
+
+        delay = script_actions.get('key_delay', 0.1)
+        target = doc.switch_to.active_element
+
+        if 'selector' in script_actions:
+            found = doc.find_elements_by_xpath(script_actions['selector'])
+            if not found:
+                self.logger.set_log('type_keys: selector matched nothing')
+                return
+            target = found[0]
+
+        for character in value:
+            target.send_keys(character)
+            time.sleep(delay)
+
+        for key_name in script_actions.get('keys_after', []):
+            key = getattr(Keys, key_name.upper(), None)
+            if key is None:
+                self.logger.set_log('type_keys: no such key ' + str(key_name))
+                continue
+            target.send_keys(key)
+            time.sleep(delay)
+
+        self.logger.set_log('type_keys: typed %d characters' % len(value))
 
     def wait_for(self, doc, script_actions, condition):
         """Waits for a selector. The expected conditions take a (By, selector)
