@@ -244,14 +244,19 @@ class SeleniumHtmlHelpers:
                 doc.switch_to.window(doc.window_handles[-1])
 
     def switch_to_new_tab(self, doc, timeout=15):
-        """Waits for a tab to appear and switches to the newest one. The click
-        that opens it returns before the browser has the window, so switching
-        straight away lands on the old tab."""
-        opened = len(doc.window_handles)
+        """Switches to the most recently opened tab.
+
+        The count is taken here, after the click that opened the tab, so the new
+        window is usually already present: waiting for one MORE than the current
+        count waits for a second tab that never comes. What is waited for is a
+        tab other than the current one, which covers both the tab that is
+        already there and the one still opening."""
+        current = doc.current_window_handle
         try:
-            wait(doc, timeout).until(lambda driver: len(driver.window_handles) > opened)
+            wait(doc, timeout).until(
+                lambda driver: driver.window_handles[-1] != current)
         except TimeoutException:
-            self.logger.set_log('switch_to_new_tab: no new tab appeared')
+            self.logger.set_log('switch_to_new_tab: no other tab appeared')
             return
         doc.switch_to.window(doc.window_handles[-1])
 
